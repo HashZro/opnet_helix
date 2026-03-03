@@ -169,7 +169,7 @@
       "title": "Create Mine index.ts boilerplate",
       "description": "Create mines-opnet/contracts/src/mine/index.ts following exact pattern from MinerToken index.ts but importing Mine class instead. Blockchain.contract factory returns new Mine(). Export runtime exports. Export abort function with abort=src/mine/index/abort.",
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with correct imports and factory function returning Mine instance.",
       "model": "opus"
     },

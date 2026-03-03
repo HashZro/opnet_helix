@@ -152,3 +152,9 @@
   - Returns netUnderlying in BytesWriter(32)
   - All u256 arithmetic via SafeMath — no raw operators
   - Can't compile yet — Mine index.ts is story S19
+
+[2026-03-03] S19 — Created Mine index.ts boilerplate
+  - File: mines-opnet/contracts/src/mine/index.ts
+  - Exact same pattern as MinerToken index.ts: Blockchain.contract factory, runtime exports, abort handler
+  - Imports Mine class instead of MinerToken
+  - Mine contract can now be compiled (next story S20)
