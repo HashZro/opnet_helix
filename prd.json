@@ -16,7 +16,7 @@
       "title": "Create contracts asconfig.json",
       "description": "Create mines-opnet/contracts/asconfig.json with 4 targets: miner (outFile build/MinerToken.wasm, use abort=src/miner-token/index/abort), mine (outFile build/Mine.wasm, use abort=src/mine/index/abort), factory (outFile build/Factory.wasm, use abort=src/factory/index/abort), staking (outFile build/Staking.wasm, use abort=src/staking/index/abort). Copy options block exactly from ../monorepo/contracts/asconfig.json (sourceMap false, optimizeLevel 3, shrinkLevel 1, converge true, enable features, runtime stub, transform @btc-vision/opnet-transform).",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists and is valid JSON. Options match monorepo reference exactly.",
       "model": "opus"
     },

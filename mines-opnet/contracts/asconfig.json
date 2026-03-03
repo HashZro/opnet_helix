@@ -1,0 +1,45 @@
+{
+  "targets": {
+    "miner": {
+      "outFile": "build/MinerToken.wasm",
+      "textFile": "build/MinerToken.wat",
+      "use": ["abort=src/miner-token/index/abort"]
+    },
+    "mine": {
+      "outFile": "build/Mine.wasm",
+      "textFile": "build/Mine.wat",
+      "use": ["abort=src/mine/index/abort"]
+    },
+    "factory": {
+      "outFile": "build/Factory.wasm",
+      "textFile": "build/Factory.wat",
+      "use": ["abort=src/factory/index/abort"]
+    },
+    "staking": {
+      "outFile": "build/Staking.wasm",
+      "textFile": "build/Staking.wat",
+      "use": ["abort=src/staking/index/abort"]
+    }
+  },
+  "options": {
+    "sourceMap": false,
+    "optimizeLevel": 3,
+    "shrinkLevel": 1,
+    "converge": true,
+    "noAssert": false,
+    "enable": [
+      "sign-extension",
+      "mutable-globals",
+      "nontrapping-f2i",
+      "bulk-memory",
+      "simd",
+      "reference-types",
+      "multi-value"
+    ],
+    "runtime": "stub",
+    "memoryBase": 0,
+    "initialMemory": 1,
+    "exportStart": "start",
+    "transform": "@btc-vision/opnet-transform"
+  }
+}

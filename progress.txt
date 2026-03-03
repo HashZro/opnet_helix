@@ -15,3 +15,10 @@
   - Scripts: build:miner, build:mine, build:factory, build:staking + deploy scripts for each
   - npm install completed (669 packages). Engine warnings for node 23 vs 24 — non-blocking.
   - Created build/ directory for WASM output
+
+[2026-03-03] S02 — Created mines-opnet/contracts/asconfig.json
+  - 4 targets: miner (MinerToken.wasm), mine (Mine.wasm), factory (Factory.wasm), staking (Staking.wasm)
+  - Each target uses abort=src/<contract>/index/abort pattern
+  - Options block copied exactly from ../monorepo/contracts/asconfig.json
+  - Includes: optimizeLevel 3, shrinkLevel 1, converge true, runtime stub, transform @btc-vision/opnet-transform
+  - All 7 WASM features enabled (sign-extension, mutable-globals, nontrapping-f2i, bulk-memory, simd, reference-types, multi-value)
