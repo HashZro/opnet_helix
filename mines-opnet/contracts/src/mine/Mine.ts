@@ -66,4 +66,33 @@ export class Mine extends OP20 {
     private la(key: Uint8Array): Address {
         return new BytesReader(Blockchain.getStorageAt(key)).readAddress();
     }
+
+    // ── Lifecycle ──
+
+    public override onDeployment(_calldata: Calldata): void {
+        super.onDeployment(_calldata);
+
+        // Read deployment params from calldata (order matters!)
+        const underlying: Address = _calldata.readAddress();
+        const decimals: u8 = _calldata.readU8();
+        const name: string = _calldata.readStringWithLength();
+        const symbol: string = _calldata.readStringWithLength();
+        const wrapFee: u256 = _calldata.readU256();
+        const unwrapFee: u256 = _calldata.readU256();
+        const controllerFee: u256 = _calldata.readU256();
+        const protocolFee: u256 = _calldata.readU256();
+
+        // Unlimited supply — minting is driven by wrap deposits
+        const maxSupply: u256 = u256.Max;
+        this.instantiate(new OP20InitParameters(maxSupply, decimals, name, symbol));
+
+        // Store config
+        this.sa(this.fieldKeySimple(this._underlying), underlying);
+        this.sa(this.fieldKeySimple(this._owner), Blockchain.tx.sender);
+        this.sa(this.fieldKeySimple(this._factoryAddr), Blockchain.tx.sender);
+        this.su(this.fieldKeySimple(this._wrapFee), wrapFee);
+        this.su(this.fieldKeySimple(this._unwrapFee), unwrapFee);
+        this.su(this.fieldKeySimple(this._controllerFee), controllerFee);
+        this.su(this.fieldKeySimple(this._protocolFee), protocolFee);
+    }
 }

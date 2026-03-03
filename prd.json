@@ -106,7 +106,7 @@
       "title": "Add Mine onDeployment",
       "description": "Override onDeployment in Mine class. Call super.onDeployment(_calldata) FIRST. Read from calldata in order: underlying (Address via readAddress), decimals (u8 via readU8), name (string via readStringWithLength), symbol (string via readStringWithLength), wrapFee (u256 via readU256), unwrapFee (u256 via readU256), controllerFee (u256 via readU256), protocolFee (u256 via readU256). Set maxSupply to max u256 value. Call this.instantiate(new OP20InitParameters(maxSupply, decimals, name, symbol)). Store all values using sa/su with fieldKeySimple. Store _owner and _factoryAddr as Blockchain.tx.sender.",
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "acceptance": "onDeployment reads 8 params from calldata, calls super first, calls instantiate, stores all values.",
       "model": "opus"
     },
