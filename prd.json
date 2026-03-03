@@ -205,7 +205,7 @@
       "title": "Add Mine underlyingBalance and getUnderlyingAmount public views",
       "description": "Add two public view methods: underlyingBalance(calldata): returns this._underlyingBalance() in BytesWriter(32). getUnderlyingAmount(calldata): reads xAmount u256, returns this._getUnderlyingAmount(xAmount) in BytesWriter(32). Both @method() @returns UINT256.",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "acceptance": "Both view methods exist and return correct u256 values.",
       "model": "opus"
     },

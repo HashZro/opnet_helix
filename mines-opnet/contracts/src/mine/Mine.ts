@@ -280,6 +280,23 @@ export class Mine extends OP20 {
         return response;
     }
 
+    @method()
+    @returns({ name: 'balance', type: ABIDataTypes.UINT256 })
+    public underlyingBalance(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this._underlyingBalance());
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'underlyingAmount', type: ABIDataTypes.UINT256 })
+    public getUnderlyingAmount(_calldata: Calldata): BytesWriter {
+        const xAmount: u256 = _calldata.readU256();
+        const response = new BytesWriter(32);
+        response.writeU256(this._getUnderlyingAmount(xAmount));
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

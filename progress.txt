@@ -182,3 +182,10 @@
   - All arithmetic via SafeMath
   - Selector: 0x707f7330
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S23 — Added Mine underlyingBalance and getUnderlyingAmount public views
+  - underlyingBalance(_calldata): returns net underlying available (held - ctrlAccrued - protoAccrued)
+  - getUnderlyingAmount(_calldata): reads xAmount, converts to underlying via _getUnderlyingAmount()
+  - Both decorated with @method() and @returns UINT256
+  - Selectors: underlyingBalance() -> 0x98548594, getUnderlyingAmount() -> 0x1a4b7e31
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated
