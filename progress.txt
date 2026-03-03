@@ -71,3 +71,13 @@
   - Fields: _underlying, _owner, _factoryAddr, _wrapFee, _unwrapFee, _controllerFee, _protocolFee, _controllerFeeAccrued, _protocolFeeAccrued, _underlyingHeld
   - Follows MultSigVault pointer pattern exactly (u16 = Blockchain.nextPointer)
   - No index.ts yet (later story), so can't compile standalone — but pattern is verified against reference
+
+[2026-03-03] S11 — Added Mine storage helper methods
+  - Added 5 @inline helper methods to Mine class:
+    1. fieldKeySimple(ptr: u16): Uint8Array — 32-byte key with ptr in first 2 bytes, rest zeros
+    2. su(key, val): void — writes u256 to storage via Blockchain.setStorageAt
+    3. lu(key): u256 — reads u256 from storage via Blockchain.getStorageAt
+    4. sa(key, addr): void — writes Address to storage via BytesWriter
+    5. la(key): Address — reads Address from storage via BytesReader
+  - All methods match MultSigVault patterns exactly (same signatures, same implementation)
+  - No fieldKey(ptr, id) variant needed — Mine uses simple pointers, no compound vault IDs

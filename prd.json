@@ -97,7 +97,7 @@
       "title": "Add Mine storage helper methods",
       "description": "Add storage helper methods to Mine class matching MultSigVault pattern. fieldKeySimple(ptr: u16): Uint8Array \u2014 creates 32-byte key with ptr in first 2 bytes. su(key, val): void \u2014 writes u256 to storage. lu(key): u256 \u2014 reads u256 from storage. sa(key, addr): void \u2014 writes Address to storage via BytesWriter. la(key): Address \u2014 reads Address from storage via BytesReader. All marked @inline.",
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "acceptance": "All 5 helper methods exist and match MultSigVault patterns exactly.",
       "model": "opus"
     },
