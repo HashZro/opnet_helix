@@ -133,7 +133,7 @@
       "title": "Add Mine _getUnderlyingAmount internal method",
       "description": "Add private _getUnderlyingAmount(xAmount: u256): u256 method to Mine. If totalSupply() == ZERO, return xAmount (1:1 ratio). Otherwise return SafeMath.div(SafeMath.mul(xAmount, this._underlyingBalance()), this.totalSupply()). Uses inherited totalSupply() from OP20.",
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "acceptance": "Method handles zero-supply edge case (returns input), otherwise calculates proportional underlying amount.",
       "model": "opus"
     },

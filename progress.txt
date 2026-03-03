@@ -104,3 +104,11 @@
   - Returns SafeMath.sub(SafeMath.sub(held, ctrlAccrued), protoAccrued)
   - All arithmetic via SafeMath — no raw operators
   - Can't compile yet — Mine index.ts is story S20
+
+[2026-03-03] S15 — Added Mine _getUnderlyingAmount internal method
+  - Private method converts xToken amount to underlying amount based on current ratio
+  - Edge case: if totalSupply() == ZERO, returns xAmount directly (1:1 ratio for first wrap)
+  - Otherwise: SafeMath.div(SafeMath.mul(xAmount, _underlyingBalance()), totalSupply())
+  - Uses inherited totalSupply() from OP20 base class
+  - All arithmetic via SafeMath — no raw operators
+  - Can't compile yet — Mine index.ts is story S20

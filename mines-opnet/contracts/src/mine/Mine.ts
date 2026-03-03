@@ -96,6 +96,14 @@ export class Mine extends OP20 {
         return SafeMath.sub(SafeMath.sub(held, ctrlAccrued), protoAccrued);
     }
 
+    // ── Conversion helpers ──
+
+    private _getUnderlyingAmount(xAmount: u256): u256 {
+        const supply: u256 = this.totalSupply();
+        if (supply == ZERO) return xAmount;
+        return SafeMath.div(SafeMath.mul(xAmount, this._underlyingBalance()), supply);
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {
