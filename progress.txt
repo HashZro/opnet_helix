@@ -134,3 +134,21 @@
   - Returns xAmount in BytesWriter(32)
   - All u256 arithmetic via SafeMath — no raw operators
   - Can't compile yet — Mine index.ts is story S19
+
+[2026-03-03] S18 — Added Mine unwrap() public method
+  - Public method decorated with @method() and @returns({ name: 'netUnderlying', type: ABIDataTypes.UINT256 })
+  - Reads xAmount (u256) from calldata, validates > ZERO
+  - CEI pattern: CHECKS (xAmount > 0) → EFFECTS (calc fees, burn, update accumulators, update _underlyingHeld) → INTERACTIONS (TransferHelper.transfer)
+  - Ported from Mine.sol _unwrapTo + _processUnwrap logic:
+    1. underlyingAmount via _getUnderlyingAmount(xAmount)
+    2. feeAmount = underlyingAmount * unwrapFee / 1000
+    3. controllerFeeAmount = feeAmount * controllerFee / 1000
+    4. protocolFeeAmount = feeAmount * protocolFee / 1000
+    5. Burns xTokens from sender via this._burn()
+    6. Updates _controllerFeeAccrued and _protocolFeeAccrued accumulators
+    7. netUnderlying = underlyingAmount - feeAmount
+    8. Decrements _underlyingHeld by netUnderlying
+    9. TransferHelper.transfer sends netUnderlying to sender
+  - Returns netUnderlying in BytesWriter(32)
+  - All u256 arithmetic via SafeMath — no raw operators
+  - Can't compile yet — Mine index.ts is story S19

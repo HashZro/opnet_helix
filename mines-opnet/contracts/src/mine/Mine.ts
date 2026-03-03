@@ -199,6 +199,61 @@ export class Mine extends OP20 {
         return response;
     }
 
+    @method()
+    @returns({ name: 'netUnderlying', type: ABIDataTypes.UINT256 })
+    public unwrap(_calldata: Calldata): BytesWriter {
+        const xAmount: u256 = _calldata.readU256();
+
+        // CHECKS
+        if (xAmount == ZERO) throw new Revert('zero amount');
+
+        // EFFECTS — convert xTokens to underlying, calculate fees, burn xTokens
+        const underlyingAmount: u256 = this._getUnderlyingAmount(xAmount);
+
+        const unwrapFeeRate: u256 = this.lu(this.fieldKeySimple(this._unwrapFee));
+        const feeAmount: u256 = SafeMath.div(
+            SafeMath.mul(underlyingAmount, unwrapFeeRate),
+            FEE_DENOMINATOR,
+        );
+
+        // Controller/protocol portions of fee
+        const ctrlFeeRate: u256 = this.lu(this.fieldKeySimple(this._controllerFee));
+        const controllerFeeAmount: u256 = SafeMath.div(
+            SafeMath.mul(feeAmount, ctrlFeeRate),
+            FEE_DENOMINATOR,
+        );
+
+        const protoFeeRate: u256 = this.lu(this.fieldKeySimple(this._protocolFee));
+        const protocolFeeAmount: u256 = SafeMath.div(
+            SafeMath.mul(feeAmount, protoFeeRate),
+            FEE_DENOMINATOR,
+        );
+
+        // Burn xTokens from sender
+        this._burn(Blockchain.tx.sender, xAmount);
+
+        // Update fee accumulators
+        const ctrlKey: Uint8Array = this.fieldKeySimple(this._controllerFeeAccrued);
+        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
+        this.su(ctrlKey, SafeMath.add(this.lu(ctrlKey), controllerFeeAmount));
+        this.su(protoKey, SafeMath.add(this.lu(protoKey), protocolFeeAmount));
+
+        // Net underlying to send
+        const netUnderlying: u256 = SafeMath.sub(underlyingAmount, feeAmount);
+
+        // Decrement self-tracked balance
+        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
+        this.su(heldKey, SafeMath.sub(this.lu(heldKey), netUnderlying));
+
+        // INTERACTIONS — transfer underlying out to sender
+        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+        TransferHelper.transfer(underlying, Blockchain.tx.sender, netUnderlying);
+
+        const response = new BytesWriter(32);
+        response.writeU256(netUnderlying);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

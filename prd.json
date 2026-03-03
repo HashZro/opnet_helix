@@ -160,7 +160,7 @@
       "title": "Add Mine unwrap() public method",
       "description": "Add public unwrap(calldata: Calldata): BytesWriter method to Mine. Reads xAmount (u256). CHECKS: xAmount > ZERO. Calculate underlyingAmount via _getUnderlyingAmount(xAmount). Calculate feeAmount = SafeMath.div(SafeMath.mul(underlyingAmount, unwrapFee), FEE_DENOMINATOR). Calculate controller/protocol portions of fee. EFFECTS: this._burn(Blockchain.tx.sender, xAmount). Update _controllerFeeAccrued, _protocolFeeAccrued. Calculate netUnderlying = SafeMath.sub(underlyingAmount, feeAmount). Decrement _underlyingHeld by netUnderlying. INTERACTIONS: TransferHelper.transfer(underlying, Blockchain.tx.sender, netUnderlying). Return netUnderlying.",
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "acceptance": "unwrap() burns xTokens, calculates unwrap fee, updates accumulators, decrements _underlyingHeld, transfers net underlying to sender. CEI pattern followed.",
       "model": "opus"
     },
