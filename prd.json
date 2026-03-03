@@ -79,7 +79,7 @@
       "title": "Create Mine contract class skeleton",
       "description": "Create mines-opnet/contracts/src/mine/Mine.ts. Class Mine extends OP20. Imports: Blockchain, BytesWriter, BytesReader, Calldata, OP20, OP20InitParameters, Revert, SafeMath, TransferHelper, Address from runtime. Import u256. Mark @final. Define constants: MAX_DEPOSIT_WITHDRAW_FEE = u256.fromU32(200), MAX_CONTROLLER_PROTOCOL_FEE = u256.fromU32(100), FEE_DENOMINATOR = u256.fromU32(1000), ZERO = u256.fromU32(0).",
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with class Mine extending OP20, all imports present, all constants defined.",
       "model": "opus"
     },

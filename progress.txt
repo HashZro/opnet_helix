@@ -58,3 +58,10 @@
   - Changed console title to 'MinerToken Deployment'
   - All wallet loading, UTXO fetching, challenge fetching, signing, broadcasting logic identical
   - Script parses without syntax errors (node --experimental-strip-types --check)
+
+[2026-03-03] S09 — Created Mine contract class skeleton
+  - File: mines-opnet/contracts/src/mine/Mine.ts
+  - Extends OP20, marked @final
+  - All imports: Blockchain, BytesWriter, BytesReader, Calldata, OP20, OP20InitParameters, Revert, SafeMath, TransferHelper, Address from runtime; u256 from as-bignum
+  - Constants: MAX_DEPOSIT_WITHDRAW_FEE(200), MAX_CONTROLLER_PROTOCOL_FEE(100), FEE_DENOMINATOR(1000), ZERO(0)
+  - Empty class body — storage/methods added in S10+
