@@ -15,6 +15,18 @@ export const MineAbi = [
         outputs: [{ name: 'netUnderlying', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
+    {
+        name: 'getWrappedAmount',
+        inputs: [],
+        outputs: [{ name: 'xAmount', type: ABIDataTypes.UINT256 }],
+        type: BitcoinAbiTypes.Function,
+    },
+    {
+        name: 'getUnwrappedAmount',
+        inputs: [],
+        outputs: [{ name: 'netUnderlying', type: ABIDataTypes.UINT256 }],
+        type: BitcoinAbiTypes.Function,
+    },
     ...MineEvents,
     ...OP_NET_ABI,
 ];

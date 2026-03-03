@@ -29,10 +29,32 @@ export type Unwrap = CallResult<
     OPNetEvent<never>[]
 >;
 
+/**
+ * @description Represents the result of the getWrappedAmount function call.
+ */
+export type GetWrappedAmount = CallResult<
+    {
+        xAmount: bigint;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the getUnwrappedAmount function call.
+ */
+export type GetUnwrappedAmount = CallResult<
+    {
+        netUnderlying: bigint;
+    },
+    OPNetEvent<never>[]
+>;
+
 // ------------------------------------------------------------------
 // IMine
 // ------------------------------------------------------------------
 export interface IMine extends IOP_NETContract {
     wrap(): Promise<Wrap>;
     unwrap(): Promise<Unwrap>;
+    getWrappedAmount(): Promise<GetWrappedAmount>;
+    getUnwrappedAmount(): Promise<GetUnwrappedAmount>;
 }

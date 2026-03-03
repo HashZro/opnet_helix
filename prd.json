@@ -196,7 +196,7 @@
       "title": "Add Mine getUnwrappedAmount view",
       "description": "Add public getUnwrappedAmount(calldata: Calldata): BytesWriter to Mine. Reads xAmount. Calculates underlyingAmount = _getUnderlyingAmount(xAmount). Calculates feeAmount = underlyingAmount * unwrapFee / 1000 (SafeMath). Returns SafeMath.sub(underlyingAmount, feeAmount) in BytesWriter(32).",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "acceptance": "View method returns net underlying after unwrap fee deduction.",
       "model": "opus"
     },

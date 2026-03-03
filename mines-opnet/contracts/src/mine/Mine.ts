@@ -264,6 +264,22 @@ export class Mine extends OP20 {
         return response;
     }
 
+    @method()
+    @returns({ name: 'netUnderlying', type: ABIDataTypes.UINT256 })
+    public getUnwrappedAmount(_calldata: Calldata): BytesWriter {
+        const xAmount: u256 = _calldata.readU256();
+        const underlyingAmount: u256 = this._getUnderlyingAmount(xAmount);
+        const unwrapFeeRate: u256 = this.lu(this.fieldKeySimple(this._unwrapFee));
+        const feeAmount: u256 = SafeMath.div(
+            SafeMath.mul(underlyingAmount, unwrapFeeRate),
+            FEE_DENOMINATOR,
+        );
+        const netUnderlying: u256 = SafeMath.sub(underlyingAmount, feeAmount);
+        const response = new BytesWriter(32);
+        response.writeU256(netUnderlying);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

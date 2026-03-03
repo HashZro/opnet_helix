@@ -25,6 +25,32 @@
                     "type": "UINT256"
                 }
             ]
+        },
+        {
+            "name": "getWrappedAmount",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "xAmount",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getUnwrappedAmount",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "netUnderlying",
+                    "type": "UINT256"
+                }
+            ]
         }
     ],
     "events": []

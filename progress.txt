@@ -173,3 +173,12 @@
   - Reads amount (u256) from calldata, calls _calcWrap(amount), returns only xAmount in BytesWriter(32)
   - Selector: 0xbebd4153
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S22 — Added Mine getUnwrappedAmount view method
+  - Public read-only method: getUnwrappedAmount(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns({ name: 'netUnderlying', type: ABIDataTypes.UINT256 })
+  - Reads xAmount from calldata, converts via _getUnderlyingAmount(), deducts unwrapFee, returns net in BytesWriter(32)
+  - Mirrors unwrap() fee logic but read-only (no state changes)
+  - All arithmetic via SafeMath
+  - Selector: 0x707f7330
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated
