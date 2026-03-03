@@ -1,0 +1,17 @@
+# Mines Protocol — Progress Log
+# Each entry: [DATE] STORY_ID — What was done, decisions made, gotchas
+
+[2026-03-03] INIT — Project initialized. Plan approved. Ralph loop scaffolding created.
+  - Original Solidity source in mines-contracts-main/, mines-frontend-main/, mines-graph-main/
+  - Reference OPNet patterns in ../monorepo/contracts/
+  - Frontend tricks in ../optnet_tricks.md
+  - Simplifications: No ERC721/1155, no OP_404, no Gateway, no TheGraph, no multi-chain
+  - Target: 4 contracts (MinerToken, Mine, Factory, Staking) + React frontend
+
+[2026-03-03] S01 — Created mines-opnet/contracts/package.json
+  - Copied dependency structure from ../monorepo/contracts/package.json
+  - Dependencies: @btc-vision/bitcoin@7.0.0-alpha.11, @btc-vision/btc-runtime@^1.11.0-rc.10, @btc-vision/transaction@1.8.0-beta.10, opnet@1.8.1-beta.13
+  - DevDeps: @btc-vision/opnet-transform@1.2.0, assemblyscript@0.27.36, dotenv@^16.0.0
+  - Scripts: build:miner, build:mine, build:factory, build:staking + deploy scripts for each
+  - npm install completed (669 packages). Engine warnings for node 23 vs 24 — non-blocking.
+  - Created build/ directory for WASM output

@@ -1,0 +1,240 @@
+# AGENTS.md — Patterns & Conventions for Mines Protocol
+
+## Contract Patterns (AssemblyScript / OPNet)
+
+### OP_20 Token Contract Skeleton
+```typescript
+import {
+    Blockchain, BytesWriter, Calldata, OP20, OP20InitParameters,
+} from '@btc-vision/btc-runtime/runtime';
+import { u256 } from '@btc-vision/as-bignum/assembly';
+
+@final
+export class MyToken extends OP20 {
+    public override onDeployment(_calldata: Calldata): void {
+        super.onDeployment(_calldata);  // MUST be first
+        const maxSupply: u256 = u256.fromString('1000000000000000000000000000');
+        this.instantiate(new OP20InitParameters(maxSupply, 18, 'Name', 'SYM'));
+    }
+
+    @method()
+    @returns({ name: 'amount', type: ABIDataTypes.UINT256 })
+    public myMethod(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(u256.fromU32(0));
+        return response;
+    }
+}
+```
+
+### OP_NET Non-Token Contract Skeleton
+```typescript
+import {
+    Blockchain, BytesWriter, BytesReader, Calldata, OP_NET, Revert,
+    SafeMath, StoredU256, TransferHelper, Address,
+} from '@btc-vision/btc-runtime/runtime';
+import { u256 } from '@btc-vision/as-bignum/assembly';
+
+const ZERO: u256 = u256.fromU32(0);
+const ONE: u256 = u256.fromU32(1);
+const EMPTY_SUB: Uint8Array = new Uint8Array(30);
+
+@final
+export class MyContract extends OP_NET {
+    private readonly _counter: StoredU256 = new StoredU256(Blockchain.nextPointer, EMPTY_SUB);
+    private readonly pSomeField: u16 = Blockchain.nextPointer;
+
+    public override onDeployment(_calldata: Calldata): void {
+        super.onDeployment(_calldata);
+    }
+}
+```
+
+### Index.ts Boilerplate (NEVER modify this pattern)
+```typescript
+import { Blockchain } from '@btc-vision/btc-runtime/runtime';
+import { revertOnError } from '@btc-vision/btc-runtime/runtime/abort/abort';
+import { MyContract } from './MyContract';
+
+Blockchain.contract = () => {
+    return new MyContract();
+};
+
+export * from '@btc-vision/btc-runtime/runtime/exports';
+
+export function abort(message: string, fileName: string, line: u32, column: u32): void {
+    revertOnError(message, fileName, line, column);
+}
+```
+
+### Storage Key Helpers (from MultSigVault)
+```typescript
+// Simple field key: [ptr_hi, ptr_lo, 0...0]
+@inline
+private fieldKeySimple(ptr: u16): Uint8Array {
+    const k = new Uint8Array(32);
+    k[0] = u8((ptr >> 8) & 0xFF);
+    k[1] = u8(ptr & 0xFF);
+    return k;
+}
+
+// Compound key with ID: [ptr(2)] + [zeros(26)] + [id_lo32(4)]
+@inline
+private fieldKey(ptr: u16, id: u256): Uint8Array {
+    const k = new Uint8Array(32);
+    k[0] = u8((ptr >> 8) & 0xFF);
+    k[1] = u8(ptr & 0xFF);
+    const idVal: u32 = u32(id.lo1);
+    k[28] = u8((idVal >> 24) & 0xFF);
+    k[29] = u8((idVal >> 16) & 0xFF);
+    k[30] = u8((idVal >> 8) & 0xFF);
+    k[31] = u8(idVal & 0xFF);
+    return k;
+}
+
+// Address-keyed field: [ptr(2)] + [addr bytes(30)]
+@inline
+private addrKey(ptr: u16, addr: Address): Uint8Array {
+    const k = new Uint8Array(32);
+    k[0] = u8((ptr >> 8) & 0xFF);
+    k[1] = u8(ptr & 0xFF);
+    const raw = addr.toBytes();
+    for (let i = 0; i < 30; i++) {
+        k[i + 2] = i < raw.length ? raw[i] : 0;
+    }
+    return k;
+}
+
+// Raw storage read/write
+@inline private su(key: Uint8Array, val: u256): void {
+    Blockchain.setStorageAt(key, val.toUint8Array(true));
+}
+@inline private lu(key: Uint8Array): u256 {
+    return u256.fromUint8ArrayBE(Blockchain.getStorageAt(key));
+}
+@inline private sa(key: Uint8Array, addr: Address): void {
+    const w = new BytesWriter(32);
+    w.writeAddress(addr);
+    Blockchain.setStorageAt(key, w.getBuffer());
+}
+@inline private la(key: Uint8Array): Address {
+    return new BytesReader(Blockchain.getStorageAt(key)).readAddress();
+}
+```
+
+### SafeMath Rules
+- ALL u256 arithmetic MUST use SafeMath: `SafeMath.add()`, `SafeMath.sub()`, `SafeMath.mul()`, `SafeMath.div()`
+- NEVER use raw `+`, `-`, `*`, `/` on u256 values
+- For big number literals: `u256.fromString('123...')` not `u256.fromU64()` (overflow risk)
+- For small constants: `u256.fromU32(100)` is fine
+
+### Access Control Pattern
+```typescript
+private requireOwner(): void {
+    const owner = this.la(this.fieldKeySimple(this._owner));
+    if (Blockchain.tx.sender != owner) throw new Revert('not owner');
+}
+```
+
+### CEI Pattern (Checks-Effects-Interactions)
+```typescript
+// 1. CHECKS — validate inputs
+if (amount == ZERO) throw new Revert('zero amount');
+
+// 2. EFFECTS — update local state
+this.su(balKey, SafeMath.sub(bal, amount));
+
+// 3. INTERACTIONS — external calls
+TransferHelper.transfer(token, to, amount);
+```
+
+## Frontend Patterns
+
+### Identity Key Resolution (CRITICAL)
+```typescript
+const opnetNet = { ...networks.testnet, bech32: networks.testnet.bech32Opnet };
+const script = toOutputScript(walletAddress, opnetNet);
+const tweakedHex = '0x' + Array.from(script.subarray(2))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+const pubKeyInfo = await provider.getPublicKeyInfo(tweakedHex, false);
+const identityHex = pubKeyInfo?.toString();
+const compressedTweaked = '0x02' + tweakedHex.slice(2);
+const sender = Address.fromString(identityHex, compressedTweaked);
+```
+
+### getContract Usage
+```typescript
+// Read-only (no sender needed):
+const contract = getContract(addr, ABI, provider, networks.testnet);
+
+// Write operations (sender required as 5th param):
+const contract = getContract(addr, ABI, provider, networks.testnet, senderAddress);
+```
+
+### sendTransaction (Frontend)
+```typescript
+await sim.sendTransaction({
+    signer: null,           // ALWAYS null on frontend
+    mldsaSigner: null,      // ALWAYS null on frontend
+    refundTo: walletAddress,
+    maximumAllowedSatToSpend: BigInt(100_000),
+    feeRate: 10,
+    network: networks.testnet,
+    minGas: BigInt(100_000),
+});
+```
+
+### Reading Token Balances
+```typescript
+const balRes = await contract.balanceOf(ownerAddress);
+const raw = balRes?.properties?.balance
+    ?? balRes?.result
+    ?? balRes?.decoded?.[0]
+    ?? null;
+const balance = raw !== null ? BigInt(raw.toString()) : BigInt(0);
+```
+
+### Import Rules (Frontend)
+```typescript
+// CORRECT imports:
+import { Address } from '@btc-vision/transaction';
+import { getContract, JSONRpcProvider, OP_20_ABI } from 'opnet';
+import { networks, toOutputScript } from '@btc-vision/bitcoin';
+
+// NEVER import Address or ABIDataTypes from @btc-vision/bitcoin on frontend
+```
+
+## Build & Deploy
+
+### Contract Build
+```bash
+asc src/contract-name/index.ts --target targetname --measure --uncheckedBehavior never
+```
+
+### asconfig.json Target Pattern
+```json
+{
+  "targetname": {
+    "outFile": "build/ContractName.wasm",
+    "textFile": "build/ContractName.wat",
+    "use": ["abort=src/contract-name/index/abort"]
+  }
+}
+```
+
+## Naming Conventions
+- Contract classes: PascalCase (`MinerToken`, `MultSigVault`)
+- Storage pointers: `_camelCase` for simple, `pCamelCase` for mapping pointers
+- Methods: camelCase (`wrap`, `unwrap`, `getRewards`)
+- Constants: UPPER_SNAKE_CASE (`MAX_DEPOSIT_WITHDRAW_FEE`, `POINT_MULTIPLIER`)
+- Files: PascalCase for contract files, camelCase for frontend
+
+## Common Gotchas
+1. `super.onDeployment(_calldata)` MUST be the first line in onDeployment
+2. `StoredU256` second param is `Uint8Array(30)`, NOT `u256.Zero`
+3. ABIDataTypes is globally available via decorators, NOT importable
+4. Method selectors are SHA256 (not Keccak256)
+5. Constructor runs EVERY interaction — init logic goes in onDeployment only
+6. OP_20 uses `increaseAllowance()`/`decreaseAllowance()`, NOT `approve()`
+7. Frontend: identity key ≠ tweaked pubkey — use identity for ALL contract calls
+8. Frontend: `maximumAllowedSatToSpend` + `minGas` must be < wallet balance

@@ -1,0 +1,780 @@
+{
+  "project": "Mines Protocol \u2014 OPNet Port",
+  "description": "Token-wrapping yield protocol on Bitcoin L1. Wrap OP_20 tokens into xTokens with fee-based yield. Staking rewards from protocol fees.",
+  "stories": [
+    {
+      "id": "S01",
+      "title": "Create contracts package.json",
+      "description": "Create mines-opnet/contracts/package.json with exact dependencies from monorepo reference at ../monorepo/contracts/package.json. Must include: @btc-vision/bitcoin@7.0.0-alpha.11, @btc-vision/btc-runtime@^1.11.0-rc.10, @btc-vision/transaction@1.8.0-beta.10, opnet@1.8.1-beta.13, assemblyscript@0.27.36, @btc-vision/opnet-transform@1.2.0, dotenv. Add build scripts for 4 targets: build:miner, build:mine, build:factory, build:staking. Add deploy scripts for each.",
+      "priority": 1,
+      "passes": true,
+      "acceptance": "File exists at mines-opnet/contracts/package.json. npm install completes without errors.",
+      "model": "opus"
+    },
+    {
+      "id": "S02",
+      "title": "Create contracts asconfig.json",
+      "description": "Create mines-opnet/contracts/asconfig.json with 4 targets: miner (outFile build/MinerToken.wasm, use abort=src/miner-token/index/abort), mine (outFile build/Mine.wasm, use abort=src/mine/index/abort), factory (outFile build/Factory.wasm, use abort=src/factory/index/abort), staking (outFile build/Staking.wasm, use abort=src/staking/index/abort). Copy options block exactly from ../monorepo/contracts/asconfig.json (sourceMap false, optimizeLevel 3, shrinkLevel 1, converge true, enable features, runtime stub, transform @btc-vision/opnet-transform).",
+      "priority": 1,
+      "passes": false,
+      "acceptance": "File exists and is valid JSON. Options match monorepo reference exactly.",
+      "model": "opus"
+    },
+    {
+      "id": "S03",
+      "title": "Create contracts tsconfig.json and .env.example",
+      "description": "Create mines-opnet/contracts/tsconfig.json for AssemblyScript compatibility. Create .env.example with EC_PRIVATE_KEY and MLDSA_PRIVATE_KEY placeholders. Create empty build/ directory.",
+      "priority": 1,
+      "passes": false,
+      "acceptance": "Both files exist. tsconfig.json is valid JSON.",
+      "model": "opus"
+    },
+    {
+      "id": "S04",
+      "title": "Create MinerToken contract class",
+      "description": "Create mines-opnet/contracts/src/miner-token/MinerToken.ts. Class MinerToken extends OP20. Import from @btc-vision/btc-runtime/runtime: Blockchain, BytesWriter, Calldata, OP20, OP20InitParameters. Import u256 from @btc-vision/as-bignum/assembly. Mark class @final. Override onDeployment: call super.onDeployment first, then this.instantiate with maxSupply=u256.fromString('1000000000000000000000000000') (1B with 18 decimals), decimals=18, name='Miner', symbol='MINER'. Pre-mint 10M MINER to Blockchain.tx.origin using this._mint.",
+      "priority": 2,
+      "passes": false,
+      "acceptance": "File exists with correct class extending OP20, onDeployment calls super first, instantiate with correct params, pre-mint 10M to deployer.",
+      "model": "opus"
+    },
+    {
+      "id": "S05",
+      "title": "Add MinerToken mine() free mint method",
+      "description": "Add a public mine() method to MinerToken.ts. Decorated with @method() and @returns({ name: 'amount', type: ABIDataTypes.UINT256 }). Mints 1000 MINER (u256.fromString('1000000000000000000000')) to Blockchain.tx.sender. Returns the minted amount as BytesWriter(32) with writeU256. No payment required (testnet convenience).",
+      "priority": 2,
+      "passes": false,
+      "acceptance": "mine() method exists, mints 1000 MINER to sender, returns amount in BytesWriter.",
+      "model": "opus"
+    },
+    {
+      "id": "S06",
+      "title": "Create MinerToken index.ts boilerplate",
+      "description": "Create mines-opnet/contracts/src/miner-token/index.ts following exact pattern from ../monorepo/contracts/src/alpha/index.ts. Import Blockchain from runtime, revertOnError from runtime/abort/abort, MinerToken from ./MinerToken. Set Blockchain.contract factory. Export runtime exports. Export abort function.",
+      "priority": 2,
+      "passes": false,
+      "acceptance": "File exists with correct imports, contract factory, exports, and abort function matching the reference pattern.",
+      "model": "opus"
+    },
+    {
+      "id": "S07",
+      "title": "Build MinerToken contract",
+      "description": "Run npm run build:miner in the contracts directory. Fix any compilation errors. The command should be: asc src/miner-token/index.ts --target miner --measure --uncheckedBehavior never",
+      "priority": 2,
+      "passes": false,
+      "acceptance": "build/MinerToken.wasm exists and is non-empty. Build completes without errors.",
+      "model": "opus"
+    },
+    {
+      "id": "S08",
+      "title": "Create MinerToken deploy script",
+      "description": "Create mines-opnet/contracts/scripts/deploy-miner.ts following exact pattern from ../monorepo/contracts/scripts/deploy-vault.ts. Change WASM path to build/MinerToken.wasm. Change console log title to 'MinerToken Deployment'. Keep all wallet loading, UTXO fetching, challenge fetching, signing, and broadcasting logic identical.",
+      "priority": 3,
+      "passes": false,
+      "acceptance": "File exists. Script can be parsed by Node without syntax errors (node --check or similar).",
+      "model": "opus"
+    },
+    {
+      "id": "S09",
+      "title": "Create Mine contract class skeleton",
+      "description": "Create mines-opnet/contracts/src/mine/Mine.ts. Class Mine extends OP20. Imports: Blockchain, BytesWriter, BytesReader, Calldata, OP20, OP20InitParameters, Revert, SafeMath, TransferHelper, Address from runtime. Import u256. Mark @final. Define constants: MAX_DEPOSIT_WITHDRAW_FEE = u256.fromU32(200), MAX_CONTROLLER_PROTOCOL_FEE = u256.fromU32(100), FEE_DENOMINATOR = u256.fromU32(1000), ZERO = u256.fromU32(0).",
+      "priority": 3,
+      "passes": false,
+      "acceptance": "File exists with class Mine extending OP20, all imports present, all constants defined.",
+      "model": "opus"
+    },
+    {
+      "id": "S10",
+      "title": "Add Mine storage pointers",
+      "description": "Add storage pointer fields to Mine class. All use Blockchain.nextPointer. Fields: _underlying (u16, stores Address of wrapped token), _owner (u16, stores controller Address), _factoryAddr (u16, stores factory/deployer Address), _wrapFee (u16, basis points out of 1000), _unwrapFee (u16), _controllerFee (u16), _protocolFee (u16), _controllerFeeAccrued (u16, accumulated controller fees), _protocolFeeAccrued (u16, accumulated protocol fees), _underlyingHeld (u16, self-tracked underlying balance).",
+      "priority": 3,
+      "passes": false,
+      "acceptance": "Mine class has 10 private readonly u16 fields, each assigned Blockchain.nextPointer.",
+      "model": "opus"
+    },
+    {
+      "id": "S11",
+      "title": "Add Mine storage helper methods",
+      "description": "Add storage helper methods to Mine class matching MultSigVault pattern. fieldKeySimple(ptr: u16): Uint8Array \u2014 creates 32-byte key with ptr in first 2 bytes. su(key, val): void \u2014 writes u256 to storage. lu(key): u256 \u2014 reads u256 from storage. sa(key, addr): void \u2014 writes Address to storage via BytesWriter. la(key): Address \u2014 reads Address from storage via BytesReader. All marked @inline.",
+      "priority": 3,
+      "passes": false,
+      "acceptance": "All 5 helper methods exist and match MultSigVault patterns exactly.",
+      "model": "opus"
+    },
+    {
+      "id": "S12",
+      "title": "Add Mine onDeployment",
+      "description": "Override onDeployment in Mine class. Call super.onDeployment(_calldata) FIRST. Read from calldata in order: underlying (Address via readAddress), decimals (u8 via readU8), name (string via readStringWithLength), symbol (string via readStringWithLength), wrapFee (u256 via readU256), unwrapFee (u256 via readU256), controllerFee (u256 via readU256), protocolFee (u256 via readU256). Set maxSupply to max u256 value. Call this.instantiate(new OP20InitParameters(maxSupply, decimals, name, symbol)). Store all values using sa/su with fieldKeySimple. Store _owner and _factoryAddr as Blockchain.tx.sender.",
+      "priority": 4,
+      "passes": false,
+      "acceptance": "onDeployment reads 8 params from calldata, calls super first, calls instantiate, stores all values.",
+      "model": "opus"
+    },
+    {
+      "id": "S13",
+      "title": "Add Mine access control helpers",
+      "description": "Add private helper methods to Mine: requireOwner() \u2014 checks Blockchain.tx.sender == stored _owner, throws Revert('not owner'). requireFactoryOwner() \u2014 checks sender == stored _factoryAddr, throws Revert('not factory owner'). requireOwnerOrFactory() \u2014 checks sender is either _owner or _factoryAddr, throws Revert('not authorized').",
+      "priority": 4,
+      "passes": false,
+      "acceptance": "Three access control methods exist, each reads stored address and compares with tx.sender.",
+      "model": "opus"
+    },
+    {
+      "id": "S14",
+      "title": "Add Mine _underlyingBalance internal method",
+      "description": "Add private _underlyingBalance(): u256 method to Mine. Returns: SafeMath.sub(SafeMath.sub(underlyingHeld, controllerFeeAccrued), protocolFeeAccrued). Reads all three from storage using lu(fieldKeySimple(ptr)). This is the net underlying available to xToken holders.",
+      "priority": 4,
+      "passes": false,
+      "acceptance": "Method returns _underlyingHeld minus both fee accumulators, all via SafeMath.",
+      "model": "opus"
+    },
+    {
+      "id": "S15",
+      "title": "Add Mine _getUnderlyingAmount internal method",
+      "description": "Add private _getUnderlyingAmount(xAmount: u256): u256 method to Mine. If totalSupply() == ZERO, return xAmount (1:1 ratio). Otherwise return SafeMath.div(SafeMath.mul(xAmount, this._underlyingBalance()), this.totalSupply()). Uses inherited totalSupply() from OP20.",
+      "priority": 4,
+      "passes": false,
+      "acceptance": "Method handles zero-supply edge case (returns input), otherwise calculates proportional underlying amount.",
+      "model": "opus"
+    },
+    {
+      "id": "S16",
+      "title": "Add Mine _calcWrap fee algorithm",
+      "description": "Add private _calcWrap(amount: u256) method to Mine. Port EXACTLY from Mine.sol lines 479-502. If totalSupply == 0: return (amount, ZERO, ZERO, ZERO). Otherwise: feeAmount = SafeMath.div(SafeMath.mul(amount, wrapFee), FEE_DENOMINATOR). controllerFeeAmount = SafeMath.div(SafeMath.mul(feeAmount, controllerFee), FEE_DENOMINATOR). protocolFeeAmount = SafeMath.div(SafeMath.mul(feeAmount, protocolFee), FEE_DENOMINATOR). stakersFee = SafeMath.sub(SafeMath.sub(feeAmount, controllerFeeAmount), protocolFeeAmount). xAmount = SafeMath.div(SafeMath.mul(totalSupply, SafeMath.sub(amount, feeAmount)), SafeMath.add(this._underlyingBalance(), stakersFee)). Since AssemblyScript has no tuple returns, store results in local variables and return them via a helper approach (4 separate method calls, or store in temporary storage, or use a WrapResult class).",
+      "priority": 5,
+      "passes": false,
+      "acceptance": "Fee calculation matches Mine.sol exactly. All arithmetic uses SafeMath. Handles zero-supply case.",
+      "model": "opus"
+    },
+    {
+      "id": "S17",
+      "title": "Add Mine wrap() public method",
+      "description": "Add public wrap(calldata: Calldata): BytesWriter method to Mine. Decorated with @method() and @returns. Reads amount (u256) from calldata. CHECKS: amount must be > ZERO. EFFECTS: Calculate fees via _calcWrap. Update _controllerFeeAccrued and _protocolFeeAccrued by adding their portions. INTERACTIONS: TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount). Update _underlyingHeld by adding amount. Mint xTokens to sender: this._mint(Blockchain.tx.sender, xAmount). Return xAmount in BytesWriter(32).",
+      "priority": 5,
+      "passes": false,
+      "acceptance": "wrap() reads amount, validates, calculates fees, updates accumulators, transfers underlying, increments _underlyingHeld, mints xTokens, returns xAmount. CEI pattern followed.",
+      "model": "opus"
+    },
+    {
+      "id": "S18",
+      "title": "Add Mine unwrap() public method",
+      "description": "Add public unwrap(calldata: Calldata): BytesWriter method to Mine. Reads xAmount (u256). CHECKS: xAmount > ZERO. Calculate underlyingAmount via _getUnderlyingAmount(xAmount). Calculate feeAmount = SafeMath.div(SafeMath.mul(underlyingAmount, unwrapFee), FEE_DENOMINATOR). Calculate controller/protocol portions of fee. EFFECTS: this._burn(Blockchain.tx.sender, xAmount). Update _controllerFeeAccrued, _protocolFeeAccrued. Calculate netUnderlying = SafeMath.sub(underlyingAmount, feeAmount). Decrement _underlyingHeld by netUnderlying. INTERACTIONS: TransferHelper.transfer(underlying, Blockchain.tx.sender, netUnderlying). Return netUnderlying.",
+      "priority": 5,
+      "passes": false,
+      "acceptance": "unwrap() burns xTokens, calculates unwrap fee, updates accumulators, decrements _underlyingHeld, transfers net underlying to sender. CEI pattern followed.",
+      "model": "opus"
+    },
+    {
+      "id": "S19",
+      "title": "Create Mine index.ts boilerplate",
+      "description": "Create mines-opnet/contracts/src/mine/index.ts following exact pattern from MinerToken index.ts but importing Mine class instead. Blockchain.contract factory returns new Mine(). Export runtime exports. Export abort function with abort=src/mine/index/abort.",
+      "priority": 5,
+      "passes": false,
+      "acceptance": "File exists with correct imports and factory function returning Mine instance.",
+      "model": "opus"
+    },
+    {
+      "id": "S20",
+      "title": "Build Mine contract (wrap/unwrap)",
+      "description": "Run npm run build:mine. Fix any compilation errors. Ensure all SafeMath usage is correct, all imports resolve, no while loops exist.",
+      "priority": 5,
+      "passes": false,
+      "acceptance": "build/Mine.wasm exists and is non-empty. Build completes without errors.",
+      "model": "opus"
+    },
+    {
+      "id": "S21",
+      "title": "Add Mine getWrappedAmount view",
+      "description": "Add public getWrappedAmount(calldata: Calldata): BytesWriter to Mine. @method() @returns UINT256. Reads amount (u256) from calldata. Calls _calcWrap(amount) and returns only the xAmount portion in BytesWriter(32). This is a read-only preview of how many xTokens the user would receive.",
+      "priority": 6,
+      "passes": false,
+      "acceptance": "View method exists, calls _calcWrap, returns xAmount only.",
+      "model": "opus"
+    },
+    {
+      "id": "S22",
+      "title": "Add Mine getUnwrappedAmount view",
+      "description": "Add public getUnwrappedAmount(calldata: Calldata): BytesWriter to Mine. Reads xAmount. Calculates underlyingAmount = _getUnderlyingAmount(xAmount). Calculates feeAmount = underlyingAmount * unwrapFee / 1000 (SafeMath). Returns SafeMath.sub(underlyingAmount, feeAmount) in BytesWriter(32).",
+      "priority": 6,
+      "passes": false,
+      "acceptance": "View method returns net underlying after unwrap fee deduction.",
+      "model": "opus"
+    },
+    {
+      "id": "S23",
+      "title": "Add Mine underlyingBalance and getUnderlyingAmount public views",
+      "description": "Add two public view methods: underlyingBalance(calldata): returns this._underlyingBalance() in BytesWriter(32). getUnderlyingAmount(calldata): reads xAmount u256, returns this._getUnderlyingAmount(xAmount) in BytesWriter(32). Both @method() @returns UINT256.",
+      "priority": 6,
+      "passes": false,
+      "acceptance": "Both view methods exist and return correct u256 values.",
+      "model": "opus"
+    },
+    {
+      "id": "S24",
+      "title": "Add Mine fee getter views",
+      "description": "Add 6 public view methods to Mine, each @method() @returns UINT256: getWrapFee \u2014 returns stored _wrapFee. getUnwrapFee \u2014 returns stored _unwrapFee. getControllerFee \u2014 returns stored _controllerFee. getProtocolFee \u2014 returns stored _protocolFee. getProtocolFeeAccrued \u2014 returns stored _protocolFeeAccrued. getControllerFeeAccrued \u2014 returns stored _controllerFeeAccrued. Each reads from storage via lu(fieldKeySimple(ptr)) and writes to BytesWriter(32).",
+      "priority": 6,
+      "passes": false,
+      "acceptance": "All 6 fee getter methods exist and return correct stored values.",
+      "model": "opus"
+    },
+    {
+      "id": "S25",
+      "title": "Add Mine underlying() and getOwner() views",
+      "description": "Add two public view methods: getUnderlying(calldata): reads and returns _underlying address via la(). getOwner(calldata): reads and returns _owner address via la(). Both write Address to BytesWriter using writeAddress.",
+      "priority": 6,
+      "passes": false,
+      "acceptance": "Both methods return stored addresses correctly.",
+      "model": "opus"
+    },
+    {
+      "id": "S26",
+      "title": "Add Mine fee setter methods",
+      "description": "Add 4 public methods to Mine: setWrapFee(calldata) \u2014 reads fee u256, requireOwnerOrFactory(), validate fee <= MAX_DEPOSIT_WITHDRAW_FEE, store. setUnwrapFee(calldata) \u2014 same pattern. setControllerFee(calldata) \u2014 reads fee, requireOwnerOrFactory(), validate <= MAX_CONTROLLER_PROTOCOL_FEE, store. setProtocolFee(calldata) \u2014 reads fee, requireFactoryOwner() only, validate <= MAX_CONTROLLER_PROTOCOL_FEE, store. All return boolean true in BytesWriter(1).",
+      "priority": 7,
+      "passes": false,
+      "acceptance": "All 4 setters exist with proper access control and validation. setProtocolFee restricted to factory owner only.",
+      "model": "opus"
+    },
+    {
+      "id": "S27",
+      "title": "Add Mine claimControllerFee method",
+      "description": "Add public claimControllerFee(calldata): BytesWriter. requireOwner(). Read _controllerFeeAccrued. If ZERO, throw Revert('no fee'). Reset _controllerFeeAccrued to ZERO. Read _underlying address. Decrement _underlyingHeld by accrued amount. TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued). Return accrued in BytesWriter(32).",
+      "priority": 7,
+      "passes": false,
+      "acceptance": "Method transfers accrued controller fees to owner, resets accumulator, decrements _underlyingHeld.",
+      "model": "opus"
+    },
+    {
+      "id": "S28",
+      "title": "Add Mine claimProtocolFee method",
+      "description": "Add public claimProtocolFee(calldata): BytesWriter. requireFactoryOwner(). Read _protocolFeeAccrued. If ZERO, throw Revert('no fee'). Reset _protocolFeeAccrued to ZERO. Decrement _underlyingHeld by accrued amount. TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued). Return accrued in BytesWriter(32).",
+      "priority": 7,
+      "passes": false,
+      "acceptance": "Method transfers accrued protocol fees to factory owner, resets accumulator, decrements _underlyingHeld.",
+      "model": "opus"
+    },
+    {
+      "id": "S29",
+      "title": "Add Mine disburseProtocolFee method",
+      "description": "Add public disburseProtocolFee(calldata): BytesWriter. Read recipient Address from calldata. Read _protocolFeeAccrued. If ZERO, return ZERO (no revert \u2014 staking calls this speculatively). Reset _protocolFeeAccrued to ZERO. Decrement _underlyingHeld by accrued amount. TransferHelper.transfer(underlying, recipient, accrued). Return accrued amount. This method is called by the Staking contract to pull protocol fees for reward distribution.",
+      "priority": 7,
+      "passes": false,
+      "acceptance": "Method transfers protocol fees to specified recipient (Staking contract), returns amount disbursed. Returns ZERO gracefully if nothing accrued.",
+      "model": "opus"
+    },
+    {
+      "id": "S30",
+      "title": "Build complete Mine contract",
+      "description": "Run npm run build:mine. Fix any compilation errors from all the added methods (S09-S29). Verify all SafeMath usage, no while loops, all storage pointers unique.",
+      "priority": 7,
+      "passes": false,
+      "acceptance": "build/Mine.wasm exists and is non-empty. No compilation errors.",
+      "model": "opus"
+    },
+    {
+      "id": "S31",
+      "title": "Create Mine deploy script",
+      "description": "Create mines-opnet/contracts/scripts/deploy-mine.ts. Follow deploy-miner.ts pattern but load build/Mine.wasm. Title: 'Mine Deployment'. Note: Mine deployment requires calldata params (underlying address, decimals, name, symbol, fees) \u2014 add these as constants or CLI args at the top of the script. Use BinaryWriter to encode deployment calldata.",
+      "priority": 8,
+      "passes": false,
+      "acceptance": "File exists. Includes calldata encoding for Mine deployment parameters.",
+      "model": "opus"
+    },
+    {
+      "id": "S32",
+      "title": "Create Factory contract class skeleton",
+      "description": "Create mines-opnet/contracts/src/factory/Factory.ts. Class Factory extends OP_NET. Imports: Blockchain, BytesWriter, BytesReader, Calldata, OP_NET, Revert, SafeMath, StoredU256, Address. Import u256. Mark @final. Constants: ZERO, ONE, EMPTY_SUB = new Uint8Array(30).",
+      "priority": 8,
+      "passes": false,
+      "acceptance": "File exists with Factory class extending OP_NET, all imports, constants.",
+      "model": "opus"
+    },
+    {
+      "id": "S33",
+      "title": "Add Factory storage and helpers",
+      "description": "Add to Factory: Storage: _owner (u16), _mineCount (StoredU256 with Blockchain.nextPointer and EMPTY_SUB), pMineByUnderlying (u16 for mapping underlying\u2192mine), pMineByIndex (u16 for mapping index\u2192mine), pUnderlyingByMine (u16 for reverse lookup mine\u2192underlying). Storage helpers: su, lu, sa, la, fieldKeySimple (same as Mine). Add addrKey(ptr, addr) for address-keyed lookups \u2014 key format: [ptr(2)] + [addr first 30 bytes]. Add idxKey(ptr, idx: u256) for index-keyed lookups \u2014 key format: [ptr(2)] + [zeros(26)] + [idx_lo32(4)].",
+      "priority": 8,
+      "passes": false,
+      "acceptance": "Factory has 5 storage fields, all helper methods for different key patterns.",
+      "model": "opus"
+    },
+    {
+      "id": "S34",
+      "title": "Add Factory onDeployment and requireOwner",
+      "description": "Override onDeployment: call super.onDeployment first. Store Blockchain.tx.sender as _owner. Add private requireOwner() that checks sender == _owner, throws Revert('not owner').",
+      "priority": 8,
+      "passes": false,
+      "acceptance": "onDeployment stores owner. requireOwner validates caller.",
+      "model": "opus"
+    },
+    {
+      "id": "S35",
+      "title": "Add Factory registerMine method",
+      "description": "Add public registerMine(calldata): BytesWriter. @method() @returns UINT256. requireOwner(). Read underlying (Address) and mineAddress (Address) from calldata. Store mapping: addrKey(pMineByUnderlying, underlying) \u2192 mineAddress. Store reverse: addrKey(pUnderlyingByMine, mineAddress) \u2192 underlying. Get current count from _mineCount. Store: idxKey(pMineByIndex, count) \u2192 mineAddress. Increment _mineCount. Return new count.",
+      "priority": 9,
+      "passes": false,
+      "acceptance": "registerMine stores both mappings, increments count. Owner-only.",
+      "model": "opus"
+    },
+    {
+      "id": "S36",
+      "title": "Add Factory view methods",
+      "description": "Add 3 public view methods to Factory: getMineAddress(calldata) \u2014 reads underlying Address, returns mine Address from addrKey lookup. getMineCount(calldata) \u2014 returns _mineCount.value. getMineAtIndex(calldata) \u2014 reads index u256, validates < _mineCount.value, returns mine Address from idxKey lookup. All @method() with appropriate @returns.",
+      "priority": 9,
+      "passes": false,
+      "acceptance": "All 3 views return correct data. getMineAtIndex validates bounds.",
+      "model": "opus"
+    },
+    {
+      "id": "S37",
+      "title": "Create Factory index.ts and build",
+      "description": "Create src/factory/index.ts boilerplate (same pattern). Run npm run build:factory. Fix compilation errors.",
+      "priority": 9,
+      "passes": false,
+      "acceptance": "build/Factory.wasm exists and is non-empty.",
+      "model": "opus"
+    },
+    {
+      "id": "S38",
+      "title": "Create Factory deploy script",
+      "description": "Create scripts/deploy-factory.ts following deploy pattern. Load build/Factory.wasm. Title: 'Factory Deployment'. No special calldata needed (onDeployment only reads sender).",
+      "priority": 9,
+      "passes": false,
+      "acceptance": "File exists. Script follows deploy pattern correctly.",
+      "model": "opus"
+    },
+    {
+      "id": "S39",
+      "title": "Create Staking contract class skeleton",
+      "description": "Create mines-opnet/contracts/src/staking/Staking.ts. Class Staking extends OP_NET. Same imports as Factory plus TransferHelper. Mark @final. Constants: ZERO, ONE, EMPTY_SUB, POINT_MULTIPLIER = u256.fromString('1000000000000000000').",
+      "priority": 10,
+      "passes": false,
+      "acceptance": "File exists with Staking extending OP_NET, all imports, POINT_MULTIPLIER constant.",
+      "model": "opus"
+    },
+    {
+      "id": "S40",
+      "title": "Add Staking storage pointers and key helpers",
+      "description": "Add to Staking: _xMiner (u16, Address of MINER token), _owner (u16). Per-mine pointers: pMineSupply (u16), pMineTotalPoints (u16). Per-user-per-mine pointers: pRecordBalance (u16), pRecordReward (u16), pRecordLastPoints (u16). Add helpers: su, lu, sa, la, fieldKeySimple (same pattern). Add mineKey(ptr, mine: Address): Uint8Array \u2014 [ptr(2)] + [mine first 30 bytes]. Add userMineKey(ptr, mine: Address, user: Address): Uint8Array \u2014 [ptr(2)] + [mine first 15 bytes] + [user first 15 bytes] (compound key for 2 addresses).",
+      "priority": 10,
+      "passes": false,
+      "acceptance": "Staking has 7 storage pointers, su/lu/sa/la helpers, mineKey and userMineKey compound key builders.",
+      "model": "opus"
+    },
+    {
+      "id": "S41",
+      "title": "Add Staking onDeployment",
+      "description": "Override onDeployment: call super.onDeployment first. Read xMiner Address from calldata. Store _xMiner and _owner (= tx.sender).",
+      "priority": 10,
+      "passes": false,
+      "acceptance": "onDeployment reads xMiner address, stores both fields.",
+      "model": "opus"
+    },
+    {
+      "id": "S42",
+      "title": "Add Staking _newRewards and _updateRewards internal methods",
+      "description": "Add private _newRewards(mineAddr: Address, user: Address, totalPoints: u256): u256. Reads lastPoints from userMineKey(pRecordLastPoints, mine, user). Calculates points = SafeMath.sub(totalPoints, lastPoints). Reads balance from userMineKey(pRecordBalance, mine, user). Returns SafeMath.div(SafeMath.mul(points, balance), POINT_MULTIPLIER). Add private _updateRewards(mineAddr: Address, user: Address, totalPoints: u256): void. Calculates owing = _newRewards(...). If owing > ZERO: adds to stored reward. Updates lastPoints = totalPoints.",
+      "priority": 11,
+      "passes": false,
+      "acceptance": "Both methods implement points-based reward calculation matching Staking.sol logic.",
+      "model": "opus"
+    },
+    {
+      "id": "S43",
+      "title": "Add Staking _disburse internal method",
+      "description": "Add private _disburse(mineAddr: Address): u256. This calls the Mine contract's disburseProtocolFee method to pull accrued protocol fees. Use TransferHelper or direct cross-contract call. Read current mineSupply from mineKey(pMineSupply, mine). If supply > ZERO and disbursed > ZERO: update totalPoints += SafeMath.div(SafeMath.mul(disbursed, POINT_MULTIPLIER), supply). Store updated totalPoints. Return disbursed amount.",
+      "priority": 11,
+      "passes": false,
+      "acceptance": "_disburse pulls fees from Mine, updates totalPoints proportionally to staked supply.",
+      "model": "opus"
+    },
+    {
+      "id": "S44",
+      "title": "Add Staking stake() method",
+      "description": "Add public stake(calldata): BytesWriter. @method() @returns BOOL. Read mine Address and amount u256 from calldata. Validate amount > ZERO. Call _disburse(mine) to pull pending fees. Read current totalPoints. Call _updateRewards(mine, sender, totalPoints). TransferHelper.transferFrom(_xMiner, sender, contractAddress, amount). Increment user balance in userMineKey(pRecordBalance). Increment mineSupply in mineKey(pMineSupply). Return true.",
+      "priority": 11,
+      "passes": false,
+      "acceptance": "stake() disburses, updates rewards, transfers MINER tokens in, increments balances.",
+      "model": "opus"
+    },
+    {
+      "id": "S45",
+      "title": "Add Staking unstake() method",
+      "description": "Add public unstake(calldata): BytesWriter. Read mine Address and amount u256. Validate amount > ZERO. _disburse(mine). Read totalPoints. _updateRewards. Read user balance, validate >= amount. Decrement user balance. Decrement mineSupply. TransferHelper.transfer(_xMiner, sender, amount). Return true.",
+      "priority": 12,
+      "passes": false,
+      "acceptance": "unstake() validates balance, decrements, transfers MINER tokens back to user.",
+      "model": "opus"
+    },
+    {
+      "id": "S46",
+      "title": "Add Staking claim() method",
+      "description": "Add public claim(calldata): BytesWriter. @method() @returns UINT256. Read mine Address. _disburse(mine). Read totalPoints. _updateRewards(mine, sender, totalPoints). Read user reward from userMineKey(pRecordReward). If ZERO, throw Revert('no rewards'). Reset reward to ZERO. Get underlying token address by calling Mine contract or storing it. TransferHelper.transfer(underlying, sender, reward). Return reward amount.",
+      "priority": 12,
+      "passes": false,
+      "acceptance": "claim() disburses, calculates owed rewards, transfers underlying tokens to user, resets reward.",
+      "model": "opus"
+    },
+    {
+      "id": "S47",
+      "title": "Add Staking view methods",
+      "description": "Add two view methods: getRewards(calldata) \u2014 reads mine Address and staker Address. Reads totalPoints from mineKey. Computes pending = stored reward + _newRewards(mine, staker, totalPoints). Returns pending u256. getStakeBalance(calldata) \u2014 reads mine Address and staker Address. Returns balance from userMineKey(pRecordBalance). Both @method() @returns UINT256.",
+      "priority": 12,
+      "passes": false,
+      "acceptance": "Both views return correct pending rewards and staked balance.",
+      "model": "opus"
+    },
+    {
+      "id": "S48",
+      "title": "Create Staking index.ts and build",
+      "description": "Create src/staking/index.ts boilerplate. Run npm run build:staking. Fix compilation errors.",
+      "priority": 12,
+      "passes": false,
+      "acceptance": "build/Staking.wasm exists and is non-empty.",
+      "model": "opus"
+    },
+    {
+      "id": "S49",
+      "title": "Create Staking deploy script",
+      "description": "Create scripts/deploy-staking.ts. Load build/Staking.wasm. Encode calldata with xMiner token address (BinaryWriter.writeAddress). Title: 'Staking Deployment'.",
+      "priority": 13,
+      "passes": false,
+      "acceptance": "File exists with calldata encoding for xMiner address parameter.",
+      "model": "opus"
+    },
+    {
+      "id": "S50",
+      "title": "Build all 4 contracts successfully",
+      "description": "Run npm run build (all targets). Fix any remaining compilation errors across all contracts. Verify all 4 WASM files exist in build/.",
+      "priority": 13,
+      "passes": false,
+      "acceptance": "build/MinerToken.wasm, build/Mine.wasm, build/Factory.wasm, build/Staking.wasm all exist and are non-empty.",
+      "model": "opus"
+    },
+    {
+      "id": "S51",
+      "title": "Deploy MinerToken to testnet",
+      "description": "Run npm run deploy:miner. Save the contract address. Update a deployed-addresses.json file with {minerToken: address}.",
+      "priority": 14,
+      "passes": false,
+      "acceptance": "MinerToken deployed. Address saved in deployed-addresses.json.",
+      "model": "opus"
+    },
+    {
+      "id": "S52",
+      "title": "Deploy Factory to testnet",
+      "description": "Run npm run deploy:factory. Save address to deployed-addresses.json.",
+      "priority": 14,
+      "passes": false,
+      "acceptance": "Factory deployed. Address saved.",
+      "model": "opus"
+    },
+    {
+      "id": "S53",
+      "title": "Deploy Mine to testnet",
+      "description": "Update deploy-mine.ts with MinerToken address as underlying. Set name='xMINER', symbol='xMINER', decimals=18, wrapFee=50 (5%), unwrapFee=50 (5%), controllerFee=100 (10%), protocolFee=100 (10%). Deploy. Save address.",
+      "priority": 14,
+      "passes": false,
+      "acceptance": "Mine deployed with correct params. Address saved.",
+      "model": "opus"
+    },
+    {
+      "id": "S54",
+      "title": "Register Mine in Factory and deploy Staking",
+      "description": "Create a script or modify deploy script to call Factory.registerMine(minerTokenAddr, mineAddr). Deploy Staking with xMiner=MinerToken address. Save all addresses to deployed-addresses.json.",
+      "priority": 14,
+      "passes": false,
+      "acceptance": "Mine registered in Factory. Staking deployed. deployed-addresses.json has all 4 addresses.",
+      "model": "opus"
+    },
+    {
+      "id": "S55",
+      "title": "Scaffold React + Vite + TypeScript frontend",
+      "description": "Create mines-opnet/frontend/ using npm create vite@latest -- --template react-ts. Install dependencies: @btc-vision/walletconnect@^1.9.12, opnet@1.8.1-beta.13, @btc-vision/transaction@1.8.0-beta.10, @btc-vision/bitcoin@7.0.0-alpha.11, react-router-dom, tailwindcss, @tailwindcss/vite. Configure vite.config.ts: base './', add tailwind plugin. Create src/styles/globals.css with Tailwind directives and dark theme base styles (bg-gray-950, text-gray-100).",
+      "priority": 15,
+      "passes": false,
+      "acceptance": "npm run dev starts without errors. Page renders with dark background.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S56",
+      "title": "Create frontend config and provider",
+      "description": "Create src/config.ts: export NETWORK (networks.testnet), RPC_URL ('https://testnet.opnet.org'), all 4 contract addresses from deployed-addresses.json. Create src/lib/provider.ts: export singleton JSONRpcProvider(RPC_URL, NETWORK). Import from 'opnet'.",
+      "priority": 15,
+      "passes": false,
+      "acceptance": "Both files exist. Provider can be imported and used.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S57",
+      "title": "Create frontend helpers.ts",
+      "description": "Create src/lib/helpers.ts with: formatBalance(raw: bigint, decimals: number): string \u2014 formats with 4 decimal places, no trailing zeros. truncateAddress(addr: string): string \u2014 shows first 8 + last 6 chars. parseAmount(input: string, decimals: number): bigint \u2014 parses user input to bigint with decimals. toHex(bytes: Uint8Array): string \u2014 converts to 0x-prefixed hex string.",
+      "priority": 15,
+      "passes": false,
+      "acceptance": "All 4 utility functions exist and handle edge cases (zero, empty string, etc.).",
+      "model": "sonnet"
+    },
+    {
+      "id": "S58",
+      "title": "Create contract ABIs",
+      "description": "Create src/lib/contracts.ts. Define ABI arrays for all 4 contracts matching their @method/@returns signatures. Each ABI entry: { name, type: 'function', inputs: [...], outputs: [...] }. MinerToken ABI: mine(). Mine ABI: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, getWrapFee, getUnwrapFee, getControllerFee, getProtocolFee, getProtocolFeeAccrued, getControllerFeeAccrued, getUnderlying, getOwner, setWrapFee, setUnwrapFee, setControllerFee, setProtocolFee, claimControllerFee, claimProtocolFee, disburseProtocolFee. Factory ABI: registerMine, getMineAddress, getMineCount, getMineAtIndex. Staking ABI: stake, unstake, claim, getRewards, getStakeBalance. Also export OP_20_ABI from opnet for standard token methods.",
+      "priority": 16,
+      "passes": false,
+      "acceptance": "All ABIs defined. Method names match contract implementations exactly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S59",
+      "title": "Create useWallet hook",
+      "description": "Create src/hooks/useWallet.ts. React hook using useState/useEffect. State: address (string|null), isConnected (boolean), identityKey (string|null), tweakedKey (string|null), senderAddress (Address|null). connect(): instantiate OPWalletConnect, get wallet address, decode bech32 to tweaked hex, resolve identity key via provider.getPublicKeyInfo(tweakedHex, false), build Address.fromString(identityHex, '0x02'+tweakedHex.slice(2)). disconnect(): clear state. Import Address from @btc-vision/transaction, NOT from @btc-vision/bitcoin.",
+      "priority": 16,
+      "passes": false,
+      "acceptance": "Hook manages wallet state. connect() resolves identity key. disconnect() clears state.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S60",
+      "title": "Create WalletButton component",
+      "description": "Create src/components/WalletButton.tsx. Uses useWallet hook. When disconnected: shows 'Connect Wallet' button with purple/blue accent. When connected: shows truncated address. Click toggles connect/disconnect. Style: rounded, dark theme consistent.",
+      "priority": 16,
+      "passes": false,
+      "acceptance": "Component renders connect/disconnect states correctly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S61",
+      "title": "Create Layout and Navbar components",
+      "description": "Create src/components/Layout.tsx: flex column, min-h-screen, dark bg. Renders Navbar at top + children. Create src/components/Navbar.tsx: flex row, logo/title 'Mines Protocol', nav links (Home, Wrap, Unwrap, Stake), WalletButton on right. Responsive: hamburger menu on mobile. Use react-router-dom Link components.",
+      "priority": 17,
+      "passes": false,
+      "acceptance": "Layout wraps pages. Navbar shows title, links, wallet button. Responsive on mobile.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S62",
+      "title": "Create App.tsx with HashRouter and routes",
+      "description": "Create src/App.tsx. Use HashRouter (not BrowserRouter) for IPFS compatibility. Routes: / \u2192 HomePage, /mine/:address \u2192 MineDetailPage, /wrap \u2192 WrapPage, /wrap/:address \u2192 WrapPage, /unwrap \u2192 UnwrapPage, /unwrap/:address \u2192 UnwrapPage, /stake \u2192 StakingPage. Wrap all routes in Layout component. Update main.tsx to render App.",
+      "priority": 17,
+      "passes": false,
+      "acceptance": "HashRouter with all routes. Navigation between pages works.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S63",
+      "title": "Fix WalletConnect popup CSS",
+      "description": "Add global CSS to fix OPWallet connect popup positioning. In globals.css or a dedicated override: .walletconnect-modal__base { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; z-index: 99999 !important; } Ensure popup appears centered and above all content.",
+      "priority": 17,
+      "passes": false,
+      "acceptance": "WalletConnect popup appears centered as a modal overlay.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S64",
+      "title": "Create useMines hook",
+      "description": "Create src/hooks/useMines.ts. Fetches all mines from Factory contract. On mount: call getMineCount(), then loop getMineAtIndex(i) for each index. For each mine address, fetch: name, symbol (from OP_20 interface), underlyingBalance, totalSupply (to compute ratio), getWrapFee, getUnwrapFee. Use getContract from opnet with provider (no sender needed for reads). Return: mines array, loading boolean, error.",
+      "priority": 18,
+      "passes": false,
+      "acceptance": "Hook fetches mine list from Factory, enriches with on-chain data.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S65",
+      "title": "Create MineCard component",
+      "description": "Create src/components/MineCard.tsx. Props: mine data (address, name, symbol, ratio, wrapFee, unwrapFee, underlyingBalance). Renders a card with: name/symbol header, ratio display (formatted to 4 decimals), fees (as percentages: fee/10 %), underlying balance. Card is clickable \u2014 links to /mine/:address. Dark theme card style (bg-gray-900, border-gray-800, hover effect).",
+      "priority": 18,
+      "passes": false,
+      "acceptance": "Card renders mine info, links to detail page, dark theme styled.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S66",
+      "title": "Create HomePage",
+      "description": "Create src/pages/HomePage.tsx. Uses useMines hook. Shows page title 'Mines'. Loading state: skeleton cards. Empty state: 'No mines found' message. Data state: grid of MineCards (responsive: 1 col mobile, 2 col tablet, 3 col desktop). Optional: link to create mine (future feature).",
+      "priority": 18,
+      "passes": false,
+      "acceptance": "Page renders mine grid from on-chain data. Loading and empty states handled.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S67",
+      "title": "Create TokenInput component",
+      "description": "Create src/components/TokenInput.tsx. Props: value, onChange, max (bigint), decimals, symbol, label, disabled. Renders: label, number input field, MAX button (sets value to max), token symbol badge. Styling: dark input (bg-gray-800, text-white, border-gray-700). MAX button highlights on hover.",
+      "priority": 19,
+      "passes": false,
+      "acceptance": "Input handles numeric entry, MAX button sets maximum, displays token symbol.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S68",
+      "title": "Create TransactionButton component",
+      "description": "Create src/components/TransactionButton.tsx. Props: onClick (async), label, disabled, loading. Renders: button with label, shows spinner when loading, disabled state styling. Handles async onClick with try/catch \u2014 shows error state briefly on failure. Dark theme: purple/blue gradient button.",
+      "priority": 19,
+      "passes": false,
+      "acceptance": "Button handles async operations with loading spinner and error states.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S69",
+      "title": "Create useMine hook",
+      "description": "Create src/hooks/useMine.ts. Takes mine address as param. Fetches: name, symbol, totalSupply, underlyingBalance (ratio = balance/supply), all fees, underlying token address, owner. If wallet connected: fetches user's xToken balance via OP_20 balanceOf, user's underlying token balance, user's underlying value (via getUnderlyingAmount). Returns all data + loading + error + refetch function.",
+      "priority": 19,
+      "passes": false,
+      "acceptance": "Hook fetches comprehensive mine data including user-specific balances when wallet connected.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S70",
+      "title": "Create WrapPage",
+      "description": "Create src/pages/WrapPage.tsx. If URL has :address param, use that mine. Otherwise show mine selector dropdown (from useMines). TokenInput for amount (underlying token). Preview section: calls getWrappedAmount to show estimated xTokens received, shows exchange rate and fee. Wrap button flow: (1) getContract for underlying token with sender, (2) check allowance, (3) if insufficient call increaseAllowance and sendTransaction(signer:null, mldsaSigner:null), (4) getContract for Mine with sender, (5) simulate wrap(amount), (6) sendTransaction. Show success message with new balance. Use useWallet for sender address.",
+      "priority": 20,
+      "passes": false,
+      "acceptance": "Full wrap flow: select mine \u2192 enter amount \u2192 see preview \u2192 approve allowance \u2192 wrap \u2192 success. All transactions use null signers.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S71",
+      "title": "Create UnwrapPage",
+      "description": "Create src/pages/UnwrapPage.tsx. Similar to WrapPage but reversed. TokenInput for xToken amount (user's xToken balance as max). Preview: calls getUnwrappedAmount to show estimated underlying received. Unwrap button: simulate unwrap(xAmount), sendTransaction(signer:null, mldsaSigner:null). No allowance step needed (burning own tokens). Show success with updated balances.",
+      "priority": 20,
+      "passes": false,
+      "acceptance": "Full unwrap flow: select mine \u2192 enter xToken amount \u2192 see preview \u2192 unwrap \u2192 success.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S72",
+      "title": "Create MineDetailPage",
+      "description": "Create src/pages/MineDetailPage.tsx. Route param: :address. Uses useMine hook. Displays: mine name/symbol as title, underlying token info, ratio (formatted), wrap fee %, unwrap fee %, controller fee %, protocol fee %, total underlying balance, total xToken supply. If wallet connected: user's xToken balance, user's underlying value. Action buttons: 'Wrap' (links to /wrap/:address), 'Unwrap' (links to /unwrap/:address). Dark themed stat cards layout.",
+      "priority": 20,
+      "passes": false,
+      "acceptance": "Page displays all mine statistics. User balances shown when wallet connected. Action buttons link correctly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S73",
+      "title": "Create useStaking hook",
+      "description": "Create src/hooks/useStaking.ts. Takes mine address as param. If wallet connected: fetches staked balance via Staking.getStakeBalance(mine, user), pending rewards via Staking.getRewards(mine, user), user's MINER token balance (for staking). Returns: stakedBalance, pendingRewards, minerBalance, loading, error, refetch.",
+      "priority": 21,
+      "passes": false,
+      "acceptance": "Hook fetches staking data for a specific mine and user.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S74",
+      "title": "Create StakingPanel component",
+      "description": "Create src/components/StakingPanel.tsx. Props: mineAddress. Three sections: (1) STAKE tab \u2014 TokenInput for MINER amount, stake button. Flow: increaseAllowance on MINER for Staking contract \u2192 simulate stake(mine, amount) \u2192 sendTransaction. (2) UNSTAKE tab \u2014 TokenInput for staked amount (max = stakedBalance), unstake button. (3) CLAIM section \u2014 shows pending rewards amount, claim button. Flow: simulate claim(mine) \u2192 sendTransaction. Tab switching between stake/unstake. Display current staked balance and pending rewards.",
+      "priority": 21,
+      "passes": false,
+      "acceptance": "Panel handles stake/unstake/claim flows. Tab switching works. All transactions use null signers.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S75",
+      "title": "Create StakingPage",
+      "description": "Create src/pages/StakingPage.tsx. Mine selector dropdown (from useMines). When mine selected: show StakingPanel for that mine. Also show mine stats (ratio, fees) as context. If no wallet connected, show 'Connect wallet to stake' message.",
+      "priority": 21,
+      "passes": false,
+      "acceptance": "Page allows selecting a mine and interacting with staking. Wallet required message shown when disconnected.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S76",
+      "title": "Add loading skeletons and spinners",
+      "description": "Add loading states to all pages: HomePage shows skeleton cards (animated pulse bg-gray-800 rectangles). MineDetailPage shows skeleton stat cards. WrapPage/UnwrapPage show skeleton input areas. StakingPage shows skeleton panel. Add a global Spinner component (animated border-t-2 rounded-full).",
+      "priority": 22,
+      "passes": false,
+      "acceptance": "All pages show appropriate loading states instead of blank screens.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S77",
+      "title": "Add toast notifications",
+      "description": "Create a simple toast notification system. Create src/components/Toast.tsx and a useToast hook (or context). Toast types: success (green), error (red), info (blue). Auto-dismiss after 5 seconds. Position: bottom-right. Add toasts to all transaction flows: 'Transaction submitted', 'Transaction confirmed', 'Transaction failed: {error}'. Add toast for wallet connect/disconnect.",
+      "priority": 22,
+      "passes": false,
+      "acceptance": "Toasts appear for all transaction outcomes and wallet events. Auto-dismiss works.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S78",
+      "title": "Add error handling for contract reverts",
+      "description": "In all transaction flows (wrap, unwrap, stake, unstake, claim), catch errors from simulation and sendTransaction. Parse revert messages from error objects. Display human-readable error in toast: 'zero amount', 'not owner', 'no fee', 'no rewards', 'insufficient balance'. Handle 'Insufficient UTXOs' error with helpful message about wallet balance.",
+      "priority": 22,
+      "passes": false,
+      "acceptance": "Contract revert messages displayed clearly to user. Common errors have helpful messages.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S79",
+      "title": "Mobile responsive adjustments",
+      "description": "Review all pages on mobile viewport (375px width). Ensure: Navbar collapses to hamburger menu. Mine grid is single column. Input fields are full width. Buttons are full width on mobile. Stat cards stack vertically. Modal/popup fits screen. Text doesn't overflow. Touch targets are at least 44px.",
+      "priority": 23,
+      "passes": false,
+      "acceptance": "All pages usable on 375px width viewport. No horizontal scroll. Touch-friendly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S80",
+      "title": "Build frontend for production",
+      "description": "Run npm run build in frontend directory. Fix any TypeScript errors. Verify dist/ output exists. Test with npm run preview \u2014 all pages load, routing works, dark theme renders. Verify base: './' in vite.config.ts for IPFS compatibility.",
+      "priority": 23,
+      "passes": false,
+      "acceptance": "npm run build succeeds. dist/ contains index.html and assets. Preview serves correctly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S81",
+      "title": "End-to-end test: mint and wrap flow",
+      "description": "Using the deployed frontend and testnet contracts: (1) Connect OPWallet, (2) Navigate to WrapPage, (3) Call MinerToken.mine() to get test MINER tokens (add a 'Faucet' button or use the mine selector), (4) Enter amount and wrap MINER \u2192 xMINER, (5) Verify xToken balance appears. Document any issues in progress.txt.",
+      "priority": 24,
+      "passes": false,
+      "acceptance": "Full mint\u2192wrap flow works in browser. xToken balance visible after wrap.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S82",
+      "title": "End-to-end test: unwrap flow",
+      "description": "Continuing from S81: (1) Navigate to UnwrapPage, (2) Enter xToken amount, (3) Unwrap xMINER \u2192 MINER, (4) Verify MINER balance increased (minus fees), (5) Verify ratio changed. Document results.",
+      "priority": 24,
+      "passes": false,
+      "acceptance": "Full unwrap flow works. Balances update correctly. Fees deducted properly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S83",
+      "title": "End-to-end test: staking flow",
+      "description": "Continuing: (1) Navigate to StakingPage, (2) Select the Mine, (3) Stake MINER tokens, (4) Verify staked balance shows, (5) Have another wallet wrap to generate fees (or skip if single-user test), (6) Check pending rewards, (7) Claim rewards. Document results.",
+      "priority": 24,
+      "passes": false,
+      "acceptance": "Stake/claim flow works end-to-end. Staked balance and rewards display correctly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S84",
+      "title": "Add MinerToken faucet button to frontend",
+      "description": "Add a 'Get Test MINER' or 'Faucet' button to the HomePage or WrapPage. When clicked: calls MinerToken.mine() to mint 1000 MINER to the connected wallet. Shows success toast with minted amount. This makes testing easy for judges.",
+      "priority": 25,
+      "passes": false,
+      "acceptance": "Faucet button visible, mints MINER tokens on click, shows confirmation.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S85",
+      "title": "Deploy frontend to IPFS or Vercel",
+      "description": "Build frontend (npm run build). Deploy dist/ to IPFS (e.g., via Pinata, web3.storage) or Vercel. Get public URL. Test all pages work from deployed URL. Verify wallet connection works from deployed domain.",
+      "priority": 25,
+      "passes": false,
+      "acceptance": "Frontend accessible at public URL. All features work including wallet connection.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S86",
+      "title": "Create submission materials",
+      "description": "Take screenshots of: (1) HomePage with mine list, (2) WrapPage with amount entered, (3) MineDetailPage with stats, (4) StakingPage. Write 2-3 sentence app description. Ensure GitHub repo is public with README. Prepare tweet text with #opnetvibecode @opnetbtc.",
+      "priority": 25,
+      "passes": false,
+      "acceptance": "Screenshots saved. Description written. GitHub repo ready. Tweet drafted.",
+      "model": "sonnet"
+    }
+  ]
+}

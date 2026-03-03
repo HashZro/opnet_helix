@@ -1,0 +1,28 @@
+{
+  "name": "mines-opnet-contracts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:miner": "asc src/miner-token/index.ts --target miner --measure --uncheckedBehavior never",
+    "build:mine": "asc src/mine/index.ts --target mine --measure --uncheckedBehavior never",
+    "build:factory": "asc src/factory/index.ts --target factory --measure --uncheckedBehavior never",
+    "build:staking": "asc src/staking/index.ts --target staking --measure --uncheckedBehavior never",
+    "build": "npm run build:miner && npm run build:mine && npm run build:factory && npm run build:staking",
+    "deploy:miner": "node --experimental-strip-types scripts/deploy-miner.ts",
+    "deploy:mine": "node --experimental-strip-types scripts/deploy-mine.ts",
+    "deploy:factory": "node --experimental-strip-types scripts/deploy-factory.ts",
+    "deploy:staking": "node --experimental-strip-types scripts/deploy-staking.ts"
+  },
+  "dependencies": {
+    "@btc-vision/bitcoin": "7.0.0-alpha.11",
+    "@btc-vision/btc-runtime": "^1.11.0-rc.10",
+    "@btc-vision/transaction": "1.8.0-beta.10",
+    "opnet": "1.8.1-beta.13"
+  },
+  "devDependencies": {
+    "@btc-vision/opnet-transform": "1.2.0",
+    "assemblyscript": "0.27.36",
+    "dotenv": "^16.0.0"
+  }
+}
