@@ -238,3 +238,4 @@ asc src/contract-name/index.ts --target targetname --measure --uncheckedBehavior
 6. OP_20 uses `increaseAllowance()`/`decreaseAllowance()`, NOT `approve()`
 7. Frontend: identity key ≠ tweaked pubkey — use identity for ALL contract calls
 8. Frontend: `maximumAllowedSatToSpend` + `minGas` must be < wallet balance
+9. `OP20.totalSupply(_: Calldata)` is a public @method returning BytesWriter — for internal u256 access use `this._totalSupply.value` instead

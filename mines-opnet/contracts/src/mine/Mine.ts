@@ -119,7 +119,7 @@ export class Mine extends OP20 {
     // ── Conversion helpers ──
 
     private _getUnderlyingAmount(xAmount: u256): u256 {
-        const supply: u256 = this.totalSupply();
+        const supply: u256 = this._totalSupply.value;
         if (supply == ZERO) return xAmount;
         return SafeMath.div(SafeMath.mul(xAmount, this._underlyingBalance()), supply);
     }
@@ -128,7 +128,7 @@ export class Mine extends OP20 {
 
     // Port of Mine.sol _calcWrap (lines 479-502)
     private _calcWrap(amount: u256): WrapResult {
-        const supply: u256 = this.totalSupply();
+        const supply: u256 = this._totalSupply.value;
 
         if (supply == ZERO) {
             // First wrap: 1:1 ratio, no fees

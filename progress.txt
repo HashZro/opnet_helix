@@ -158,3 +158,11 @@
   - Exact same pattern as MinerToken index.ts: Blockchain.contract factory, runtime exports, abort handler
   - Imports Mine class instead of MinerToken
   - Mine contract can now be compiled (next story S20)
+
+[2026-03-03] S20 — Build Mine contract (wrap/unwrap)
+  - Fixed compilation: `this.totalSupply()` is a public @method returning BytesWriter, not u256
+  - Replaced with `this._totalSupply.value` (the internal StoredU256 field from OP20 base class) in both _getUnderlyingAmount() and _calcWrap()
+  - Build succeeds: Mine.wasm (38KB), Mine.wat, Mine.abi.json generated
+  - Selectors: wrap() -> 0x6b253417, unwrap() -> 0x2e758868
+  - GOTCHA: OP20.totalSupply() takes Calldata arg and returns BytesWriter — for internal u256 access use `this._totalSupply.value`
+  - All SafeMath usage verified, no while loops, unique pointers via Blockchain.nextPointer

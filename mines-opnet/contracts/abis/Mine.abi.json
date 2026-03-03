@@ -1,0 +1,31 @@
+{
+    "functions": [
+        {
+            "name": "wrap",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "xAmount",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "unwrap",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "netUnderlying",
+                    "type": "UINT256"
+                }
+            ]
+        }
+    ],
+    "events": []
+}

@@ -178,7 +178,7 @@
       "title": "Build Mine contract (wrap/unwrap)",
       "description": "Run npm run build:mine. Fix any compilation errors. Ensure all SafeMath usage is correct, all imports resolve, no while loops exist.",
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "acceptance": "build/Mine.wasm exists and is non-empty. Build completes without errors.",
       "model": "opus"
     },
