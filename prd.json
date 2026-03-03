@@ -25,7 +25,7 @@
       "title": "Create contracts tsconfig.json and .env.example",
       "description": "Create mines-opnet/contracts/tsconfig.json for AssemblyScript compatibility. Create .env.example with EC_PRIVATE_KEY and MLDSA_PRIVATE_KEY placeholders. Create empty build/ directory.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "acceptance": "Both files exist. tsconfig.json is valid JSON.",
       "model": "opus"
     },

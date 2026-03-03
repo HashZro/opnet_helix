@@ -22,3 +22,8 @@
   - Options block copied exactly from ../monorepo/contracts/asconfig.json
   - Includes: optimizeLevel 3, shrinkLevel 1, converge true, runtime stub, transform @btc-vision/opnet-transform
   - All 7 WASM features enabled (sign-extension, mutable-globals, nontrapping-f2i, bulk-memory, simd, reference-types, multi-value)
+
+[2026-03-03] S03 — Created tsconfig.json and .env.example
+  - tsconfig.json extends @btc-vision/opnet-transform/std/assembly.json, includes src/**/*.ts (matches monorepo pattern exactly)
+  - .env.example has EC_PRIVATE_KEY and MLDSA_PRIVATE_KEY placeholders (empty values, not real keys)
+  - build/ directory already existed from S01
