@@ -166,3 +166,10 @@
   - Selectors: wrap() -> 0x6b253417, unwrap() -> 0x2e758868
   - GOTCHA: OP20.totalSupply() takes Calldata arg and returns BytesWriter — for internal u256 access use `this._totalSupply.value`
   - All SafeMath usage verified, no while loops, unique pointers via Blockchain.nextPointer
+
+[2026-03-03] S21 — Added Mine getWrappedAmount view method
+  - Public read-only method: getWrappedAmount(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns({ name: 'xAmount', type: ABIDataTypes.UINT256 })
+  - Reads amount (u256) from calldata, calls _calcWrap(amount), returns only xAmount in BytesWriter(32)
+  - Selector: 0xbebd4153
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

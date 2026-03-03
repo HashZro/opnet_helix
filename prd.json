@@ -187,7 +187,7 @@
       "title": "Add Mine getWrappedAmount view",
       "description": "Add public getWrappedAmount(calldata: Calldata): BytesWriter to Mine. @method() @returns UINT256. Reads amount (u256) from calldata. Calls _calcWrap(amount) and returns only the xAmount portion in BytesWriter(32). This is a read-only preview of how many xTokens the user would receive.",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "acceptance": "View method exists, calls _calcWrap, returns xAmount only.",
       "model": "opus"
     },

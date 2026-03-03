@@ -254,6 +254,16 @@ export class Mine extends OP20 {
         return response;
     }
 
+    @method()
+    @returns({ name: 'xAmount', type: ABIDataTypes.UINT256 })
+    public getWrappedAmount(_calldata: Calldata): BytesWriter {
+        const amount: u256 = _calldata.readU256();
+        const result: WrapResult = this._calcWrap(amount);
+        const response = new BytesWriter(32);
+        response.writeU256(result.xAmount);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {
