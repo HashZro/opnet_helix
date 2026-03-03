@@ -97,3 +97,10 @@
   - requireOwnerOrFactory(): reads both _owner and _factoryAddr, checks sender matches either, throws Revert('not authorized')
   - Follows AGENTS.md access control pattern exactly
   - Can't compile yet — Mine index.ts is story S20
+
+[2026-03-03] S14 — Added Mine _underlyingBalance internal method
+  - Private method returns net underlying available to xToken holders
+  - Reads _underlyingHeld, _controllerFeeAccrued, _protocolFeeAccrued from storage via lu(fieldKeySimple())
+  - Returns SafeMath.sub(SafeMath.sub(held, ctrlAccrued), protoAccrued)
+  - All arithmetic via SafeMath — no raw operators
+  - Can't compile yet — Mine index.ts is story S20

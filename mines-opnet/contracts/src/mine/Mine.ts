@@ -87,6 +87,15 @@ export class Mine extends OP20 {
         }
     }
 
+    // ── Internal balance ──
+
+    private _underlyingBalance(): u256 {
+        const held = this.lu(this.fieldKeySimple(this._underlyingHeld));
+        const ctrlAccrued = this.lu(this.fieldKeySimple(this._controllerFeeAccrued));
+        const protoAccrued = this.lu(this.fieldKeySimple(this._protocolFeeAccrued));
+        return SafeMath.sub(SafeMath.sub(held, ctrlAccrued), protoAccrued);
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

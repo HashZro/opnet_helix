@@ -124,7 +124,7 @@
       "title": "Add Mine _underlyingBalance internal method",
       "description": "Add private _underlyingBalance(): u256 method to Mine. Returns: SafeMath.sub(SafeMath.sub(underlyingHeld, controllerFeeAccrued), protocolFeeAccrued). Reads all three from storage using lu(fieldKeySimple(ptr)). This is the net underlying available to xToken holders.",
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "acceptance": "Method returns _underlyingHeld minus both fee accumulators, all via SafeMath.",
       "model": "opus"
     },
