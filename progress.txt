@@ -65,3 +65,9 @@
   - All imports: Blockchain, BytesWriter, BytesReader, Calldata, OP20, OP20InitParameters, Revert, SafeMath, TransferHelper, Address from runtime; u256 from as-bignum
   - Constants: MAX_DEPOSIT_WITHDRAW_FEE(200), MAX_CONTROLLER_PROTOCOL_FEE(100), FEE_DENOMINATOR(1000), ZERO(0)
   - Empty class body — storage/methods added in S10+
+
+[2026-03-03] S10 — Added Mine storage pointers
+  - Added 10 private readonly u16 fields to Mine class, each assigned Blockchain.nextPointer
+  - Fields: _underlying, _owner, _factoryAddr, _wrapFee, _unwrapFee, _controllerFee, _protocolFee, _controllerFeeAccrued, _protocolFeeAccrued, _underlyingHeld
+  - Follows MultSigVault pointer pattern exactly (u16 = Blockchain.nextPointer)
+  - No index.ts yet (later story), so can't compile standalone — but pattern is verified against reference

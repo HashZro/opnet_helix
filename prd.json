@@ -88,7 +88,7 @@
       "title": "Add Mine storage pointers",
       "description": "Add storage pointer fields to Mine class. All use Blockchain.nextPointer. Fields: _underlying (u16, stores Address of wrapped token), _owner (u16, stores controller Address), _factoryAddr (u16, stores factory/deployer Address), _wrapFee (u16, basis points out of 1000), _unwrapFee (u16), _controllerFee (u16), _protocolFee (u16), _controllerFeeAccrued (u16, accumulated controller fees), _protocolFeeAccrued (u16, accumulated protocol fees), _underlyingHeld (u16, self-tracked underlying balance).",
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "acceptance": "Mine class has 10 private readonly u16 fields, each assigned Blockchain.nextPointer.",
       "model": "opus"
     },
