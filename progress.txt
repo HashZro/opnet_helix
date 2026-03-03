@@ -34,3 +34,11 @@
   - instantiate: maxSupply 1B (10^27), 18 decimals, name 'Miner', symbol 'MINER'
   - Pre-mints 10M MINER to Blockchain.tx.origin (deployer)
   - Follows AlphaToken pattern from monorepo reference exactly
+
+[2026-03-03] S05 — Added mine() free mint method + index.ts boilerplate
+  - Added mine() method to MinerToken.ts: mints 1000 MINER (10^21) to Blockchain.tx.sender
+  - Decorated with @method() and @returns({ name: 'amount', type: ABIDataTypes.UINT256 })
+  - Returns minted amount in BytesWriter(32)
+  - Created src/miner-token/index.ts (contract factory registration + abort handler)
+  - Compilation succeeds: MinerToken.wasm (35KB) + MinerToken.abi.json generated
+  - mine() selector: 0x417c69bb (SHA256)

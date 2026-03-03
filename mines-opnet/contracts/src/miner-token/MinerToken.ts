@@ -1,5 +1,6 @@
 import {
     Blockchain,
+    BytesWriter,
     Calldata,
     OP20,
     OP20InitParameters,
@@ -22,5 +23,17 @@ export class MinerToken extends OP20 {
         // Pre-mint 10,000,000 MINER to deployer
         const deployerAlloc: u256 = u256.fromString('10000000000000000000000000');
         this._mint(Blockchain.tx.origin, deployerAlloc);
+    }
+
+    @method()
+    @returns({ name: 'amount', type: ABIDataTypes.UINT256 })
+    public mine(_calldata: Calldata): BytesWriter {
+        // Mint 1000 MINER (1000 * 10^18) to the caller
+        const amount: u256 = u256.fromString('1000000000000000000000');
+        this._mint(Blockchain.tx.sender, amount);
+
+        const response = new BytesWriter(32);
+        response.writeU256(amount);
+        return response;
     }
 }

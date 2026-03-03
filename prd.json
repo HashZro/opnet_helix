@@ -43,7 +43,7 @@
       "title": "Add MinerToken mine() free mint method",
       "description": "Add a public mine() method to MinerToken.ts. Decorated with @method() and @returns({ name: 'amount', type: ABIDataTypes.UINT256 }). Mints 1000 MINER (u256.fromString('1000000000000000000000')) to Blockchain.tx.sender. Returns the minted amount as BytesWriter(32) with writeU256. No payment required (testnet convenience).",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "acceptance": "mine() method exists, mints 1000 MINER to sender, returns amount in BytesWriter.",
       "model": "opus"
     },
