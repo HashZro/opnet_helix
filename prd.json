@@ -34,7 +34,7 @@
       "title": "Create MinerToken contract class",
       "description": "Create mines-opnet/contracts/src/miner-token/MinerToken.ts. Class MinerToken extends OP20. Import from @btc-vision/btc-runtime/runtime: Blockchain, BytesWriter, Calldata, OP20, OP20InitParameters. Import u256 from @btc-vision/as-bignum/assembly. Mark class @final. Override onDeployment: call super.onDeployment first, then this.instantiate with maxSupply=u256.fromString('1000000000000000000000000000') (1B with 18 decimals), decimals=18, name='Miner', symbol='MINER'. Pre-mint 10M MINER to Blockchain.tx.origin using this._mint.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with correct class extending OP20, onDeployment calls super first, instantiate with correct params, pre-mint 10M to deployer.",
       "model": "opus"
     },

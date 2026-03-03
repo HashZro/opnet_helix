@@ -27,3 +27,10 @@
   - tsconfig.json extends @btc-vision/opnet-transform/std/assembly.json, includes src/**/*.ts (matches monorepo pattern exactly)
   - .env.example has EC_PRIVATE_KEY and MLDSA_PRIVATE_KEY placeholders (empty values, not real keys)
   - build/ directory already existed from S01
+
+[2026-03-03] S04 — Created MinerToken contract class
+  - File: mines-opnet/contracts/src/miner-token/MinerToken.ts
+  - Extends OP20, @final, onDeployment calls super first
+  - instantiate: maxSupply 1B (10^27), 18 decimals, name 'Miner', symbol 'MINER'
+  - Pre-mints 10M MINER to Blockchain.tx.origin (deployer)
+  - Follows AlphaToken pattern from monorepo reference exactly
