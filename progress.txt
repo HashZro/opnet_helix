@@ -122,3 +122,15 @@
   - All arithmetic via SafeMath — no raw operators on u256
   - Reads wrapFee, controllerFee, protocolFee from storage via lu(fieldKeySimple())
   - Can't compile yet — Mine index.ts is story S19
+
+[2026-03-03] S17 — Added Mine wrap() public method
+  - Public method decorated with @method() and @returns({ name: 'xAmount', type: ABIDataTypes.UINT256 })
+  - Reads amount (u256) from calldata, validates > ZERO
+  - CEI pattern: CHECKS (amount > 0) → EFFECTS (calcWrap fees, update accumulators) → INTERACTIONS (transferFrom, update _underlyingHeld, _mint)
+  - TransferHelper.transferFrom pulls underlying from sender to Blockchain.contractAddress
+  - Updates _controllerFeeAccrued and _protocolFeeAccrued via SafeMath.add
+  - Updates _underlyingHeld via SafeMath.add(held, amount) — self-tracked balance
+  - Mints xTokens to sender via this._mint(Blockchain.tx.sender, result.xAmount)
+  - Returns xAmount in BytesWriter(32)
+  - All u256 arithmetic via SafeMath — no raw operators
+  - Can't compile yet — Mine index.ts is story S19

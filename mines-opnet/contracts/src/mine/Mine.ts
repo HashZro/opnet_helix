@@ -167,6 +167,38 @@ export class Mine extends OP20 {
         return new WrapResult(xAmount, stakersFee, controllerFeeAmount, protocolFeeAmount);
     }
 
+    // ── Public methods ──
+
+    @method()
+    @returns({ name: 'xAmount', type: ABIDataTypes.UINT256 })
+    public wrap(_calldata: Calldata): BytesWriter {
+        const amount: u256 = _calldata.readU256();
+
+        // CHECKS
+        if (amount == ZERO) throw new Revert('zero amount');
+
+        // EFFECTS — calculate fees, update accumulators
+        const result: WrapResult = this._calcWrap(amount);
+
+        const ctrlKey: Uint8Array = this.fieldKeySimple(this._controllerFeeAccrued);
+        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
+        this.su(ctrlKey, SafeMath.add(this.lu(ctrlKey), result.controllerFeeAmount));
+        this.su(protoKey, SafeMath.add(this.lu(protoKey), result.protocolFeeAmount));
+
+        // INTERACTIONS — transfer underlying in, update held balance, mint xTokens
+        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+        TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount);
+
+        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
+        this.su(heldKey, SafeMath.add(this.lu(heldKey), amount));
+
+        this._mint(Blockchain.tx.sender, result.xAmount);
+
+        const response = new BytesWriter(32);
+        response.writeU256(result.xAmount);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

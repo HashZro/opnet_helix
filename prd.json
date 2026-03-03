@@ -151,7 +151,7 @@
       "title": "Add Mine wrap() public method",
       "description": "Add public wrap(calldata: Calldata): BytesWriter method to Mine. Decorated with @method() and @returns. Reads amount (u256) from calldata. CHECKS: amount must be > ZERO. EFFECTS: Calculate fees via _calcWrap. Update _controllerFeeAccrued and _protocolFeeAccrued by adding their portions. INTERACTIONS: TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount). Update _underlyingHeld by adding amount. Mint xTokens to sender: this._mint(Blockchain.tx.sender, xAmount). Return xAmount in BytesWriter(32).",
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "acceptance": "wrap() reads amount, validates, calculates fees, updates accumulators, transfers underlying, increments _underlyingHeld, mints xTokens, returns xAmount. CEI pattern followed.",
       "model": "opus"
     },
