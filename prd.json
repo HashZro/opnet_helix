@@ -214,7 +214,7 @@
       "title": "Add Mine fee getter views",
       "description": "Add 6 public view methods to Mine, each @method() @returns UINT256: getWrapFee \u2014 returns stored _wrapFee. getUnwrapFee \u2014 returns stored _unwrapFee. getControllerFee \u2014 returns stored _controllerFee. getProtocolFee \u2014 returns stored _protocolFee. getProtocolFeeAccrued \u2014 returns stored _protocolFeeAccrued. getControllerFeeAccrued \u2014 returns stored _controllerFeeAccrued. Each reads from storage via lu(fieldKeySimple(ptr)) and writes to BytesWriter(32).",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "acceptance": "All 6 fee getter methods exist and return correct stored values.",
       "model": "opus"
     },

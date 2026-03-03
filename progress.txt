@@ -189,3 +189,10 @@
   - Both decorated with @method() and @returns UINT256
   - Selectors: underlyingBalance() -> 0x98548594, getUnderlyingAmount() -> 0x1a4b7e31
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S24 — Added Mine fee getter views
+  - 6 public read-only methods: getWrapFee, getUnwrapFee, getControllerFee, getProtocolFee, getProtocolFeeAccrued, getControllerFeeAccrued
+  - Each reads from storage via lu(fieldKeySimple(ptr)) and returns u256 in BytesWriter(32)
+  - All decorated with @method() and @returns UINT256
+  - Selectors: getWrapFee() -> 0x615a28b4, getUnwrapFee() -> 0x68b8b7fb, getControllerFee() -> 0xd7459485, getProtocolFee() -> 0xc9759caf, getProtocolFeeAccrued() -> 0x1fa117e0, getControllerFeeAccrued() -> 0xa73fca05
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

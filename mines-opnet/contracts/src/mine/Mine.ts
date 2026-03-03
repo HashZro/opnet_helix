@@ -297,6 +297,56 @@ export class Mine extends OP20 {
         return response;
     }
 
+    // ── Fee getter views ──
+
+    @method()
+    @returns({ name: 'wrapFee', type: ABIDataTypes.UINT256 })
+    public getWrapFee(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._wrapFee)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'unwrapFee', type: ABIDataTypes.UINT256 })
+    public getUnwrapFee(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._unwrapFee)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'controllerFee', type: ABIDataTypes.UINT256 })
+    public getControllerFee(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._controllerFee)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'protocolFee', type: ABIDataTypes.UINT256 })
+    public getProtocolFee(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._protocolFee)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'protocolFeeAccrued', type: ABIDataTypes.UINT256 })
+    public getProtocolFeeAccrued(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._protocolFeeAccrued)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'controllerFeeAccrued', type: ABIDataTypes.UINT256 })
+    public getControllerFeeAccrued(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._controllerFeeAccrued)));
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

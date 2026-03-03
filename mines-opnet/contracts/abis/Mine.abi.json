@@ -51,6 +51,110 @@
                     "type": "UINT256"
                 }
             ]
+        },
+        {
+            "name": "underlyingBalance",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "balance",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getUnderlyingAmount",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "underlyingAmount",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getWrapFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "wrapFee",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getUnwrapFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "unwrapFee",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getControllerFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "controllerFee",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getProtocolFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "protocolFee",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getProtocolFeeAccrued",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "protocolFeeAccrued",
+                    "type": "UINT256"
+                }
+            ]
+        },
+        {
+            "name": "getControllerFeeAccrued",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "controllerFeeAccrued",
+                    "type": "UINT256"
+                }
+            ]
         }
     ],
     "events": []
