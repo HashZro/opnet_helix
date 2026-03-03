@@ -12,6 +12,26 @@ import {
 } from '@btc-vision/btc-runtime/runtime';
 import { u256 } from '@btc-vision/as-bignum/assembly';
 
+// Result container for _calcWrap (AssemblyScript has no tuple returns)
+class WrapResult {
+    xAmount: u256;
+    stakersFee: u256;
+    controllerFeeAmount: u256;
+    protocolFeeAmount: u256;
+
+    constructor(
+        xAmount: u256,
+        stakersFee: u256,
+        controllerFeeAmount: u256,
+        protocolFeeAmount: u256,
+    ) {
+        this.xAmount = xAmount;
+        this.stakersFee = stakersFee;
+        this.controllerFeeAmount = controllerFeeAmount;
+        this.protocolFeeAmount = protocolFeeAmount;
+    }
+}
+
 // Fee limits (basis points out of 1000)
 const MAX_DEPOSIT_WITHDRAW_FEE: u256 = u256.fromU32(200);
 const MAX_CONTROLLER_PROTOCOL_FEE: u256 = u256.fromU32(100);
@@ -102,6 +122,49 @@ export class Mine extends OP20 {
         const supply: u256 = this.totalSupply();
         if (supply == ZERO) return xAmount;
         return SafeMath.div(SafeMath.mul(xAmount, this._underlyingBalance()), supply);
+    }
+
+    // ── Fee calculation ──
+
+    // Port of Mine.sol _calcWrap (lines 479-502)
+    private _calcWrap(amount: u256): WrapResult {
+        const supply: u256 = this.totalSupply();
+
+        if (supply == ZERO) {
+            // First wrap: 1:1 ratio, no fees
+            return new WrapResult(amount, ZERO, ZERO, ZERO);
+        }
+
+        // feeAmount = amount * wrapFee / 1000
+        const wrapFee: u256 = this.lu(this.fieldKeySimple(this._wrapFee));
+        const feeAmount: u256 = SafeMath.div(SafeMath.mul(amount, wrapFee), FEE_DENOMINATOR);
+
+        // controllerFeeAmount = feeAmount * controllerFee / 1000
+        const ctrlFeeRate: u256 = this.lu(this.fieldKeySimple(this._controllerFee));
+        const controllerFeeAmount: u256 = SafeMath.div(
+            SafeMath.mul(feeAmount, ctrlFeeRate),
+            FEE_DENOMINATOR,
+        );
+
+        // protocolFeeAmount = feeAmount * protocolFee / 1000
+        const protoFeeRate: u256 = this.lu(this.fieldKeySimple(this._protocolFee));
+        const protocolFeeAmount: u256 = SafeMath.div(
+            SafeMath.mul(feeAmount, protoFeeRate),
+            FEE_DENOMINATOR,
+        );
+
+        // stakersFee = feeAmount - controllerFeeAmount - protocolFeeAmount
+        const stakersFee: u256 = SafeMath.sub(
+            SafeMath.sub(feeAmount, controllerFeeAmount),
+            protocolFeeAmount,
+        );
+
+        // xAmount = totalSupply * (amount - feeAmount) / (underlyingBalance + stakersFee)
+        const netAmount: u256 = SafeMath.sub(amount, feeAmount);
+        const denominator: u256 = SafeMath.add(this._underlyingBalance(), stakersFee);
+        const xAmount: u256 = SafeMath.div(SafeMath.mul(supply, netAmount), denominator);
+
+        return new WrapResult(xAmount, stakersFee, controllerFeeAmount, protocolFeeAmount);
     }
 
     // ── Lifecycle ──

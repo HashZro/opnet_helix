@@ -112,3 +112,13 @@
   - Uses inherited totalSupply() from OP20 base class
   - All arithmetic via SafeMath — no raw operators
   - Can't compile yet — Mine index.ts is story S20
+
+[2026-03-03] S16 — Added Mine _calcWrap fee algorithm
+  - Ported from Mine.sol lines 479-502 exactly
+  - Created WrapResult class (xAmount, stakersFee, controllerFeeAmount, protocolFeeAmount) for tuple-return workaround
+  - Zero-supply case: returns (amount, ZERO, ZERO, ZERO) — 1:1, no fees
+  - Normal case: feeAmount = amount * wrapFee / 1000, then controller/protocol portions, stakersFee = remainder
+  - xAmount = totalSupply * (amount - feeAmount) / (underlyingBalance + stakersFee)
+  - All arithmetic via SafeMath — no raw operators on u256
+  - Reads wrapFee, controllerFee, protocolFee from storage via lu(fieldKeySimple())
+  - Can't compile yet — Mine index.ts is story S19

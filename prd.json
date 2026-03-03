@@ -142,7 +142,7 @@
       "title": "Add Mine _calcWrap fee algorithm",
       "description": "Add private _calcWrap(amount: u256) method to Mine. Port EXACTLY from Mine.sol lines 479-502. If totalSupply == 0: return (amount, ZERO, ZERO, ZERO). Otherwise: feeAmount = SafeMath.div(SafeMath.mul(amount, wrapFee), FEE_DENOMINATOR). controllerFeeAmount = SafeMath.div(SafeMath.mul(feeAmount, controllerFee), FEE_DENOMINATOR). protocolFeeAmount = SafeMath.div(SafeMath.mul(feeAmount, protocolFee), FEE_DENOMINATOR). stakersFee = SafeMath.sub(SafeMath.sub(feeAmount, controllerFeeAmount), protocolFeeAmount). xAmount = SafeMath.div(SafeMath.mul(totalSupply, SafeMath.sub(amount, feeAmount)), SafeMath.add(this._underlyingBalance(), stakersFee)). Since AssemblyScript has no tuple returns, store results in local variables and return them via a helper approach (4 separate method calls, or store in temporary storage, or use a WrapResult class).",
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "acceptance": "Fee calculation matches Mine.sol exactly. All arithmetic uses SafeMath. Handles zero-supply case.",
       "model": "opus"
     },
