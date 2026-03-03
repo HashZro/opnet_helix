@@ -42,3 +42,19 @@
   - Created src/miner-token/index.ts (contract factory registration + abort handler)
   - Compilation succeeds: MinerToken.wasm (35KB) + MinerToken.abi.json generated
   - mine() selector: 0x417c69bb (SHA256)
+
+[2026-03-03] S06 — MinerToken index.ts boilerplate (already completed in S05)
+  - File already existed at src/miner-token/index.ts with correct pattern
+  - Imports, contract factory, exports, and abort all match reference
+
+[2026-03-03] S07 — Build MinerToken contract (already completed in S05)
+  - build/MinerToken.wasm and build/MinerToken.wat both exist
+  - Compilation was verified in S05
+
+[2026-03-03] S08 — Created MinerToken deploy script
+  - File: mines-opnet/contracts/scripts/deploy-miner.ts
+  - Copied exact pattern from ../monorepo/contracts/scripts/deploy-vault.ts
+  - Changed WASM path to build/MinerToken.wasm
+  - Changed console title to 'MinerToken Deployment'
+  - All wallet loading, UTXO fetching, challenge fetching, signing, broadcasting logic identical
+  - Script parses without syntax errors (node --experimental-strip-types --check)

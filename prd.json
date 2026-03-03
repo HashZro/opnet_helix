@@ -52,7 +52,7 @@
       "title": "Create MinerToken index.ts boilerplate",
       "description": "Create mines-opnet/contracts/src/miner-token/index.ts following exact pattern from ../monorepo/contracts/src/alpha/index.ts. Import Blockchain from runtime, revertOnError from runtime/abort/abort, MinerToken from ./MinerToken. Set Blockchain.contract factory. Export runtime exports. Export abort function.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with correct imports, contract factory, exports, and abort function matching the reference pattern.",
       "model": "opus"
     },
@@ -61,7 +61,7 @@
       "title": "Build MinerToken contract",
       "description": "Run npm run build:miner in the contracts directory. Fix any compilation errors. The command should be: asc src/miner-token/index.ts --target miner --measure --uncheckedBehavior never",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "acceptance": "build/MinerToken.wasm exists and is non-empty. Build completes without errors.",
       "model": "opus"
     },
@@ -70,7 +70,7 @@
       "title": "Create MinerToken deploy script",
       "description": "Create mines-opnet/contracts/scripts/deploy-miner.ts following exact pattern from ../monorepo/contracts/scripts/deploy-vault.ts. Change WASM path to build/MinerToken.wasm. Change console log title to 'MinerToken Deployment'. Keep all wallet loading, UTXO fetching, challenge fetching, signing, and broadcasting logic identical.",
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists. Script can be parsed by Node without syntax errors (node --check or similar).",
       "model": "opus"
     },
