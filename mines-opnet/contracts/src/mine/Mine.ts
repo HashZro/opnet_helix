@@ -67,6 +67,26 @@ export class Mine extends OP20 {
         return new BytesReader(Blockchain.getStorageAt(key)).readAddress();
     }
 
+    // ── Access control ──
+
+    private requireOwner(): void {
+        const owner = this.la(this.fieldKeySimple(this._owner));
+        if (Blockchain.tx.sender != owner) throw new Revert('not owner');
+    }
+
+    private requireFactoryOwner(): void {
+        const factory = this.la(this.fieldKeySimple(this._factoryAddr));
+        if (Blockchain.tx.sender != factory) throw new Revert('not factory owner');
+    }
+
+    private requireOwnerOrFactory(): void {
+        const owner = this.la(this.fieldKeySimple(this._owner));
+        const factory = this.la(this.fieldKeySimple(this._factoryAddr));
+        if (Blockchain.tx.sender != owner && Blockchain.tx.sender != factory) {
+            throw new Revert('not authorized');
+        }
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

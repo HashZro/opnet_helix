@@ -115,7 +115,7 @@
       "title": "Add Mine access control helpers",
       "description": "Add private helper methods to Mine: requireOwner() \u2014 checks Blockchain.tx.sender == stored _owner, throws Revert('not owner'). requireFactoryOwner() \u2014 checks sender == stored _factoryAddr, throws Revert('not factory owner'). requireOwnerOrFactory() \u2014 checks sender is either _owner or _factoryAddr, throws Revert('not authorized').",
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "acceptance": "Three access control methods exist, each reads stored address and compares with tx.sender.",
       "model": "opus"
     },

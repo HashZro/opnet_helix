@@ -90,3 +90,10 @@
   - Stores underlying, owner, factoryAddr via sa(); wrapFee, unwrapFee, controllerFee, protocolFee via su()
   - Owner and factoryAddr both set to Blockchain.tx.sender (deployer)
   - Can't compile yet — Mine index.ts is story S20
+
+[2026-03-03] S13 — Added Mine access control helpers
+  - requireOwner(): reads _owner via la(), compares with Blockchain.tx.sender, throws Revert('not owner')
+  - requireFactoryOwner(): reads _factoryAddr via la(), compares with sender, throws Revert('not factory owner')
+  - requireOwnerOrFactory(): reads both _owner and _factoryAddr, checks sender matches either, throws Revert('not authorized')
+  - Follows AGENTS.md access control pattern exactly
+  - Can't compile yet — Mine index.ts is story S20
