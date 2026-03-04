@@ -277,7 +277,7 @@
       "title": "Create Mine deploy script",
       "description": "Create mines-opnet/contracts/scripts/deploy-mine.ts. Follow deploy-miner.ts pattern but load build/Mine.wasm. Title: 'Mine Deployment'. Note: Mine deployment requires calldata params (underlying address, decimals, name, symbol, fees) \u2014 add these as constants or CLI args at the top of the script. Use BinaryWriter to encode deployment calldata.",
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists. Includes calldata encoding for Mine deployment parameters.",
       "model": "opus"
     },

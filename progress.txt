@@ -250,3 +250,13 @@
   - 21 custom selectors registered: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, 6 fee getters, 2 address getters, 4 fee setters, claimControllerFee, claimProtocolFee, disburseProtocolFee
   - Quality verified: all u256 arithmetic via SafeMath, no while loops, 10 unique storage pointers via Blockchain.nextPointer, CEI pattern in all state-changing methods
   - No fixes needed — compiled clean on first attempt
+
+[2026-03-03] S31 — Created Mine deploy script
+  - File: mines-opnet/contracts/scripts/deploy-mine.ts
+  - Follows deploy-miner.ts pattern exactly: wallet loading, UTXO fetching, challenge, signing, broadcasting
+  - Key difference: encodes deployment calldata using BinaryWriter from @btc-vision/transaction
+  - Calldata matches Mine.onDeployment() read order: underlying (writeAddress), decimals (writeU8), name (writeStringWithLength), symbol (writeStringWithLength), wrapFee/unwrapFee/controllerFee/protocolFee (writeU256 each)
+  - Passes calldata to factory.signDeployment({ bytecode, calldata, ... })
+  - Config constants at top: UNDERLYING_ADDRESS (env var or zero placeholder), MINE_DECIMALS=18, MINE_NAME='xMiner', MINE_SYMBOL='xMINER', fees all 50 (5%)
+  - Added UNDERLYING_ADDRESS to .env.example
+  - Script parses without syntax errors (node --experimental-strip-types --check)
