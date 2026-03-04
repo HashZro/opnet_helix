@@ -196,3 +196,10 @@
   - All decorated with @method() and @returns UINT256
   - Selectors: getWrapFee() -> 0x615a28b4, getUnwrapFee() -> 0x68b8b7fb, getControllerFee() -> 0xd7459485, getProtocolFee() -> 0xc9759caf, getProtocolFeeAccrued() -> 0x1fa117e0, getControllerFeeAccrued() -> 0xa73fca05
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S25 — Added Mine getUnderlying() and getOwner() view methods
+  - getUnderlying(_calldata): reads _underlying address via la(fieldKeySimple()), returns in BytesWriter via writeAddress()
+  - getOwner(_calldata): reads _owner address via la(fieldKeySimple()), returns in BytesWriter via writeAddress()
+  - Both decorated with @method() and @returns ADDRESS type
+  - Selectors: getUnderlying() -> 0x49fc993a, getOwner() -> 0x39d26091
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

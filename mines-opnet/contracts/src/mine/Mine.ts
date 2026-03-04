@@ -347,6 +347,24 @@ export class Mine extends OP20 {
         return response;
     }
 
+    // ── Address getter views ──
+
+    @method()
+    @returns({ name: 'underlying', type: ABIDataTypes.ADDRESS })
+    public getUnderlying(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeAddress(this.la(this.fieldKeySimple(this._underlying)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'owner', type: ABIDataTypes.ADDRESS })
+    public getOwner(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeAddress(this.la(this.fieldKeySimple(this._owner)));
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

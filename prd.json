@@ -223,7 +223,7 @@
       "title": "Add Mine underlying() and getOwner() views",
       "description": "Add two public view methods: getUnderlying(calldata): reads and returns _underlying address via la(). getOwner(calldata): reads and returns _owner address via la(). Both write Address to BytesWriter using writeAddress.",
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "acceptance": "Both methods return stored addresses correctly.",
       "model": "opus"
     },
