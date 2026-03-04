@@ -10,7 +10,7 @@ import { NETWORK } from '../config';
 import { MINE_ABI } from '../lib/contracts';
 import { TokenInput } from '../components/TokenInput';
 import { TransactionButton } from '../components/TransactionButton';
-import { formatBalance, parseAmount } from '../lib/helpers';
+import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
 
 function extractU256(res: unknown, field: string): bigint {
     const r = res as Record<string, unknown> | null;
@@ -104,7 +104,7 @@ export function UnwrapPage() {
             setEstimatedUnderlying(null);
             refetch();
         } catch (err) {
-            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            toast.error(`Transaction failed: ${parseContractError(err)}`);
             throw err;
         }
     }, [senderAddress, walletAddress, selectedMine, mine, amount, refetch, toast]);

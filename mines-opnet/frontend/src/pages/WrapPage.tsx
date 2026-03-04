@@ -11,7 +11,7 @@ import { NETWORK } from '../config';
 import { MINE_ABI, OP_20_ABI } from '../lib/contracts';
 import { TokenInput } from '../components/TokenInput';
 import { TransactionButton } from '../components/TransactionButton';
-import { formatBalance, parseAmount } from '../lib/helpers';
+import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
 
 // Resolve a contract's Address object from its bech32 address via RPC
 async function resolveContractAddress(bech32: string): Promise<Address> {
@@ -156,7 +156,7 @@ export function WrapPage() {
             setEstimatedXAmount(null);
             refetch();
         } catch (err) {
-            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            toast.error(`Transaction failed: ${parseContractError(err)}`);
             throw err;
         }
     }, [senderAddress, walletAddress, selectedMine, mine, amount, refetch, toast]);

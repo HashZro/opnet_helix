@@ -699,3 +699,12 @@
   - UnwrapPage.tsx: toast.info on submit, toast.success on success, toast.error on failure; removed inline success banner
   - StakingPanel.tsx: all three handlers (stake/unstake/claim) wrapped in try/catch with toasts; removed inline success banner, kept error banner for fetch errors
   - Build passes: tsc -b + vite build ✓
+
+[2026-03-04] S78 — Added error handling for contract reverts
+  - Added parseContractError() to lib/helpers.ts
+  - Maps known revert messages to human-readable strings: 'zero amount', 'not owner',
+    'no fee', 'no rewards', 'insufficient balance', 'insufficient utxos', 'not staked', etc.
+  - 'Insufficient UTXOs' triggers special message about adding BTC to wallet
+  - Long unknown messages are truncated to 120 chars with ellipsis
+  - Updated WrapPage.tsx, UnwrapPage.tsx, StakingPanel.tsx (all 3 handlers) to use parseContractError
+  - Build passes: tsc -b + vite build ✓

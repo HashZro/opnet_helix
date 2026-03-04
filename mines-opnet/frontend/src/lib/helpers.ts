@@ -26,3 +26,47 @@ export function parseAmount(input: string, decimals: number): bigint {
 export function toHex(bytes: Uint8Array): string {
     return '0x' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
 }
+
+// Known revert message → human-readable label
+const REVERT_MESSAGES: Array<[string, string]> = [
+    ['zero amount', 'Amount must be greater than zero'],
+    ['not owner', 'Only the contract owner can perform this action'],
+    ['not authorized', 'You are not authorized to perform this action'],
+    ['no fee', 'No fees have accrued yet'],
+    ['no rewards', 'No rewards to claim at this time'],
+    ['insufficient balance', 'Insufficient balance for this operation'],
+    ['not enough balance', 'Insufficient balance for this operation'],
+    ['insufficient utxos', 'Insufficient wallet balance — add more BTC to cover transaction fees'],
+    ['insufficient utxo', 'Insufficient wallet balance — add more BTC to cover transaction fees'],
+    ['not staked', 'No staked balance found'],
+    ['already staked', 'Already staked in this mine'],
+];
+
+/**
+ * Extract a human-readable error message from any error shape thrown by
+ * contract simulation or sendTransaction.
+ */
+export function parseContractError(err: unknown): string {
+    // Gather raw message text from various error shapes
+    let raw = '';
+    if (err instanceof Error) {
+        raw = err.message;
+    } else if (typeof err === 'string') {
+        raw = err;
+    } else if (err && typeof err === 'object') {
+        const e = err as Record<string, unknown>;
+        raw = String(e['message'] ?? e['error'] ?? e['reason'] ?? e['msg'] ?? JSON.stringify(err));
+    } else {
+        raw = String(err);
+    }
+
+    const lower = raw.toLowerCase();
+
+    // Check known revert messages (case-insensitive substring match)
+    for (const [key, label] of REVERT_MESSAGES) {
+        if (lower.includes(key)) return label;
+    }
+
+    // Trim long raw messages to keep toasts readable
+    return raw.length > 120 ? raw.slice(0, 120) + '…' : raw;
+}

@@ -700,7 +700,7 @@
       "title": "Add error handling for contract reverts",
       "description": "In all transaction flows (wrap, unwrap, stake, unstake, claim), catch errors from simulation and sendTransaction. Parse revert messages from error objects. Display human-readable error in toast: 'zero amount', 'not owner', 'no fee', 'no rewards', 'insufficient balance'. Handle 'Insufficient UTXOs' error with helpful message about wallet balance.",
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "acceptance": "Contract revert messages displayed clearly to user. Common errors have helpful messages.",
       "model": "sonnet"
     },

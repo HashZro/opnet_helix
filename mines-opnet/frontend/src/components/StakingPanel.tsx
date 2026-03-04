@@ -9,7 +9,7 @@ import { NETWORK, CONTRACT_ADDRESSES } from '../config';
 import { STAKING_ABI, MINER_TOKEN_ABI } from '../lib/contracts';
 import { TokenInput } from './TokenInput';
 import { TransactionButton } from './TransactionButton';
-import { formatBalance, parseAmount } from '../lib/helpers';
+import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
 
 interface StakingPanelProps {
     mineAddress: string;
@@ -117,7 +117,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
             setAmount('');
             refetch();
         } catch (err) {
-            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            toast.error(`Transaction failed: ${parseContractError(err)}`);
             throw err;
         }
     }, [senderAddress, walletAddress, mineAddress, amount, refetch, toast]);
@@ -156,7 +156,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
             setAmount('');
             refetch();
         } catch (err) {
-            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            toast.error(`Transaction failed: ${parseContractError(err)}`);
             throw err;
         }
     }, [senderAddress, walletAddress, mineAddress, amount, refetch, toast]);
@@ -192,7 +192,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
             toast.success('Rewards claimed!');
             refetch();
         } catch (err) {
-            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            toast.error(`Transaction failed: ${parseContractError(err)}`);
             throw err;
         }
     }, [senderAddress, walletAddress, mineAddress, refetch, toast]);
