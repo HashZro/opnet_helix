@@ -467,6 +467,38 @@ export class Mine extends OP20 {
         return response;
     }
 
+    // ── Disburse protocol fee (called by Staking contract) ──
+
+    @method()
+    @returns({ name: 'accrued', type: ABIDataTypes.UINT256 })
+    public disburseProtocolFee(_calldata: Calldata): BytesWriter {
+        const recipient: Address = _calldata.readAddress();
+
+        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
+        const accrued: u256 = this.lu(protoKey);
+
+        // Return ZERO gracefully — staking calls this speculatively
+        if (accrued == ZERO) {
+            const response = new BytesWriter(32);
+            response.writeU256(ZERO);
+            return response;
+        }
+
+        // EFFECTS — reset accumulator, decrement _underlyingHeld
+        this.su(protoKey, ZERO);
+
+        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
+        this.su(heldKey, SafeMath.sub(this.lu(heldKey), accrued));
+
+        // INTERACTIONS — transfer accrued fees to recipient (Staking contract)
+        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+        TransferHelper.transfer(underlying, recipient, accrued);
+
+        const response = new BytesWriter(32);
+        response.writeU256(accrued);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

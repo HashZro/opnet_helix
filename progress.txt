@@ -232,3 +232,14 @@
   - All arithmetic via SafeMath
   - Selector: claimProtocolFee() -> 0x43c5e731
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S29 — Added Mine disburseProtocolFee method
+  - Public method: disburseProtocolFee(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns UINT256
+  - Reads recipient Address from calldata (Staking contract provides this)
+  - No access control — designed to be called by Staking contract speculatively
+  - Returns ZERO gracefully if nothing accrued (no revert, unlike claimProtocolFee)
+  - CEI pattern: read accrued → EFFECTS (reset accumulator, decrement _underlyingHeld) → INTERACTIONS (TransferHelper.transfer to recipient)
+  - All arithmetic via SafeMath
+  - Selector: disburseProtocolFee() -> 0xe0a54d3d
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

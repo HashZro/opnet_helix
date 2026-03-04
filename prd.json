@@ -259,7 +259,7 @@
       "title": "Add Mine disburseProtocolFee method",
       "description": "Add public disburseProtocolFee(calldata): BytesWriter. Read recipient Address from calldata. Read _protocolFeeAccrued. If ZERO, return ZERO (no revert \u2014 staking calls this speculatively). Reset _protocolFeeAccrued to ZERO. Decrement _underlyingHeld by accrued amount. TransferHelper.transfer(underlying, recipient, accrued). Return accrued amount. This method is called by the Staking contract to pull protocol fees for reward distribution.",
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "acceptance": "Method transfers protocol fees to specified recipient (Staking contract), returns amount disbursed. Returns ZERO gracefully if nothing accrued.",
       "model": "opus"
     },
