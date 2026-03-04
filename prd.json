@@ -664,7 +664,7 @@
       "title": "Create StakingPanel component",
       "description": "Create src/components/StakingPanel.tsx. Props: mineAddress. Three sections: (1) STAKE tab \u2014 TokenInput for MINER amount, stake button. Flow: increaseAllowance on MINER for Staking contract \u2192 simulate stake(mine, amount) \u2192 sendTransaction. (2) UNSTAKE tab \u2014 TokenInput for staked amount (max = stakedBalance), unstake button. (3) CLAIM section \u2014 shows pending rewards amount, claim button. Flow: simulate claim(mine) \u2192 sendTransaction. Tab switching between stake/unstake. Display current staked balance and pending rewards.",
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "acceptance": "Panel handles stake/unstake/claim flows. Tab switching works. All transactions use null signers.",
       "model": "sonnet"
     },

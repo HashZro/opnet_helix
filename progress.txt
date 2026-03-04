@@ -656,3 +656,17 @@
   - Uses same extractU256 pattern as useMine.ts
   - Returns zeros (not null) when wallet disconnected or no mine selected
   - Frontend build passes with no TypeScript errors
+
+[2026-03-04] S74 — Created StakingPanel component
+  - Created mines-opnet/frontend/src/components/StakingPanel.tsx
+  - Props: mineAddress (string)
+  - Three sections: STAKE tab, UNSTAKE tab, CLAIM section
+  - STAKE flow: increaseAllowance on MINER for Staking contract → simulate stake(mine, amount) → sendTransaction
+  - UNSTAKE flow: simulate unstake(mine, amount) → sendTransaction
+  - CLAIM flow: simulate claim(mine) → sendTransaction
+  - Tab switching resets amount and success state
+  - Stats row shows stakedBalance and minerBalance from useStaking hook
+  - Claim button disabled when pendingRewards === 0n
+  - All transactions use null signers (wallet extension signs)
+  - Error and success banners displayed below panel
+  - Frontend build passes (tsc + vite build)
