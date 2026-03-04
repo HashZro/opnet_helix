@@ -591,3 +591,13 @@
   - MAX button: purple-400 text, hover:text-purple-300 hover:bg-gray-700
   - Input hides number spinners via Tailwind appearance-none utilities
   - npm run build succeeds: no TypeScript errors
+
+[2026-03-04] S68 — Created TransactionButton component
+  - File: mines-opnet/frontend/src/components/TransactionButton.tsx
+  - Props: onClick (async), label, disabled, loading (optional external override)
+  - Internal loading state via useState — tracks async onClick lifecycle
+  - Error state: 3-second flash to red 'Transaction Failed' on exception, then auto-clears
+  - Loading state: spinning SVG icon + disabled button styling
+  - Disabled state: gray-700 bg, opacity-50, cursor-not-allowed
+  - Normal state: purple-to-blue gradient button with hover transition
+  - npm run build succeeds: no TypeScript errors

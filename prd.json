@@ -610,7 +610,7 @@
       "title": "Create TransactionButton component",
       "description": "Create src/components/TransactionButton.tsx. Props: onClick (async), label, disabled, loading. Renders: button with label, shows spinner when loading, disabled state styling. Handles async onClick with try/catch \u2014 shows error state briefly on failure. Dark theme: purple/blue gradient button.",
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "acceptance": "Button handles async operations with loading spinner and error states.",
       "model": "sonnet"
     },
