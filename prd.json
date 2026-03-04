@@ -745,7 +745,7 @@
       "title": "End-to-end test: staking flow",
       "description": "Continuing: (1) Navigate to StakingPage, (2) Select the Mine, (3) Stake MINER tokens, (4) Verify staked balance shows, (5) Have another wallet wrap to generate fees (or skip if single-user test), (6) Check pending rewards, (7) Claim rewards. Document results.",
       "priority": 24,
-      "passes": false,
+      "passes": true,
       "acceptance": "Stake/claim flow works end-to-end. Staked balance and rewards display correctly.",
       "model": "sonnet"
     },

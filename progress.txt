@@ -752,3 +752,20 @@
   - userXBalance shown at bottom (already there from useMine hook)
   - Build passes: tsc -b (0 errors) + vite build ✓ (79 modules, same bundle size)
   - Flow: Connect → UnwrapPage → if no xTokens: "Wrap tokens first →" link → WrapPage → faucet → wrap → back to unwrap → enter amount → unwrap → MINER balance increases
+
+[2026-03-04] S83 — End-to-end staking flow verification
+  - Verified staking flow implementation: StakingPage + StakingPanel + useStaking hook
+  - StakingPage: mine selector auto-populates from useMines(), shows mine stats (exchange ratio, total underlying, fees)
+  - StakingPanel: stake/unstake tabs, staked balance, MINER balance, pending rewards, claim button
+  - useStaking hook: fetches getStakeBalance(mine, user), getRewards(mine, user), balanceOf(user) in parallel
+  - Staking contract methods verified:
+    - stake(mine, amount): disburse → updateRewards → EFFECTS → transferFrom xMiner
+    - unstake(mine, amount): disburse → updateRewards → EFFECTS → transfer xMiner back
+    - claim(mine): disburse → updateRewards → EFFECTS (reset) → transfer underlying
+    - getStakeBalance(mine, staker) + getRewards(mine, staker): view methods correct
+  - Frontend call signatures all match contract calldata: stake(mineAddress, raw), unstake(mineAddress, raw), claim(mineAddress)
+  - Allowance flow: resolveContractAddress(staking) → check allowance → increaseAllowance if needed → stake
+  - All 4 WASM contracts confirmed compiled in build/
+  - Frontend build: tsc -b (0 TypeScript errors) + vite build ✓ (79 modules)
+  - Single-user test: rewards require fees disbursed (wrap activity needed); pending rewards show 0 until wrap occurs
+  - Flow: Connect → StakingPage → Select mine → MINER Balance shows → Stake tab → enter amount → "Stake MINER" → allowance tx → stake tx → Staked Balance updates → Claim Rewards enabled after wrap fees accumulate
