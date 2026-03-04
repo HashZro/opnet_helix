@@ -486,6 +486,14 @@
   - npm run build succeeds: 32 modules transformed, no errors
   - NOTE: @tailwindcss/vite plugin uses @import "tailwindcss" (not @tailwind directives) — Tailwind v4 syntax
 
+[2026-03-04] S57 — Created frontend helpers.ts
+  - File: mines-opnet/frontend/src/lib/helpers.ts
+  - formatBalance(raw, decimals): divides by 10^decimals, shows up to 4 decimal places, strips trailing zeros
+  - truncateAddress(addr): first 8 + '...' + last 6 chars, passthrough if addr <= 14 chars
+  - parseAmount(input, decimals): splits on '.', pads/truncates fractional part, converts to bigint with decimals
+  - toHex(bytes): Uint8Array to 0x-prefixed hex string
+  - npm run build succeeds: no TypeScript errors
+
 [2026-03-04] S56 — Created frontend config and provider
   - File: mines-opnet/frontend/src/config.ts — exports NETWORK (networks.testnet), RPC_URL, CONTRACT_ADDRESSES (all 4 contracts + pubkeys from deployed-addresses.json)
   - File: mines-opnet/frontend/src/lib/provider.ts — exports singleton JSONRpcProvider(RPC_URL, NETWORK) from 'opnet'

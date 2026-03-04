@@ -511,7 +511,7 @@
       "title": "Create frontend helpers.ts",
       "description": "Create src/lib/helpers.ts with: formatBalance(raw: bigint, decimals: number): string \u2014 formats with 4 decimal places, no trailing zeros. truncateAddress(addr: string): string \u2014 shows first 8 + last 6 chars. parseAmount(input: string, decimals: number): bigint \u2014 parses user input to bigint with decimals. toHex(bytes: Uint8Array): string \u2014 converts to 0x-prefixed hex string.",
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "acceptance": "All 4 utility functions exist and handle edge cases (zero, empty string, etc.).",
       "model": "sonnet"
     },
