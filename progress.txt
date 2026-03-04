@@ -243,3 +243,10 @@
   - All arithmetic via SafeMath
   - Selector: disburseProtocolFee() -> 0xe0a54d3d
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S30 — Build complete Mine contract (all S09-S29 methods)
+  - npm run build:mine succeeds with zero compilation errors
+  - Mine.wasm: 41KB, Mine.abi.json: 7KB generated
+  - 21 custom selectors registered: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, 6 fee getters, 2 address getters, 4 fee setters, claimControllerFee, claimProtocolFee, disburseProtocolFee
+  - Quality verified: all u256 arithmetic via SafeMath, no while loops, 10 unique storage pointers via Blockchain.nextPointer, CEI pattern in all state-changing methods
+  - No fixes needed — compiled clean on first attempt

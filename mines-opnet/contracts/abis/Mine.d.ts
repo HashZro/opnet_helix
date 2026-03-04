@@ -209,6 +209,16 @@ export type ClaimProtocolFee = CallResult<
     OPNetEvent<never>[]
 >;
 
+/**
+ * @description Represents the result of the disburseProtocolFee function call.
+ */
+export type DisburseProtocolFee = CallResult<
+    {
+        accrued: bigint;
+    },
+    OPNetEvent<never>[]
+>;
+
 // ------------------------------------------------------------------
 // IMine
 // ------------------------------------------------------------------
@@ -233,4 +243,5 @@ export interface IMine extends IOP_NETContract {
     setProtocolFee(): Promise<SetProtocolFee>;
     claimControllerFee(): Promise<ClaimControllerFee>;
     claimProtocolFee(): Promise<ClaimProtocolFee>;
+    disburseProtocolFee(): Promise<DisburseProtocolFee>;
 }

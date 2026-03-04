@@ -123,6 +123,12 @@ export const MineAbi = [
         outputs: [{ name: 'accrued', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
+    {
+        name: 'disburseProtocolFee',
+        inputs: [],
+        outputs: [{ name: 'accrued', type: ABIDataTypes.UINT256 }],
+        type: BitcoinAbiTypes.Function,
+    },
     ...MineEvents,
     ...OP_NET_ABI,
 ];

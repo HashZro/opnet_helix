@@ -259,6 +259,19 @@
                     "type": "UINT256"
                 }
             ]
+        },
+        {
+            "name": "disburseProtocolFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "accrued",
+                    "type": "UINT256"
+                }
+            ]
         }
     ],
     "events": []

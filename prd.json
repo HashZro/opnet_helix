@@ -268,7 +268,7 @@
       "title": "Build complete Mine contract",
       "description": "Run npm run build:mine. Fix any compilation errors from all the added methods (S09-S29). Verify all SafeMath usage, no while loops, all storage pointers unique.",
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "acceptance": "build/Mine.wasm exists and is non-empty. No compilation errors.",
       "model": "opus"
     },
