@@ -439,3 +439,11 @@
   - Deploy tx: 8ed1b8e91cab88ea15837bae4b7c7568eee12dbf3a4136b34812771810f8e9a4
   - Created deployed-addresses.json with minerToken address
   - Deployer p2tr: opt1pr55ynlpcvfqm40kv5m4743th37xach304jvzzzcyq632qj9w53tqvzmf5k
+
+[2026-03-04] S52 — Deployed Factory to testnet
+  - npm run deploy:factory succeeded — funding tx + deployment tx broadcast
+  - Contract address: opt1sqpaphjdgykdzrzkyc9lm2sqp4ruf7z7tgqv3wvx9
+  - Contract pubkey: 0x9c07eb1cf97be44831626f87967fa88b6238f733b9b865179c0c7a43a5270b9b
+  - Funding tx: cacb14631bc7ef9337ceaa602f7ad1bcd5a33713e81dfdbe58ab17f100f4286f
+  - Deploy tx: 11fa02e27f34fbcda382a3b2cae6240dcca57d715789783720359371954d3fb3
+  - Updated deployed-addresses.json with factory address

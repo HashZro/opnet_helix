@@ -466,7 +466,7 @@
       "title": "Deploy Factory to testnet",
       "description": "Run npm run deploy:factory. Save address to deployed-addresses.json.",
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "acceptance": "Factory deployed. Address saved.",
       "model": "opus"
     },
