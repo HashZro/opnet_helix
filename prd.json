@@ -529,7 +529,7 @@
       "title": "Create useWallet hook",
       "description": "Create src/hooks/useWallet.ts. React hook using useState/useEffect. State: address (string|null), isConnected (boolean), identityKey (string|null), tweakedKey (string|null), senderAddress (Address|null). connect(): instantiate OPWalletConnect, get wallet address, decode bech32 to tweaked hex, resolve identity key via provider.getPublicKeyInfo(tweakedHex, false), build Address.fromString(identityHex, '0x02'+tweakedHex.slice(2)). disconnect(): clear state. Import Address from @btc-vision/transaction, NOT from @btc-vision/bitcoin.",
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "acceptance": "Hook manages wallet state. connect() resolves identity key. disconnect() clears state.",
       "model": "sonnet"
     },

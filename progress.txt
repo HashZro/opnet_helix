@@ -505,6 +505,18 @@
   - Mine/MinerToken ABIs spread OP_20_ABI (extends OP_20), Factory/Staking spread OP_NET_ABI (extends OP_NET)
   - npm run build succeeds: no TypeScript errors
 
+[2026-03-04] S59 — Created useWallet hook
+  - File: mines-opnet/frontend/src/hooks/useWallet.ts
+  - Wraps useWalletConnect() from @btc-vision/walletconnect for connection management
+  - useEffect on walletAddress: decodes bech32 → tweaked hex via toOutputScript(), resolves identity key via provider.getPublicKeyInfo(tweakedHex, false)
+  - Builds senderAddress via Address.fromString(identityHex, '0x02' + tweakedHex.slice(2))
+  - connect() calls openConnectModal() from walletconnect context
+  - disconnect() calls wcDisconnect() + resets state to INITIAL_STATE
+  - Exports: address, isConnected, identityKey, tweakedKey, senderAddress, connect, disconnect, connectToWallet
+  - Address imported from @btc-vision/transaction (NOT @btc-vision/bitcoin)
+  - GOTCHA: WalletController is NOT exported from @btc-vision/walletconnect main index — must use useWalletConnect() context hook + WalletConnectProvider
+  - npm run build succeeds with no TypeScript errors
+
 [2026-03-04] S56 — Created frontend config and provider
   - File: mines-opnet/frontend/src/config.ts — exports NETWORK (networks.testnet), RPC_URL, CONTRACT_ADDRESSES (all 4 contracts + pubkeys from deployed-addresses.json)
   - File: mines-opnet/frontend/src/lib/provider.ts — exports singleton JSONRpcProvider(RPC_URL, NETWORK) from 'opnet'
