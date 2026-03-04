@@ -543,6 +543,17 @@
   - Placed outside @layer base (plain CSS rules) so !important overrides walletconnect styles
   - npm run build succeeds: no TypeScript errors
 
+[2026-03-04] S64 — Created useMines hook
+  - File: mines-opnet/frontend/src/hooks/useMines.ts
+  - Fetches mine count via getMineCount() from Factory contract (read-only, no sender)
+  - Loops getMineAtIndex(i) for each index to get mine addresses
+  - For each mine address, fetches in parallel: name, symbol, totalSupply, underlyingBalance, getWrapFee, getUnwrapFee
+  - Exports MineInfo interface: { address, name, symbol, underlyingBalance, totalSupply, wrapFee, unwrapFee }
+  - Uses cancelled flag for safe cleanup on unmount
+  - extractU256/extractString helpers handle opnet's flexible result shape (properties/result/decoded)
+  - GOTCHA: FACTORY_ABI/MINE_ABI type widening causes TS2345 — fix with `as any` cast on ABI arg to getContract
+  - npm run build succeeds: no TypeScript errors
+
 [2026-03-04] S60 — Created WalletButton component
   - File: mines-opnet/frontend/src/components/WalletButton.tsx
   - Uses useWallet hook for connection state and connect/disconnect callbacks

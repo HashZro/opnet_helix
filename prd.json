@@ -574,7 +574,7 @@
       "title": "Create useMines hook",
       "description": "Create src/hooks/useMines.ts. Fetches all mines from Factory contract. On mount: call getMineCount(), then loop getMineAtIndex(i) for each index. For each mine address, fetch: name, symbol (from OP_20 interface), underlyingBalance, totalSupply (to compute ratio), getWrapFee, getUnwrapFee. Use getContract from opnet with provider (no sender needed for reads). Return: mines array, loading boolean, error.",
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "acceptance": "Hook fetches mine list from Factory, enriches with on-chain data.",
       "model": "sonnet"
     },
