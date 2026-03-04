@@ -530,6 +530,13 @@
   - GOTCHA: import type ReactNode (not just import) — verbatimModuleSyntax requires type-only imports for types
   - npm run build succeeds: no TypeScript errors
 
+[2026-03-04] S62 — Created App.tsx with HashRouter and routes
+  - Replaced default Vite App.tsx with HashRouter (IPFS compatible)
+  - Created 5 placeholder pages: HomePage, MineDetailPage, WrapPage, UnwrapPage, StakingPage
+  - Routes: / → HomePage, /mine/:address → MineDetailPage, /wrap → WrapPage, /wrap/:address → WrapPage, /unwrap → UnwrapPage, /unwrap/:address → UnwrapPage, /stake → StakingPage
+  - All routes wrapped in Layout component (Navbar + main content area)
+  - npm run build succeeds: 69 modules transformed, no TypeScript errors
+
 [2026-03-04] S60 — Created WalletButton component
   - File: mines-opnet/frontend/src/components/WalletButton.tsx
   - Uses useWallet hook for connection state and connect/disconnect callbacks
