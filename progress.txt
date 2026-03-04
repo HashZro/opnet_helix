@@ -388,3 +388,14 @@
   - Mirrors stake() structure exactly but in reverse (sub instead of add, transfer instead of transferFrom)
   - All arithmetic via SafeMath
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-04] S46 — Added Staking claim() public method
+  - Public method: claim(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns UINT256
+  - Reads mine Address from calldata
+  - CEI pattern: disburse pending fees → update rewards → CHECKS (reward > 0, revert 'no rewards') → EFFECTS (reset reward to ZERO) → INTERACTIONS (get underlying via cross-contract call, transfer to sender)
+  - Added _getUnderlying(mineAddr) private helper: cross-contract call to Mine.getUnderlying() using GET_UNDERLYING_SELECTOR
+  - Added static GET_UNDERLYING_SELECTOR via encodeSelector('getUnderlying')
+  - Returns reward amount in BytesWriter(32)
+  - All arithmetic via SafeMath, follows Solidity Staking.sol claim() logic exactly
+  - Can't compile yet — no index.ts (story S48)

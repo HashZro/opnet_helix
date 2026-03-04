@@ -412,7 +412,7 @@
       "title": "Add Staking claim() method",
       "description": "Add public claim(calldata): BytesWriter. @method() @returns UINT256. Read mine Address. _disburse(mine). Read totalPoints. _updateRewards(mine, sender, totalPoints). Read user reward from userMineKey(pRecordReward). If ZERO, throw Revert('no rewards'). Reset reward to ZERO. Get underlying token address by calling Mine contract or storing it. TransferHelper.transfer(underlying, sender, reward). Return reward amount.",
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "acceptance": "claim() disburses, calculates owed rewards, transfers underlying tokens to user, resets reward.",
       "model": "opus"
     },

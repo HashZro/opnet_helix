@@ -124,6 +124,7 @@ export class Staking extends OP_NET {
     // --- Disburse: pull protocol fees from Mine and update totalPoints ---
 
     private static readonly DISBURSE_SELECTOR: Selector = encodeSelector('disburseProtocolFee');
+    private static readonly GET_UNDERLYING_SELECTOR: Selector = encodeSelector('getUnderlying');
 
     private _disburse(mineAddr: Address): u256 {
         // Build calldata: selector + recipient (this contract)
@@ -224,6 +225,48 @@ export class Staking extends OP_NET {
 
         const response = new BytesWriter(1);
         response.writeBoolean(true);
+        return response;
+    }
+
+    // --- Get underlying token address from Mine contract ---
+
+    private _getUnderlying(mineAddr: Address): Address {
+        const cd = new BytesWriter(4);
+        cd.writeSelector(Staking.GET_UNDERLYING_SELECTOR);
+
+        const result = Blockchain.call(mineAddr, cd);
+        return result.data.readAddress();
+    }
+
+    // --- Claim rewards ---
+
+    @method()
+    @returns({ name: 'reward', type: ABIDataTypes.UINT256 })
+    public claim(_calldata: Calldata): BytesWriter {
+        const mine: Address = _calldata.readAddress();
+        const sender: Address = Blockchain.tx.sender;
+
+        // Disburse pending protocol fees and update totalPoints
+        this._disburse(mine);
+
+        // Update user rewards
+        const totalPoints: u256 = this.lu(this.mineKey(this.pMineTotalPoints, mine));
+        this._updateRewards(mine, sender, totalPoints);
+
+        // CHECKS — read reward, revert if zero
+        const rewardKey: Uint8Array = this.userMineKey(this.pRecordReward, mine, sender);
+        const reward: u256 = this.lu(rewardKey);
+        if (reward == ZERO) throw new Revert('no rewards');
+
+        // EFFECTS — reset reward to zero
+        this.su(rewardKey, ZERO);
+
+        // INTERACTIONS — get underlying token from Mine and transfer to sender
+        const underlying: Address = this._getUnderlying(mine);
+        TransferHelper.transfer(underlying, sender, reward);
+
+        const response = new BytesWriter(32);
+        response.writeU256(reward);
         return response;
     }
 }
