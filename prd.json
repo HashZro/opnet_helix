@@ -718,7 +718,7 @@
       "title": "Build frontend for production",
       "description": "Run npm run build in frontend directory. Fix any TypeScript errors. Verify dist/ output exists. Test with npm run preview \u2014 all pages load, routing works, dark theme renders. Verify base: './' in vite.config.ts for IPFS compatibility.",
       "priority": 23,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build succeeds. dist/ contains index.html and assets. Preview serves correctly.",
       "model": "sonnet"
     },

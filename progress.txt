@@ -722,3 +722,13 @@
   - Mine grid was already grid-cols-1 md:grid-cols-2 lg:grid-cols-3 (no change needed)
   - Input fields already w-full (no change needed)
   - TransactionButton already w-full (no change needed)
+
+[2026-03-04] S80 — Built frontend for production
+  - Ran npm run build in mines-opnet/frontend/
+  - Build succeeded: tsc -b (no TypeScript errors) + vite build ✓
+  - dist/ contains index.html, assets/ (CSS + JS bundles)
+  - JS bundle: 5,526 kB (expected for crypto libs), gzip: 1,547 kB
+  - base: './' already set in vite.config.ts for IPFS compatibility
+  - HashRouter already in use (App.tsx)
+  - Warnings: eval in third-party libs (walletconnect, opnet protobuf) — not our code, non-blocking
+  - Large chunk warning — acceptable for this type of app (crypto/BTC libs are large)
