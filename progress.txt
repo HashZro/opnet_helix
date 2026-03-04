@@ -222,3 +222,13 @@
   - All arithmetic via SafeMath
   - Selector: claimControllerFee() -> 0x27cd0721
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S28 — Added Mine claimProtocolFee method
+  - Public method: claimProtocolFee(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns UINT256
+  - CEI pattern: CHECKS (requireFactoryOwner, accrued != ZERO) → EFFECTS (reset accumulator to ZERO, decrement _underlyingHeld) → INTERACTIONS (TransferHelper.transfer to sender)
+  - Reads _protocolFeeAccrued, reverts with 'no fee' if zero
+  - Resets accumulator, decrements _underlyingHeld by accrued amount, transfers underlying to factory owner
+  - All arithmetic via SafeMath
+  - Selector: claimProtocolFee() -> 0x43c5e731
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

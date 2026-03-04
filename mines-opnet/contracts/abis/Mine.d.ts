@@ -129,6 +129,86 @@ export type GetControllerFeeAccrued = CallResult<
     OPNetEvent<never>[]
 >;
 
+/**
+ * @description Represents the result of the getUnderlying function call.
+ */
+export type GetUnderlying = CallResult<
+    {
+        underlying: Address;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the getOwner function call.
+ */
+export type GetOwner = CallResult<
+    {
+        owner: Address;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the setWrapFee function call.
+ */
+export type SetWrapFee = CallResult<
+    {
+        success: boolean;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the setUnwrapFee function call.
+ */
+export type SetUnwrapFee = CallResult<
+    {
+        success: boolean;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the setControllerFee function call.
+ */
+export type SetControllerFee = CallResult<
+    {
+        success: boolean;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the setProtocolFee function call.
+ */
+export type SetProtocolFee = CallResult<
+    {
+        success: boolean;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the claimControllerFee function call.
+ */
+export type ClaimControllerFee = CallResult<
+    {
+        accrued: bigint;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the claimProtocolFee function call.
+ */
+export type ClaimProtocolFee = CallResult<
+    {
+        accrued: bigint;
+    },
+    OPNetEvent<never>[]
+>;
+
 // ------------------------------------------------------------------
 // IMine
 // ------------------------------------------------------------------
@@ -145,4 +225,12 @@ export interface IMine extends IOP_NETContract {
     getProtocolFee(): Promise<GetProtocolFee>;
     getProtocolFeeAccrued(): Promise<GetProtocolFeeAccrued>;
     getControllerFeeAccrued(): Promise<GetControllerFeeAccrued>;
+    getUnderlying(): Promise<GetUnderlying>;
+    getOwner(): Promise<GetOwner>;
+    setWrapFee(): Promise<SetWrapFee>;
+    setUnwrapFee(): Promise<SetUnwrapFee>;
+    setControllerFee(): Promise<SetControllerFee>;
+    setProtocolFee(): Promise<SetProtocolFee>;
+    claimControllerFee(): Promise<ClaimControllerFee>;
+    claimProtocolFee(): Promise<ClaimProtocolFee>;
 }

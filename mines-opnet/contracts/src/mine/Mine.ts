@@ -442,6 +442,31 @@ export class Mine extends OP20 {
         return response;
     }
 
+    @method()
+    @returns({ name: 'accrued', type: ABIDataTypes.UINT256 })
+    public claimProtocolFee(_calldata: Calldata): BytesWriter {
+        // CHECKS
+        this.requireFactoryOwner();
+
+        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
+        const accrued: u256 = this.lu(protoKey);
+        if (accrued == ZERO) throw new Revert('no fee');
+
+        // EFFECTS — reset accumulator, decrement _underlyingHeld
+        this.su(protoKey, ZERO);
+
+        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
+        this.su(heldKey, SafeMath.sub(this.lu(heldKey), accrued));
+
+        // INTERACTIONS — transfer accrued fees to factory owner
+        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+        TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued);
+
+        const response = new BytesWriter(32);
+        response.writeU256(accrued);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

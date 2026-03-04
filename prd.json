@@ -250,7 +250,7 @@
       "title": "Add Mine claimProtocolFee method",
       "description": "Add public claimProtocolFee(calldata): BytesWriter. requireFactoryOwner(). Read _protocolFeeAccrued. If ZERO, throw Revert('no fee'). Reset _protocolFeeAccrued to ZERO. Decrement _underlyingHeld by accrued amount. TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued). Return accrued in BytesWriter(32).",
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "acceptance": "Method transfers accrued protocol fees to factory owner, resets accumulator, decrements _underlyingHeld.",
       "model": "opus"
     },
