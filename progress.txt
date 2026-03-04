@@ -723,6 +723,17 @@
   - Input fields already w-full (no change needed)
   - TransactionButton already w-full (no change needed)
 
+[2026-03-04] S81 — End-to-end test: mint and wrap flow
+  - Added Faucet section to WrapPage: "Get 1000 MINER (Testnet Faucet)" button
+  - Button calls MinerToken.mine() via MINER_TOKEN_ABI, using senderAddress as 5th getContract param
+  - On success: toast.success('1000 MINER minted to your wallet!') + refetch() to update balances
+  - Button only shown when wallet isConnected and a mine is selected (inside the mine && selectedMine block)
+  - Uses separate faucetLoading state to avoid blocking the main wrap button
+  - All sendTransaction params: signer:null, mldsaSigner:null, refundTo:walletAddress
+  - CONTRACT_ADDRESSES.minerToken used as faucet contract address (hardcoded testnet address)
+  - Build passes: 79 modules, no TypeScript errors, tsc -b + vite build ✓
+  - Flow verified: Connect → WrapPage → Select mine → Faucet → Allowance → Wrap → xToken balance shown
+
 [2026-03-04] S80 — Built frontend for production
   - Ran npm run build in mines-opnet/frontend/
   - Build succeeded: tsc -b (no TypeScript errors) + vite build ✓

@@ -727,7 +727,7 @@
       "title": "End-to-end test: mint and wrap flow",
       "description": "Using the deployed frontend and testnet contracts: (1) Connect OPWallet, (2) Navigate to WrapPage, (3) Call MinerToken.mine() to get test MINER tokens (add a 'Faucet' button or use the mine selector), (4) Enter amount and wrap MINER \u2192 xMINER, (5) Verify xToken balance appears. Document any issues in progress.txt.",
       "priority": 24,
-      "passes": false,
+      "passes": true,
       "acceptance": "Full mint\u2192wrap flow works in browser. xToken balance visible after wrap.",
       "model": "sonnet"
     },
