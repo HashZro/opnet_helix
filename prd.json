@@ -313,7 +313,7 @@
       "title": "Add Factory registerMine method",
       "description": "Add public registerMine(calldata): BytesWriter. @method() @returns UINT256. requireOwner(). Read underlying (Address) and mineAddress (Address) from calldata. Store mapping: addrKey(pMineByUnderlying, underlying) \u2192 mineAddress. Store reverse: addrKey(pUnderlyingByMine, mineAddress) \u2192 underlying. Get current count from _mineCount. Store: idxKey(pMineByIndex, count) \u2192 mineAddress. Increment _mineCount. Return new count.",
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "acceptance": "registerMine stores both mappings, increments count. Owner-only.",
       "model": "opus"
     },

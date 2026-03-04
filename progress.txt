@@ -283,3 +283,16 @@
   - Added private requireOwner(): reads _owner via la(), compares with Blockchain.tx.sender, throws Revert('not owner')
   - Follows exact same access control pattern as Mine contract (AGENTS.md pattern)
   - Can't compile yet — no index.ts (story S37)
+
+[2026-03-03] S35 — Added Factory registerMine method
+  - Public method: registerMine(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns({ name: 'count', type: ABIDataTypes.UINT256 })
+  - requireOwner() access control
+  - Reads underlying (Address) and mineAddress (Address) from calldata
+  - Stores underlying → mine mapping via addrKey(pMineByUnderlying, underlying)
+  - Stores mine → underlying reverse mapping via addrKey(pUnderlyingByMine, mineAddress)
+  - Stores mine at current index via idxKey(pMineByIndex, count)
+  - Increments _mineCount via SafeMath.add(count, ONE)
+  - Returns new count in BytesWriter(32)
+  - All u256 arithmetic via SafeMath, CEI pattern followed
+  - Can't compile yet — no index.ts (story S37)

@@ -34,6 +34,33 @@ export class Factory extends OP_NET {
         if (Blockchain.tx.sender != owner) throw new Revert('not owner');
     }
 
+    @method()
+    @returns({ name: 'count', type: ABIDataTypes.UINT256 })
+    public registerMine(_calldata: Calldata): BytesWriter {
+        this.requireOwner();
+
+        const underlying: Address = _calldata.readAddress();
+        const mineAddress: Address = _calldata.readAddress();
+
+        // Store underlying -> mine mapping
+        this.sa(this.addrKey(this.pMineByUnderlying, underlying), mineAddress);
+
+        // Store mine -> underlying reverse mapping
+        this.sa(this.addrKey(this.pUnderlyingByMine, mineAddress), underlying);
+
+        // Store mine at current index
+        const count: u256 = this._mineCount.value;
+        this.sa(this.idxKey(this.pMineByIndex, count), mineAddress);
+
+        // Increment mine count
+        const newCount: u256 = SafeMath.add(count, ONE);
+        this._mineCount.value = newCount;
+
+        const response = new BytesWriter(32);
+        response.writeU256(newCount);
+        return response;
+    }
+
     // --- Storage key helpers ---
 
     @inline
