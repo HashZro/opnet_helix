@@ -538,7 +538,7 @@
       "title": "Create WalletButton component",
       "description": "Create src/components/WalletButton.tsx. Uses useWallet hook. When disconnected: shows 'Connect Wallet' button with purple/blue accent. When connected: shows truncated address. Click toggles connect/disconnect. Style: rounded, dark theme consistent.",
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "acceptance": "Component renders connect/disconnect states correctly.",
       "model": "sonnet"
     },
