@@ -260,3 +260,12 @@
   - Config constants at top: UNDERLYING_ADDRESS (env var or zero placeholder), MINE_DECIMALS=18, MINE_NAME='xMiner', MINE_SYMBOL='xMINER', fees all 50 (5%)
   - Added UNDERLYING_ADDRESS to .env.example
   - Script parses without syntax errors (node --experimental-strip-types --check)
+
+[2026-03-03] S32 — Created Factory contract class skeleton
+  - File: mines-opnet/contracts/src/factory/Factory.ts
+  - Extends OP_NET (non-token contract), marked @final
+  - All imports: Blockchain, BytesWriter, BytesReader, Calldata, OP_NET, Revert, SafeMath, StoredU256, Address from runtime; u256 from as-bignum
+  - Constants: ZERO, ONE, EMPTY_SUB (Uint8Array(30))
+  - Empty class body with onDeployment calling super.onDeployment first
+  - Follows AGENTS.md OP_NET non-token contract skeleton exactly
+  - Can't compile yet — no index.ts (story S37)

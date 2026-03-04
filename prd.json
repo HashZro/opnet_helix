@@ -286,7 +286,7 @@
       "title": "Create Factory contract class skeleton",
       "description": "Create mines-opnet/contracts/src/factory/Factory.ts. Class Factory extends OP_NET. Imports: Blockchain, BytesWriter, BytesReader, Calldata, OP_NET, Revert, SafeMath, StoredU256, Address. Import u256. Mark @final. Constants: ZERO, ONE, EMPTY_SUB = new Uint8Array(30).",
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with Factory class extending OP_NET, all imports, constants.",
       "model": "opus"
     },
