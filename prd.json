@@ -754,7 +754,7 @@
       "title": "Add MinerToken faucet button to frontend",
       "description": "Add a 'Get Test MINER' or 'Faucet' button to the HomePage or WrapPage. When clicked: calls MinerToken.mine() to mint 1000 MINER to the connected wallet. Shows success toast with minted amount. This makes testing easy for judges.",
       "priority": 25,
-      "passes": false,
+      "passes": true,
       "acceptance": "Faucet button visible, mints MINER tokens on click, shows confirmation.",
       "model": "sonnet"
     },

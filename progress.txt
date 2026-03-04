@@ -769,3 +769,15 @@
   - Frontend build: tsc -b (0 TypeScript errors) + vite build ✓ (79 modules)
   - Single-user test: rewards require fees disbursed (wrap activity needed); pending rewards show 0 until wrap occurs
   - Flow: Connect → StakingPage → Select mine → MINER Balance shows → Stake tab → enter amount → "Stake MINER" → allowance tx → stake tx → Staked Balance updates → Claim Rewards enabled after wrap fees accumulate
+
+[2026-03-04] S84 — Added MinerToken faucet button to HomePage
+  - Added faucet button to HomePage.tsx header row (visible when wallet connected)
+  - Button label: "🪙 Get 1000 MINER" with purple hover styling
+  - Calls MinerToken.mine() via getContract with senderAddress as 5th param
+  - On success: toast.success('1000 MINER minted to your wallet!')
+  - On failure: toast.error with parseContractError(err)
+  - Uses separate faucetLoading state, disabled + "Minting…" label while in flight
+  - All sendTransaction params: signer:null, mldsaSigner:null, refundTo:walletAddress
+  - Faucet now accessible from HomePage (no mine selection required) — easy for judges
+  - WrapPage faucet from S81 still present inside mine detail block
+  - Build passes: tsc -b (0 TypeScript errors) + vite build ✓ (79 modules)

@@ -1,5 +1,13 @@
+import { useState, useCallback } from 'react';
+import { getContract } from 'opnet';
 import { useMines } from '../hooks/useMines';
+import { useWallet } from '../hooks/useWallet';
+import { useToast } from '../contexts/ToastContext';
 import { MineCard } from '../components/MineCard';
+import { provider } from '../lib/provider';
+import { NETWORK, CONTRACT_ADDRESSES } from '../config';
+import { MINER_TOKEN_ABI } from '../lib/contracts';
+import { parseContractError } from '../lib/helpers';
 
 function SkeletonCard() {
     return (
@@ -25,12 +33,62 @@ function SkeletonCard() {
 
 export function HomePage() {
     const { mines, loading, error } = useMines();
+    const { senderAddress, address: walletAddress, isConnected } = useWallet();
+    const toast = useToast();
+    const [faucetLoading, setFaucetLoading] = useState(false);
+
+    const handleFaucet = useCallback(async () => {
+        if (!senderAddress || !walletAddress) {
+            toast.error('Connect your wallet first');
+            return;
+        }
+        setFaucetLoading(true);
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const minerContract = getContract<any>(
+                CONTRACT_ADDRESSES.minerToken,
+                MINER_TOKEN_ABI as any,
+                provider,
+                NETWORK,
+                senderAddress,
+            );
+            const sim = await minerContract.mine();
+            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
+            toast.info('Minting test MINER tokens...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (sim as any).sendTransaction({
+                signer: null,
+                mldsaSigner: null,
+                refundTo: walletAddress,
+                maximumAllowedSatToSpend: BigInt(100_000),
+                feeRate: 10,
+                network: NETWORK,
+                minGas: BigInt(100_000),
+            });
+            toast.success('1000 MINER minted to your wallet!');
+        } catch (err) {
+            toast.error(`Faucet failed: ${parseContractError(err)}`);
+        } finally {
+            setFaucetLoading(false);
+        }
+    }, [senderAddress, walletAddress, toast]);
 
     return (
         <div className="max-w-6xl mx-auto p-4 md:p-6">
-            <div className="mb-8">
-                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Mines</h1>
-                <p className="text-gray-400">Wrap OP_20 tokens into yield-bearing xTokens on Bitcoin L1.</p>
+            <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Mines</h1>
+                    <p className="text-gray-400">Wrap OP_20 tokens into yield-bearing xTokens on Bitcoin L1.</p>
+                </div>
+                {isConnected && (
+                    <button
+                        onClick={handleFaucet}
+                        disabled={faucetLoading}
+                        className="shrink-0 text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:border-purple-500 hover:text-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                        {faucetLoading ? 'Minting…' : '🪙 Get 1000 MINER'}
+                    </button>
+                )}
             </div>
 
             {error && (
