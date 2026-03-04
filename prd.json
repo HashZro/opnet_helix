@@ -646,7 +646,7 @@
       "title": "Create MineDetailPage",
       "description": "Create src/pages/MineDetailPage.tsx. Route param: :address. Uses useMine hook. Displays: mine name/symbol as title, underlying token info, ratio (formatted), wrap fee %, unwrap fee %, controller fee %, protocol fee %, total underlying balance, total xToken supply. If wallet connected: user's xToken balance, user's underlying value. Action buttons: 'Wrap' (links to /wrap/:address), 'Unwrap' (links to /unwrap/:address). Dark themed stat cards layout.",
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "acceptance": "Page displays all mine statistics. User balances shown when wallet connected. Action buttons link correctly.",
       "model": "sonnet"
     },
