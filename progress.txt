@@ -625,3 +625,14 @@
   - Disabled state: gray-700 bg, opacity-50, cursor-not-allowed
   - Normal state: purple-to-blue gradient button with hover transition
   - npm run build succeeds: no TypeScript errors
+
+[2026-03-04] S71 — Created UnwrapPage
+  - Replaced placeholder UnwrapPage.tsx with full unwrap flow implementation
+  - Mine selector dropdown shown when no :address URL param (uses useMines hook)
+  - TokenInput for xToken amount (max = userXBalance from useMine)
+  - Debounced preview (500ms): calls getUnwrappedAmount to show estimated underlying, exchange rate, unwrap fee %
+  - Unwrap button flow: simulate unwrap(xAmount), sendTransaction(signer:null, mldsaSigner:null) — no allowance step (burning own tokens)
+  - unwrapRate = underlyingBalance / totalSupply (inverse of wrapRate)
+  - Success banner on completion, refetch() called to update balances
+  - Underlying symbol derived by stripping 'x' prefix from xToken symbol (xMINER → MINER)
+  - npm run build succeeds: 75 modules, no TypeScript errors

@@ -637,7 +637,7 @@
       "title": "Create UnwrapPage",
       "description": "Create src/pages/UnwrapPage.tsx. Similar to WrapPage but reversed. TokenInput for xToken amount (user's xToken balance as max). Preview: calls getUnwrappedAmount to show estimated underlying received. Unwrap button: simulate unwrap(xAmount), sendTransaction(signer:null, mldsaSigner:null). No allowance step needed (burning own tokens). Show success with updated balances.",
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "acceptance": "Full unwrap flow: select mine \u2192 enter xToken amount \u2192 see preview \u2192 unwrap \u2192 success.",
       "model": "sonnet"
     },
