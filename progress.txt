@@ -494,6 +494,17 @@
   - toHex(bytes): Uint8Array to 0x-prefixed hex string
   - npm run build succeeds: no TypeScript errors
 
+[2026-03-04] S58 — Created frontend contract ABIs
+  - File: mines-opnet/frontend/src/lib/contracts.ts
+  - Defined MINER_TOKEN_ABI (mine() + OP_20_ABI spread)
+  - Defined MINE_ABI (21 custom methods + OP_20_ABI spread): wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, 6 fee getters, getUnderlying, getOwner, 4 fee setters, claimControllerFee, claimProtocolFee, disburseProtocolFee
+  - Defined FACTORY_ABI (registerMine, getMineAddress, getMineCount, getMineAtIndex + OP_NET_ABI spread)
+  - Defined STAKING_ABI (stake, unstake, claim, getRewards, getStakeBalance + OP_NET_ABI spread)
+  - Re-exported OP_20_ABI from opnet for standard token interactions
+  - ABIs use ABIDataTypes/BitcoinAbiTypes from 'opnet' — same format as compiler-generated .abi.ts files
+  - Mine/MinerToken ABIs spread OP_20_ABI (extends OP_20), Factory/Staking spread OP_NET_ABI (extends OP_NET)
+  - npm run build succeeds: no TypeScript errors
+
 [2026-03-04] S56 — Created frontend config and provider
   - File: mines-opnet/frontend/src/config.ts — exports NETWORK (networks.testnet), RPC_URL, CONTRACT_ADDRESSES (all 4 contracts + pubkeys from deployed-addresses.json)
   - File: mines-opnet/frontend/src/lib/provider.ts — exports singleton JSONRpcProvider(RPC_URL, NETWORK) from 'opnet'

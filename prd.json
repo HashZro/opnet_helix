@@ -520,7 +520,7 @@
       "title": "Create contract ABIs",
       "description": "Create src/lib/contracts.ts. Define ABI arrays for all 4 contracts matching their @method/@returns signatures. Each ABI entry: { name, type: 'function', inputs: [...], outputs: [...] }. MinerToken ABI: mine(). Mine ABI: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, getWrapFee, getUnwrapFee, getControllerFee, getProtocolFee, getProtocolFeeAccrued, getControllerFeeAccrued, getUnderlying, getOwner, setWrapFee, setUnwrapFee, setControllerFee, setProtocolFee, claimControllerFee, claimProtocolFee, disburseProtocolFee. Factory ABI: registerMine, getMineAddress, getMineCount, getMineAtIndex. Staking ABI: stake, unstake, claim, getRewards, getStakeBalance. Also export OP_20_ABI from opnet for standard token methods.",
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "acceptance": "All ABIs defined. Method names match contract implementations exactly.",
       "model": "sonnet"
     },
