@@ -407,3 +407,11 @@
   - Both are read-only (no state changes, no _disburse call)
   - All arithmetic via SafeMath
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-04] S48 — Created Staking index.ts and built contract
+  - File: mines-opnet/contracts/src/staking/index.ts (standard boilerplate pattern)
+  - Exact same pattern as MinerToken/Mine/Factory index.ts: Blockchain.contract factory, runtime exports, abort handler
+  - Build succeeds first try: Staking.wasm (25KB), Staking.wat, Staking.abi.json generated
+  - Selectors: stake() -> 0x2f949bae, unstake() -> 0xad1dbe09, getRewards() -> 0xef585f7a, getStakeBalance() -> 0xe582c7e9, claim() -> 0xa443c5e4
+  - All SafeMath usage verified, no while loops, 7 unique storage pointers via Blockchain.nextPointer
+  - No compilation fixes needed — compiled clean on first attempt
