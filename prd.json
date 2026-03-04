@@ -736,7 +736,7 @@
       "title": "End-to-end test: unwrap flow",
       "description": "Continuing from S81: (1) Navigate to UnwrapPage, (2) Enter xToken amount, (3) Unwrap xMINER \u2192 MINER, (4) Verify MINER balance increased (minus fees), (5) Verify ratio changed. Document results.",
       "priority": 24,
-      "passes": false,
+      "passes": true,
       "acceptance": "Full unwrap flow works. Balances update correctly. Fees deducted properly.",
       "model": "sonnet"
     },

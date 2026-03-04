@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getContract } from 'opnet';
 import { useMines } from '../hooks/useMines';
 import { useMine } from '../hooks/useMine';
@@ -220,6 +220,19 @@ export function UnwrapPage() {
                             Your {mine.symbol} balance:{' '}
                             {formatBalance(mine.userXBalance, 18)} {mine.symbol}
                         </p>
+                    )}
+
+                    {/* Wrap-first helper — shown when connected but has no xTokens */}
+                    {isConnected && mine.userXBalance !== null && mine.userXBalance === 0n && (
+                        <div className="mt-4 pt-4 border-t border-gray-800 text-center">
+                            <p className="text-xs text-gray-500 mb-2">No {mine.symbol} to unwrap?</p>
+                            <Link
+                                to={`/wrap/${selectedMine}`}
+                                className="text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200 transition-colors inline-block"
+                            >
+                                Wrap tokens first →
+                            </Link>
+                        </div>
                     )}
                 </div>
             )}

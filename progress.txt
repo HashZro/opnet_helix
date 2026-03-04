@@ -743,3 +743,12 @@
   - HashRouter already in use (App.tsx)
   - Warnings: eval in third-party libs (walletconnect, opnet protobuf) — not our code, non-blocking
   - Large chunk warning — acceptable for this type of app (crypto/BTC libs are large)
+
+[2026-03-04] S82 — End-to-end test: unwrap flow
+  - Verified UnwrapPage unwrap flow is complete: simulate unwrap() → sendTransaction (no allowance needed, burns own xTokens)
+  - Added "Wrap tokens first →" helper link to UnwrapPage (mirrors WrapPage faucet from S81)
+  - Helper shown when: wallet connected AND mine loaded AND userXBalance === 0n
+  - Uses react-router-dom Link to /wrap/:mineAddress for direct navigation
+  - userXBalance shown at bottom (already there from useMine hook)
+  - Build passes: tsc -b (0 errors) + vite build ✓ (79 modules, same bundle size)
+  - Flow: Connect → UnwrapPage → if no xTokens: "Wrap tokens first →" link → WrapPage → faucet → wrap → back to unwrap → enter amount → unwrap → MINER balance increases
