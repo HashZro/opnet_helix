@@ -377,3 +377,14 @@
   - Increments pMineSupply for mine via mineKey
   - All arithmetic via SafeMath
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-04] S45 — Added Staking unstake() public method
+  - Public method: unstake(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns BOOL
+  - Reads mine Address and amount u256 from calldata
+  - Validates amount > ZERO, throws Revert('zero amount')
+  - CEI pattern: CHECKS (amount > 0) → disburse pending fees → update rewards → EFFECTS (validate balance >= amount, decrement user balance, decrement mine supply) → INTERACTIONS (TransferHelper.transfer sends xMiner back to sender)
+  - Uses u256.lt(currentBal, amount) for balance validation, throws Revert('insufficient balance')
+  - Mirrors stake() structure exactly but in reverse (sub instead of add, transfer instead of transferFrom)
+  - All arithmetic via SafeMath
+  - Can't compile yet — no index.ts (story S48)

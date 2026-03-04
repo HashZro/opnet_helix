@@ -403,7 +403,7 @@
       "title": "Add Staking unstake() method",
       "description": "Add public unstake(calldata): BytesWriter. Read mine Address and amount u256. Validate amount > ZERO. _disburse(mine). Read totalPoints. _updateRewards. Read user balance, validate >= amount. Decrement user balance. Decrement mineSupply. TransferHelper.transfer(_xMiner, sender, amount). Return true.",
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "acceptance": "unstake() validates balance, decrements, transfers MINER tokens back to user.",
       "model": "opus"
     },
