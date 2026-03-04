@@ -202,7 +202,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
             <h2 className="text-lg font-semibold text-white">Staking</h2>
 
             {/* Stats row */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-gray-800 rounded-lg p-3">
                     <p className="text-xs text-gray-500 mb-1">Staked Balance</p>
                     <p className="text-sm font-medium text-white">

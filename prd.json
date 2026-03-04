@@ -709,7 +709,7 @@
       "title": "Mobile responsive adjustments",
       "description": "Review all pages on mobile viewport (375px width). Ensure: Navbar collapses to hamburger menu. Mine grid is single column. Input fields are full width. Buttons are full width on mobile. Stat cards stack vertically. Modal/popup fits screen. Text doesn't overflow. Touch targets are at least 44px.",
       "priority": 23,
-      "passes": false,
+      "passes": true,
       "acceptance": "All pages usable on 375px width viewport. No horizontal scroll. Touch-friendly.",
       "model": "sonnet"
     },

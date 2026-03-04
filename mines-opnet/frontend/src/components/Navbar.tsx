@@ -39,7 +39,7 @@ export function Navbar() {
                         <WalletButton />
                     </div>
                     <button
-                        className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+                        className="md:hidden p-2.5 text-gray-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                         onClick={() => setMenuOpen((prev) => !prev)}
                         aria-label="Toggle menu"
                     >
@@ -63,7 +63,7 @@ export function Navbar() {
                         <Link
                             key={link.to}
                             to={link.to}
-                            className="text-gray-400 hover:text-white text-sm font-medium px-1 transition-colors"
+                            className="text-gray-400 hover:text-white text-sm font-medium px-1 py-2.5 min-h-[44px] flex items-center transition-colors"
                             onClick={() => setMenuOpen(false)}
                         >
                             {link.label}

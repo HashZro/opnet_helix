@@ -39,7 +39,7 @@ export function StakingPage() {
         : 'TOKEN';
 
     return (
-        <div className="max-w-lg mx-auto p-6">
+        <div className="max-w-lg mx-auto p-4 md:p-6">
             <h1 className="text-2xl font-bold mb-6">Staking</h1>
 
             {/* Mine selector */}
@@ -66,7 +66,7 @@ export function StakingPage() {
                     {/* Mine stats skeleton */}
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-3">
                         <div className="h-4 w-24 bg-gray-700 rounded" />
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {[1, 2, 3, 4].map((i) => (
                                 <div key={i} className="bg-gray-800 rounded-lg p-3">
                                     <div className="h-3 w-20 bg-gray-700 rounded mb-2" />
@@ -78,7 +78,7 @@ export function StakingPage() {
                     {/* Staking panel skeleton */}
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5">
                         <div className="h-5 w-20 bg-gray-700 rounded" />
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="bg-gray-800 rounded-lg p-3">
                                 <div className="h-3 w-24 bg-gray-700 rounded mb-2" />
                                 <div className="h-4 w-16 bg-gray-700 rounded" />
@@ -109,7 +109,7 @@ export function StakingPage() {
                     {/* Mine stats */}
                     <div className="mb-6 bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-3">
                         <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide">Mine Stats</h2>
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className="bg-gray-800 rounded-lg p-3">
                                 <p className="text-xs text-gray-500 mb-1">Exchange Ratio</p>
                                 <p className="text-sm font-medium text-white">

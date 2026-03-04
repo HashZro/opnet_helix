@@ -27,9 +27,9 @@ export function HomePage() {
     const { mines, loading, error } = useMines();
 
     return (
-        <div className="max-w-6xl mx-auto p-6">
+        <div className="max-w-6xl mx-auto p-4 md:p-6">
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Mines</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Mines</h1>
                 <p className="text-gray-400">Wrap OP_20 tokens into yield-bearing xTokens on Bitcoin L1.</p>
             </div>
 
