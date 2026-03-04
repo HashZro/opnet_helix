@@ -313,3 +313,10 @@
   - Selectors: registerMine() -> 0xc2607fbb, getMineAddress() -> 0x286dadd5, getMineCount() -> 0x094869ba, getMineAtIndex() -> 0xb11fc80f
   - GOTCHA: Address has no toBytes() method — it IS a Uint8Array. Use addr[i] for byte access
   - Updated AGENTS.md addrKey pattern to use correct addr[i] syntax
+
+[2026-03-03] S38 — Created Factory deploy script
+  - File: mines-opnet/contracts/scripts/deploy-factory.ts
+  - Follows deploy-miner.ts pattern exactly: wallet loading, UTXO fetching, challenge, signing, broadcasting
+  - No calldata needed — Factory.onDeployment() only reads Blockchain.tx.sender (no calldata params)
+  - Changed WASM path to build/Factory.wasm, title to 'Factory Deployment'
+  - Script parses without syntax errors (node --experimental-strip-types --check)

@@ -340,7 +340,7 @@
       "title": "Create Factory deploy script",
       "description": "Create scripts/deploy-factory.ts following deploy pattern. Load build/Factory.wasm. Title: 'Factory Deployment'. No special calldata needed (onDeployment only reads sender).",
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists. Script follows deploy pattern correctly.",
       "model": "opus"
     },
