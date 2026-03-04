@@ -98,9 +98,8 @@ private addrKey(ptr: u16, addr: Address): Uint8Array {
     const k = new Uint8Array(32);
     k[0] = u8((ptr >> 8) & 0xFF);
     k[1] = u8(ptr & 0xFF);
-    const raw = addr.toBytes();
-    for (let i = 0; i < 30; i++) {
-        k[i + 2] = i < raw.length ? raw[i] : 0;
+    for (let i: i32 = 0; i < 30; i++) {
+        k[i + 2] = addr[i];
     }
     return k;
 }
@@ -239,3 +238,4 @@ asc src/contract-name/index.ts --target targetname --measure --uncheckedBehavior
 7. Frontend: identity key ≠ tweaked pubkey — use identity for ALL contract calls
 8. Frontend: `maximumAllowedSatToSpend` + `minGas` must be < wallet balance
 9. `OP20.totalSupply(_: Calldata)` is a public @method returning BytesWriter — for internal u256 access use `this._totalSupply.value` instead
+10. `Address` extends `Uint8Array` — there is NO `.toBytes()` method. Index directly into the Address (e.g., `addr[i]`) for byte access in key builders

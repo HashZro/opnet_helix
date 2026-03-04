@@ -331,7 +331,7 @@
       "title": "Create Factory index.ts and build",
       "description": "Create src/factory/index.ts boilerplate (same pattern). Run npm run build:factory. Fix compilation errors.",
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "acceptance": "build/Factory.wasm exists and is non-empty.",
       "model": "opus"
     },

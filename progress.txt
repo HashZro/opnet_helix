@@ -304,3 +304,12 @@
   - All decorated with @method() and appropriate @returns (ADDRESS or UINT256)
   - getMineAtIndex validates bounds and throws Revert('index out of bounds')
   - Can't compile yet — no index.ts (story S37)
+
+[2026-03-03] S37 — Created Factory index.ts and built contract
+  - File: mines-opnet/contracts/src/factory/index.ts (standard boilerplate pattern)
+  - Fixed compilation error: Address.toBytes() does not exist — Address extends Uint8Array, index directly via addr[i]
+  - Updated addrKey() to use `addr[i]` instead of `addr.toBytes()` + length check
+  - Build succeeds: Factory.wasm (19KB), Factory.abi.json generated
+  - Selectors: registerMine() -> 0xc2607fbb, getMineAddress() -> 0x286dadd5, getMineCount() -> 0x094869ba, getMineAtIndex() -> 0xb11fc80f
+  - GOTCHA: Address has no toBytes() method — it IS a Uint8Array. Use addr[i] for byte access
+  - Updated AGENTS.md addrKey pattern to use correct addr[i] syntax

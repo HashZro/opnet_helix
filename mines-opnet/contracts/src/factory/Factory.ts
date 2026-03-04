@@ -106,9 +106,8 @@ export class Factory extends OP_NET {
         const k = new Uint8Array(32);
         k[0] = u8((ptr >> 8) & 0xff);
         k[1] = u8(ptr & 0xff);
-        const raw = addr.toBytes();
         for (let i: i32 = 0; i < 30; i++) {
-            k[i + 2] = i < raw.length ? raw[i] : 0;
+            k[i + 2] = addr[i];
         }
         return k;
     }
