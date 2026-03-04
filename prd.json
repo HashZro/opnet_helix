@@ -322,7 +322,7 @@
       "title": "Add Factory view methods",
       "description": "Add 3 public view methods to Factory: getMineAddress(calldata) \u2014 reads underlying Address, returns mine Address from addrKey lookup. getMineCount(calldata) \u2014 returns _mineCount.value. getMineAtIndex(calldata) \u2014 reads index u256, validates < _mineCount.value, returns mine Address from idxKey lookup. All @method() with appropriate @returns.",
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "acceptance": "All 3 views return correct data. getMineAtIndex validates bounds.",
       "model": "opus"
     },

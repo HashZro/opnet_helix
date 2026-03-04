@@ -296,3 +296,11 @@
   - Returns new count in BytesWriter(32)
   - All u256 arithmetic via SafeMath, CEI pattern followed
   - Can't compile yet — no index.ts (story S37)
+
+[2026-03-03] S36 — Added Factory view methods
+  - getMineAddress(_calldata): reads underlying Address, looks up mine via addrKey(pMineByUnderlying), returns Address via writeAddress()
+  - getMineCount(_calldata): returns _mineCount.value in BytesWriter(32)
+  - getMineAtIndex(_calldata): reads index u256, validates idx < count via u256.lt(), looks up mine via idxKey(pMineByIndex), returns Address
+  - All decorated with @method() and appropriate @returns (ADDRESS or UINT256)
+  - getMineAtIndex validates bounds and throws Revert('index out of bounds')
+  - Can't compile yet — no index.ts (story S37)

@@ -61,6 +61,36 @@ export class Factory extends OP_NET {
         return response;
     }
 
+    @method()
+    @returns({ name: 'mineAddress', type: ABIDataTypes.ADDRESS })
+    public getMineAddress(_calldata: Calldata): BytesWriter {
+        const underlying: Address = _calldata.readAddress();
+        const mine: Address = this.la(this.addrKey(this.pMineByUnderlying, underlying));
+        const response = new BytesWriter(32);
+        response.writeAddress(mine);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'count', type: ABIDataTypes.UINT256 })
+    public getMineCount(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this._mineCount.value);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'mineAddress', type: ABIDataTypes.ADDRESS })
+    public getMineAtIndex(_calldata: Calldata): BytesWriter {
+        const idx: u256 = _calldata.readU256();
+        const count: u256 = this._mineCount.value;
+        if (!u256.lt(idx, count)) throw new Revert('index out of bounds');
+        const mine: Address = this.la(this.idxKey(this.pMineByIndex, idx));
+        const response = new BytesWriter(32);
+        response.writeAddress(mine);
+        return response;
+    }
+
     // --- Storage key helpers ---
 
     @inline
