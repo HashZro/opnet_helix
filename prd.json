@@ -367,7 +367,7 @@
       "title": "Add Staking onDeployment",
       "description": "Override onDeployment: call super.onDeployment first. Read xMiner Address from calldata. Store _xMiner and _owner (= tx.sender).",
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "acceptance": "onDeployment reads xMiner address, stores both fields.",
       "model": "opus"
     },

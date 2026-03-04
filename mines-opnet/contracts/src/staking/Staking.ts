@@ -34,6 +34,11 @@ export class Staking extends OP_NET {
 
     public override onDeployment(_calldata: Calldata): void {
         super.onDeployment(_calldata);
+
+        const xMiner: Address = _calldata.readAddress();
+
+        this.sa(this.fieldKeySimple(this._xMiner), xMiner);
+        this.sa(this.fieldKeySimple(this._owner), Blockchain.tx.sender);
     }
 
     // --- Storage key helpers ---

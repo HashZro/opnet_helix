@@ -338,3 +338,11 @@
   - su/lu/sa/la raw storage helpers — identical to Factory/Mine pattern
   - Follows AGENTS.md patterns exactly, uses addr[i] byte access (no toBytes())
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-03] S41 — Added Staking onDeployment
+  - Overrides onDeployment, calls super.onDeployment(_calldata) FIRST
+  - Reads xMiner Address from calldata via _calldata.readAddress()
+  - Stores _xMiner via sa(fieldKeySimple(_xMiner), xMiner)
+  - Stores _owner as Blockchain.tx.sender via sa(fieldKeySimple(_owner), sender)
+  - Follows exact same pattern as Mine/Factory onDeployment
+  - Can't compile yet — no index.ts (story S48)
