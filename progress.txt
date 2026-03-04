@@ -592,6 +592,17 @@
   - Input hides number spinners via Tailwind appearance-none utilities
   - npm run build succeeds: no TypeScript errors
 
+[2026-03-04] S69 — Created useMine hook
+  - File: mines-opnet/frontend/src/hooks/useMine.ts
+  - Takes mineAddress (string | null) parameter; returns data, loading, error, refetch
+  - Fetches in parallel: name, symbol, totalSupply, underlyingBalance, all 4 fees, underlyingAddress, ownerAddress
+  - ratio = underlyingBalance / totalSupply (defaults to 1.0 when supply is zero)
+  - When wallet connected: fetches userXBalance (mine.balanceOf), userUnderlyingBalance (underlying token.balanceOf), userUnderlyingValue (mine.getUnderlyingAmount)
+  - refetch uses fetchTrigger counter pattern (increment → effect re-runs) — no logic duplication
+  - extractAddress helper added for ADDRESS-type results (alongside existing extractU256/extractString)
+  - User null sentinel values (not 0) to distinguish 'not connected' from 'zero balance'
+  - npm run build succeeds: 72 modules, no TypeScript errors
+
 [2026-03-04] S68 — Created TransactionButton component
   - File: mines-opnet/frontend/src/components/TransactionButton.tsx
   - Props: onClick (async), label, disabled, loading (optional external override)

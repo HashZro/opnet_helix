@@ -619,7 +619,7 @@
       "title": "Create useMine hook",
       "description": "Create src/hooks/useMine.ts. Takes mine address as param. Fetches: name, symbol, totalSupply, underlyingBalance (ratio = balance/supply), all fees, underlying token address, owner. If wallet connected: fetches user's xToken balance via OP_20 balanceOf, user's underlying token balance, user's underlying value (via getUnderlyingAmount). Returns all data + loading + error + refetch function.",
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "acceptance": "Hook fetches comprehensive mine data including user-specific balances when wallet connected.",
       "model": "sonnet"
     },
