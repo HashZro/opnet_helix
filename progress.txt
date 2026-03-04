@@ -329,3 +329,12 @@
   - onDeployment calls super.onDeployment first (empty body — storage/methods added in S40+)
   - Follows Factory.ts / AGENTS.md OP_NET skeleton pattern exactly
   - Can't compile yet — no index.ts (later story)
+
+[2026-03-03] S40 — Added Staking storage pointers and key helpers
+  - 7 storage pointers via Blockchain.nextPointer: _xMiner, _owner, pMineSupply, pMineTotalPoints, pRecordBalance, pRecordReward, pRecordLastPoints
+  - fieldKeySimple(ptr): standard [ptr(2)] + zeros pattern
+  - mineKey(ptr, mine): [ptr(2)] + [mine first 30 bytes] — same as Factory.addrKey pattern
+  - userMineKey(ptr, mine, user): [ptr(2)] + [mine first 15 bytes] + [user first 15 bytes] — compound key for per-user-per-mine records
+  - su/lu/sa/la raw storage helpers — identical to Factory/Mine pattern
+  - Follows AGENTS.md patterns exactly, uses addr[i] byte access (no toBytes())
+  - Can't compile yet — no index.ts (story S48)

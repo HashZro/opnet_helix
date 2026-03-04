@@ -358,7 +358,7 @@
       "title": "Add Staking storage pointers and key helpers",
       "description": "Add to Staking: _xMiner (u16, Address of MINER token), _owner (u16). Per-mine pointers: pMineSupply (u16), pMineTotalPoints (u16). Per-user-per-mine pointers: pRecordBalance (u16), pRecordReward (u16), pRecordLastPoints (u16). Add helpers: su, lu, sa, la, fieldKeySimple (same pattern). Add mineKey(ptr, mine: Address): Uint8Array \u2014 [ptr(2)] + [mine first 30 bytes]. Add userMineKey(ptr, mine: Address, user: Address): Uint8Array \u2014 [ptr(2)] + [mine first 15 bytes] + [user first 15 bytes] (compound key for 2 addresses).",
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "acceptance": "Staking has 7 storage pointers, su/lu/sa/la helpers, mineKey and userMineKey compound key builders.",
       "model": "opus"
     },
