@@ -365,3 +365,15 @@
   - All arithmetic via SafeMath — no raw operators
   - PATTERN: Cross-contract calls use Blockchain.call(target, calldata) — returns CallResult with .data BytesReader
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-03] S44 — Added Staking stake() public method
+  - Public method: stake(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns BOOL
+  - Reads mine Address and amount u256 from calldata
+  - Validates amount > ZERO, throws Revert('zero amount')
+  - CEI pattern: CHECKS (amount > 0) → disburse pending fees → update rewards → EFFECTS (increment user balance, increment mine supply) → INTERACTIONS (TransferHelper.transferFrom pulls xMiner from sender)
+  - Reads xMiner address from storage via la(fieldKeySimple(_xMiner))
+  - Increments pRecordBalance for user via userMineKey
+  - Increments pMineSupply for mine via mineKey
+  - All arithmetic via SafeMath
+  - Can't compile yet — no index.ts (story S48)

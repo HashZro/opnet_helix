@@ -394,7 +394,7 @@
       "title": "Add Staking stake() method",
       "description": "Add public stake(calldata): BytesWriter. @method() @returns BOOL. Read mine Address and amount u256 from calldata. Validate amount > ZERO. Call _disburse(mine) to pull pending fees. Read current totalPoints. Call _updateRewards(mine, sender, totalPoints). TransferHelper.transferFrom(_xMiner, sender, contractAddress, amount). Increment user balance in userMineKey(pRecordBalance). Increment mineSupply in mineKey(pMineSupply). Return true.",
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "acceptance": "stake() disburses, updates rewards, transfers MINER tokens in, increments balances.",
       "model": "opus"
     },

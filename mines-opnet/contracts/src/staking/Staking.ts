@@ -152,4 +152,41 @@ export class Staking extends OP_NET {
 
         return disbursed;
     }
+
+    // --- Public methods ---
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public stake(_calldata: Calldata): BytesWriter {
+        const mine: Address = _calldata.readAddress();
+        const amount: u256 = _calldata.readU256();
+
+        // CHECKS
+        if (amount == ZERO) throw new Revert('zero amount');
+
+        // Disburse pending protocol fees and update totalPoints
+        this._disburse(mine);
+
+        // Read updated totalPoints and update user rewards
+        const totalPoints: u256 = this.lu(this.mineKey(this.pMineTotalPoints, mine));
+        const sender: Address = Blockchain.tx.sender;
+        this._updateRewards(mine, sender, totalPoints);
+
+        // EFFECTS — increment user balance and mine supply
+        const balKey: Uint8Array = this.userMineKey(this.pRecordBalance, mine, sender);
+        const currentBal: u256 = this.lu(balKey);
+        this.su(balKey, SafeMath.add(currentBal, amount));
+
+        const supplyKey: Uint8Array = this.mineKey(this.pMineSupply, mine);
+        const currentSupply: u256 = this.lu(supplyKey);
+        this.su(supplyKey, SafeMath.add(currentSupply, amount));
+
+        // INTERACTIONS — pull xMiner tokens from sender
+        const xMiner: Address = this.la(this.fieldKeySimple(this._xMiner));
+        TransferHelper.transferFrom(xMiner, sender, Blockchain.contractAddress, amount);
+
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
 }
