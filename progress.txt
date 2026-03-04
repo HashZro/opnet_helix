@@ -269,3 +269,11 @@
   - Empty class body with onDeployment calling super.onDeployment first
   - Follows AGENTS.md OP_NET non-token contract skeleton exactly
   - Can't compile yet — no index.ts (story S37)
+
+[2026-03-03] S33 — Added Factory storage and helpers
+  - 5 storage fields: _owner (u16), _mineCount (StoredU256), pMineByUnderlying (u16), pMineByIndex (u16), pUnderlyingByMine (u16)
+  - All pointers via Blockchain.nextPointer, _mineCount uses EMPTY_SUB for sub-pointer
+  - 3 key builders: fieldKeySimple(ptr), addrKey(ptr, addr), idxKey(ptr, idx)
+  - 4 raw storage helpers: su, lu, sa, la — identical to Mine/MultSigVault patterns
+  - addrKey: [ptr(2)] + [addr first 30 bytes], idxKey: [ptr(2)] + [zeros(26)] + [idx_lo32(4)]
+  - Can't compile yet — no index.ts (story S37)

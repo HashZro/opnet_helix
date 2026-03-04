@@ -295,7 +295,7 @@
       "title": "Add Factory storage and helpers",
       "description": "Add to Factory: Storage: _owner (u16), _mineCount (StoredU256 with Blockchain.nextPointer and EMPTY_SUB), pMineByUnderlying (u16 for mapping underlying\u2192mine), pMineByIndex (u16 for mapping index\u2192mine), pUnderlyingByMine (u16 for reverse lookup mine\u2192underlying). Storage helpers: su, lu, sa, la, fieldKeySimple (same as Mine). Add addrKey(ptr, addr) for address-keyed lookups \u2014 key format: [ptr(2)] + [addr first 30 bytes]. Add idxKey(ptr, idx: u256) for index-keyed lookups \u2014 key format: [ptr(2)] + [zeros(26)] + [idx_lo32(4)].",
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "acceptance": "Factory has 5 storage fields, all helper methods for different key patterns.",
       "model": "opus"
     },
