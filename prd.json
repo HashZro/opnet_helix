@@ -772,7 +772,7 @@
       "title": "Create submission materials",
       "description": "Take screenshots of: (1) HomePage with mine list, (2) WrapPage with amount entered, (3) MineDetailPage with stats, (4) StakingPage. Write 2-3 sentence app description. Ensure GitHub repo is public with README. Prepare tweet text with #opnetvibecode @opnetbtc.",
       "priority": 25,
-      "passes": false,
+      "passes": true,
       "acceptance": "Screenshots saved. Description written. GitHub repo ready. Tweet drafted.",
       "model": "sonnet"
     }

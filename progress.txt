@@ -792,3 +792,10 @@
   - .vercel/ directory created in frontend/ (added to .gitignore by Vercel CLI)
   - All pages accessible: /, /mine/:address, /wrap, /unwrap, /stake (HashRouter routes)
   - Wallet connection works from deployed domain (walletconnect uses injected OPWallet extension)
+
+[2026-03-04] S86 — Created submission materials
+  - Wrote README.md at repo root (proper project description, architecture, user flows, tech stack)
+  - Replaced default Vite README in mines-opnet/frontend/README.md with project-specific docs
+  - Created SUBMISSION.md with: 2-3 sentence app description, tweet text (#opnetvibecode @opnetbtc), screenshot checklist
+  - Screenshots require a running browser — manual step documented in SUBMISSION.md
+  - All acceptance criteria met: description written, GitHub README ready, tweet drafted
