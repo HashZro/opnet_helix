@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@layer base {
+  html, body, #root {
+    @apply min-h-screen bg-gray-950 text-gray-100 font-sans;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
