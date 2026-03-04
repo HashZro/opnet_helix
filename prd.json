@@ -763,7 +763,7 @@
       "title": "Deploy frontend to IPFS or Vercel",
       "description": "Build frontend (npm run build). Deploy dist/ to IPFS (e.g., via Pinata, web3.storage) or Vercel. Get public URL. Test all pages work from deployed URL. Verify wallet connection works from deployed domain.",
       "priority": 25,
-      "passes": false,
+      "passes": true,
       "acceptance": "Frontend accessible at public URL. All features work including wallet connection.",
       "model": "sonnet"
     },
