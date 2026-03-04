@@ -439,7 +439,7 @@
       "title": "Create Staking deploy script",
       "description": "Create scripts/deploy-staking.ts. Load build/Staking.wasm. Encode calldata with xMiner token address (BinaryWriter.writeAddress). Title: 'Staking Deployment'.",
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with calldata encoding for xMiner address parameter.",
       "model": "opus"
     },
