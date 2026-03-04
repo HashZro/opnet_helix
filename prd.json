@@ -565,7 +565,7 @@
       "title": "Fix WalletConnect popup CSS",
       "description": "Add global CSS to fix OPWallet connect popup positioning. In globals.css or a dedicated override: .walletconnect-modal__base { position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; z-index: 99999 !important; } Ensure popup appears centered and above all content.",
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "acceptance": "WalletConnect popup appears centered as a modal overlay.",
       "model": "sonnet"
     },
