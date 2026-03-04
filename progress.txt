@@ -423,3 +423,9 @@
   - Config: XMINER_ADDRESS from env var or zero placeholder
   - Added XMINER_ADDRESS to .env.example
   - Script parses without syntax errors (node --experimental-strip-types --check)
+
+[2026-03-04] S50 — Built all 4 contracts successfully
+  - npm run build completes with zero compilation errors
+  - MinerToken.wasm (35KB), Mine.wasm (41KB), Factory.wasm (19KB), Staking.wasm (25KB) all generated
+  - Only warnings are unused event declarations from btc-runtime base classes — non-blocking
+  - No fixes needed — all contracts compiled clean

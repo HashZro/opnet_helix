@@ -448,7 +448,7 @@
       "title": "Build all 4 contracts successfully",
       "description": "Run npm run build (all targets). Fix any remaining compilation errors across all contracts. Verify all 4 WASM files exist in build/.",
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "acceptance": "build/MinerToken.wasm, build/Mine.wasm, build/Factory.wasm, build/Staking.wasm all exist and are non-empty.",
       "model": "opus"
     },
