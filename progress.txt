@@ -320,3 +320,12 @@
   - No calldata needed — Factory.onDeployment() only reads Blockchain.tx.sender (no calldata params)
   - Changed WASM path to build/Factory.wasm, title to 'Factory Deployment'
   - Script parses without syntax errors (node --experimental-strip-types --check)
+
+[2026-03-03] S39 — Created Staking contract class skeleton
+  - File: mines-opnet/contracts/src/staking/Staking.ts
+  - Extends OP_NET (non-token contract), marked @final
+  - All imports: Blockchain, BytesWriter, BytesReader, Calldata, OP_NET, Revert, SafeMath, StoredU256, TransferHelper, Address from runtime; u256 from as-bignum
+  - Constants: ZERO, ONE, EMPTY_SUB (Uint8Array(30)), POINT_MULTIPLIER (10^18 via u256.fromString)
+  - onDeployment calls super.onDeployment first (empty body — storage/methods added in S40+)
+  - Follows Factory.ts / AGENTS.md OP_NET skeleton pattern exactly
+  - Can't compile yet — no index.ts (later story)

@@ -349,7 +349,7 @@
       "title": "Create Staking contract class skeleton",
       "description": "Create mines-opnet/contracts/src/staking/Staking.ts. Class Staking extends OP_NET. Same imports as Factory plus TransferHelper. Mark @final. Constants: ZERO, ONE, EMPTY_SUB, POINT_MULTIPLIER = u256.fromString('1000000000000000000').",
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "acceptance": "File exists with Staking extending OP_NET, all imports, POINT_MULTIPLIER constant.",
       "model": "opus"
     },
