@@ -365,6 +365,56 @@ export class Mine extends OP20 {
         return response;
     }
 
+    // ── Fee setters ──
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setWrapFee(_calldata: Calldata): BytesWriter {
+        this.requireOwnerOrFactory();
+        const fee: u256 = _calldata.readU256();
+        if (u256.gt(fee, MAX_DEPOSIT_WITHDRAW_FEE)) throw new Revert('fee too high');
+        this.su(this.fieldKeySimple(this._wrapFee), fee);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setUnwrapFee(_calldata: Calldata): BytesWriter {
+        this.requireOwnerOrFactory();
+        const fee: u256 = _calldata.readU256();
+        if (u256.gt(fee, MAX_DEPOSIT_WITHDRAW_FEE)) throw new Revert('fee too high');
+        this.su(this.fieldKeySimple(this._unwrapFee), fee);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setControllerFee(_calldata: Calldata): BytesWriter {
+        this.requireOwnerOrFactory();
+        const fee: u256 = _calldata.readU256();
+        if (u256.gt(fee, MAX_CONTROLLER_PROTOCOL_FEE)) throw new Revert('fee too high');
+        this.su(this.fieldKeySimple(this._controllerFee), fee);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setProtocolFee(_calldata: Calldata): BytesWriter {
+        this.requireFactoryOwner();
+        const fee: u256 = _calldata.readU256();
+        if (u256.gt(fee, MAX_CONTROLLER_PROTOCOL_FEE)) throw new Revert('fee too high');
+        this.su(this.fieldKeySimple(this._protocolFee), fee);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

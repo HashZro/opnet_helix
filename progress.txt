@@ -203,3 +203,12 @@
   - Both decorated with @method() and @returns ADDRESS type
   - Selectors: getUnderlying() -> 0x49fc993a, getOwner() -> 0x39d26091
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S26 — Added Mine fee setter methods
+  - 4 public methods: setWrapFee, setUnwrapFee, setControllerFee, setProtocolFee
+  - setWrapFee/setUnwrapFee: requireOwnerOrFactory(), validate <= MAX_DEPOSIT_WITHDRAW_FEE (200)
+  - setControllerFee: requireOwnerOrFactory(), validate <= MAX_CONTROLLER_PROTOCOL_FEE (100)
+  - setProtocolFee: requireFactoryOwner() only, validate <= MAX_CONTROLLER_PROTOCOL_FEE (100)
+  - All use u256.gt() for comparison, store via su(fieldKeySimple()), return true in BytesWriter(1)
+  - Selectors: setWrapFee() -> 0xa9528f3c, setUnwrapFee() -> 0x3031fa57, setControllerFee() -> 0xed4bf438, setProtocolFee() -> 0x37a79cd7
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

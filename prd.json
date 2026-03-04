@@ -232,7 +232,7 @@
       "title": "Add Mine fee setter methods",
       "description": "Add 4 public methods to Mine: setWrapFee(calldata) \u2014 reads fee u256, requireOwnerOrFactory(), validate fee <= MAX_DEPOSIT_WITHDRAW_FEE, store. setUnwrapFee(calldata) \u2014 same pattern. setControllerFee(calldata) \u2014 reads fee, requireOwnerOrFactory(), validate <= MAX_CONTROLLER_PROTOCOL_FEE, store. setProtocolFee(calldata) \u2014 reads fee, requireFactoryOwner() only, validate <= MAX_CONTROLLER_PROTOCOL_FEE, store. All return boolean true in BytesWriter(1).",
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "acceptance": "All 4 setters exist with proper access control and validation. setProtocolFee restricted to factory owner only.",
       "model": "opus"
     },
