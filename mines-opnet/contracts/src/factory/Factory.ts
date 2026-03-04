@@ -26,6 +26,12 @@ export class Factory extends OP_NET {
 
     public override onDeployment(_calldata: Calldata): void {
         super.onDeployment(_calldata);
+        this.sa(this.fieldKeySimple(this._owner), Blockchain.tx.sender);
+    }
+
+    private requireOwner(): void {
+        const owner = this.la(this.fieldKeySimple(this._owner));
+        if (Blockchain.tx.sender != owner) throw new Revert('not owner');
     }
 
     // --- Storage key helpers ---

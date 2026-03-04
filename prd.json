@@ -304,7 +304,7 @@
       "title": "Add Factory onDeployment and requireOwner",
       "description": "Override onDeployment: call super.onDeployment first. Store Blockchain.tx.sender as _owner. Add private requireOwner() that checks sender == _owner, throws Revert('not owner').",
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "acceptance": "onDeployment stores owner. requireOwner validates caller.",
       "model": "opus"
     },

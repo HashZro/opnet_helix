@@ -277,3 +277,9 @@
   - 4 raw storage helpers: su, lu, sa, la — identical to Mine/MultSigVault patterns
   - addrKey: [ptr(2)] + [addr first 30 bytes], idxKey: [ptr(2)] + [zeros(26)] + [idx_lo32(4)]
   - Can't compile yet — no index.ts (story S37)
+
+[2026-03-03] S34 — Added Factory onDeployment and requireOwner
+  - onDeployment now stores Blockchain.tx.sender as _owner via sa(fieldKeySimple(_owner), sender)
+  - Added private requireOwner(): reads _owner via la(), compares with Blockchain.tx.sender, throws Revert('not owner')
+  - Follows exact same access control pattern as Mine contract (AGENTS.md pattern)
+  - Can't compile yet — no index.ts (story S37)
