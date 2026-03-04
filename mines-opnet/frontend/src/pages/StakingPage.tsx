@@ -60,10 +60,41 @@ export function StakingPage() {
                 </select>
             </div>
 
-            {/* Loading mines */}
+            {/* Skeleton panel while mines load */}
             {minesLoading && (
-                <div className="flex items-center justify-center py-12">
-                    <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                <div className="space-y-5 animate-pulse">
+                    {/* Mine stats skeleton */}
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-3">
+                        <div className="h-4 w-24 bg-gray-700 rounded" />
+                        <div className="grid grid-cols-2 gap-3">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div key={i} className="bg-gray-800 rounded-lg p-3">
+                                    <div className="h-3 w-20 bg-gray-700 rounded mb-2" />
+                                    <div className="h-4 w-28 bg-gray-700 rounded" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    {/* Staking panel skeleton */}
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5">
+                        <div className="h-5 w-20 bg-gray-700 rounded" />
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-gray-800 rounded-lg p-3">
+                                <div className="h-3 w-24 bg-gray-700 rounded mb-2" />
+                                <div className="h-4 w-16 bg-gray-700 rounded" />
+                            </div>
+                            <div className="bg-gray-800 rounded-lg p-3">
+                                <div className="h-3 w-24 bg-gray-700 rounded mb-2" />
+                                <div className="h-4 w-16 bg-gray-700 rounded" />
+                            </div>
+                        </div>
+                        <div className="h-9 bg-gray-800 rounded-lg" />
+                        <div>
+                            <div className="h-4 w-36 bg-gray-700 rounded mb-2" />
+                            <div className="h-12 bg-gray-800 rounded-lg" />
+                        </div>
+                        <div className="h-10 bg-gray-800 rounded-lg" />
+                    </div>
                 </div>
             )}
 

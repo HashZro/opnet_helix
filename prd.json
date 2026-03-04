@@ -682,7 +682,7 @@
       "title": "Add loading skeletons and spinners",
       "description": "Add loading states to all pages: HomePage shows skeleton cards (animated pulse bg-gray-800 rectangles). MineDetailPage shows skeleton stat cards. WrapPage/UnwrapPage show skeleton input areas. StakingPage shows skeleton panel. Add a global Spinner component (animated border-t-2 rounded-full).",
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "acceptance": "All pages show appropriate loading states instead of blank screens.",
       "model": "sonnet"
     },

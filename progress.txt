@@ -680,3 +680,12 @@
   - When wallet disconnected: shows yellow "Connect your wallet to stake" banner
   - Loading spinner while mines list fetches
   - Build succeeds: no TypeScript errors, tsc -b && vite build pass
+
+[2026-03-04] S76 — Add loading skeletons and spinners
+  - Created Spinner component (src/components/Spinner.tsx) — animated border-t-transparent rounded-full
+  - HomePage: already had SkeletonCard — no changes needed
+  - MineDetailPage: already had SkeletonCard — no changes needed
+  - WrapPage: replaced spinner with skeleton input area (animated label + input + button rectangles)
+  - UnwrapPage: replaced spinner with skeleton input area (same pattern)
+  - StakingPage: replaced spinner with full skeleton panel (mine stats grid + staking panel structure)
+  - Build passes: tsc -b + vite build ✓

@@ -145,10 +145,14 @@ export function UnwrapPage() {
                 </div>
             )}
 
-            {/* Loading spinner while mine data loads */}
+            {/* Skeleton input area while mine data loads */}
             {selectedMine && !mine && (
-                <div className="flex items-center justify-center py-12">
-                    <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
+                <div className="space-y-4 animate-pulse">
+                    <div>
+                        <div className="h-4 w-36 bg-gray-700 rounded mb-2" />
+                        <div className="h-12 bg-gray-800 rounded-lg" />
+                    </div>
+                    <div className="h-10 bg-gray-800 rounded-lg" />
                 </div>
             )}
 
