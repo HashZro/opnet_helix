@@ -691,7 +691,7 @@
       "title": "Add toast notifications",
       "description": "Create a simple toast notification system. Create src/components/Toast.tsx and a useToast hook (or context). Toast types: success (green), error (red), info (blue). Auto-dismiss after 5 seconds. Position: bottom-right. Add toasts to all transaction flows: 'Transaction submitted', 'Transaction confirmed', 'Transaction failed: {error}'. Add toast for wallet connect/disconnect.",
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "acceptance": "Toasts appear for all transaction outcomes and wallet events. Auto-dismiss works.",
       "model": "sonnet"
     },

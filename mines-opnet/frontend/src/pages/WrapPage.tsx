@@ -5,6 +5,7 @@ import { Address } from '@btc-vision/transaction';
 import { useMines } from '../hooks/useMines';
 import { useMine } from '../hooks/useMine';
 import { useWallet } from '../hooks/useWallet';
+import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
 import { NETWORK } from '../config';
 import { MINE_ABI, OP_20_ABI } from '../lib/contracts';
@@ -41,10 +42,11 @@ export function WrapPage() {
     const { data: mine, refetch } = useMine(selectedMine || null);
     const { senderAddress, address: walletAddress, isConnected } = useWallet();
 
+    const toast = useToast();
+
     const [amount, setAmount] = useState('');
     const [estimatedXAmount, setEstimatedXAmount] = useState<bigint | null>(null);
     const [previewLoading, setPreviewLoading] = useState(false);
-    const [success, setSuccess] = useState<string | null>(null);
 
     // Sync urlAddress → selectedMine when route param is present
     useEffect(() => {
@@ -86,33 +88,60 @@ export function WrapPage() {
         if (raw === 0n) throw new Error('Enter an amount greater than zero');
         if (!mine.underlyingAddress) throw new Error('Mine data not loaded');
 
-        setSuccess(null);
-
-        // 1. Get underlying token contract with sender
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const underlyingContract = getContract<any>(
-            mine.underlyingAddress,
-            OP_20_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
-
-        // 2. Resolve mine's Address object (needed as spender for allowance)
-        const mineContractAddr = await resolveContractAddress(selectedMine);
-
-        // 3. Check current allowance
-        const allowanceRes = await underlyingContract.allowance(senderAddress, mineContractAddr);
-        const currentAllowance = extractU256(allowanceRes, 'allowance');
-
-        // 4. If insufficient, increaseAllowance before wrapping
-        if (currentAllowance < raw) {
-            const needed = raw - currentAllowance;
+        try {
+            // 1. Get underlying token contract with sender
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const allowSim = await underlyingContract.increaseAllowance(mineContractAddr, needed);
-            if ('error' in (allowSim as object)) throw new Error(String((allowSim as { error: unknown }).error));
+            const underlyingContract = getContract<any>(
+                mine.underlyingAddress,
+                OP_20_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
+
+            // 2. Resolve mine's Address object (needed as spender for allowance)
+            const mineContractAddr = await resolveContractAddress(selectedMine);
+
+            // 3. Check current allowance
+            const allowanceRes = await underlyingContract.allowance(senderAddress, mineContractAddr);
+            const currentAllowance = extractU256(allowanceRes, 'allowance');
+
+            // 4. If insufficient, increaseAllowance before wrapping
+            if (currentAllowance < raw) {
+                const needed = raw - currentAllowance;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const allowSim = await underlyingContract.increaseAllowance(mineContractAddr, needed);
+                if ('error' in (allowSim as object)) throw new Error(String((allowSim as { error: unknown }).error));
+                toast.info('Approving allowance...');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await (allowSim as any).sendTransaction({
+                    signer: null,
+                    mldsaSigner: null,
+                    refundTo: walletAddress,
+                    maximumAllowedSatToSpend: BigInt(100_000),
+                    feeRate: 10,
+                    network: NETWORK,
+                    minGas: BigInt(100_000),
+                });
+                toast.success('Allowance approved');
+            }
+
+            // 5. Get mine contract with sender and simulate wrap
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (allowSim as any).sendTransaction({
+            const mineContract = getContract<any>(
+                selectedMine,
+                MINE_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
+            const wrapSim = await mineContract.wrap(raw);
+            if ('error' in (wrapSim as object)) throw new Error(String((wrapSim as { error: unknown }).error));
+
+            // 6. Send the wrap transaction
+            toast.info('Transaction submitted');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (wrapSim as any).sendTransaction({
                 signer: null,
                 mldsaSigner: null,
                 refundTo: walletAddress,
@@ -121,37 +150,16 @@ export function WrapPage() {
                 network: NETWORK,
                 minGas: BigInt(100_000),
             });
+
+            toast.success(`Wrap successful! ${mine.symbol} tokens minted to your wallet.`);
+            setAmount('');
+            setEstimatedXAmount(null);
+            refetch();
+        } catch (err) {
+            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            throw err;
         }
-
-        // 5. Get mine contract with sender and simulate wrap
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mineContract = getContract<any>(
-            selectedMine,
-            MINE_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
-        const wrapSim = await mineContract.wrap(raw);
-        if ('error' in (wrapSim as object)) throw new Error(String((wrapSim as { error: unknown }).error));
-
-        // 6. Send the wrap transaction
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (wrapSim as any).sendTransaction({
-            signer: null,
-            mldsaSigner: null,
-            refundTo: walletAddress,
-            maximumAllowedSatToSpend: BigInt(100_000),
-            feeRate: 10,
-            network: NETWORK,
-            minGas: BigInt(100_000),
-        });
-
-        setSuccess(`Wrap successful! ${mine.symbol} tokens have been minted to your wallet.`);
-        setAmount('');
-        setEstimatedXAmount(null);
-        refetch();
-    }, [senderAddress, walletAddress, selectedMine, mine, amount, refetch]);
+    }, [senderAddress, walletAddress, selectedMine, mine, amount, refetch, toast]);
 
     // Derive underlying symbol: strip leading 'x' from xToken symbol (e.g. xMINER → MINER)
     const underlyingSymbol = mine
@@ -180,7 +188,6 @@ export function WrapPage() {
                             setSelectedMine(e.target.value);
                             setAmount('');
                             setEstimatedXAmount(null);
-                            setSuccess(null);
                         }}
                         disabled={minesLoading}
                         className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white focus:border-gray-500 outline-none disabled:opacity-50"
@@ -212,7 +219,7 @@ export function WrapPage() {
                     <TokenInput
                         label={`You deposit (${underlyingSymbol})`}
                         value={amount}
-                        onChange={(v) => { setAmount(v); setSuccess(null); }}
+                        onChange={setAmount}
                         max={mine.userUnderlyingBalance ?? undefined}
                         decimals={18}
                         symbol={underlyingSymbol}
@@ -243,13 +250,6 @@ export function WrapPage() {
                                     {(Number(mine.wrapFee) / 10).toFixed(1)}%
                                 </span>
                             </div>
-                        </div>
-                    )}
-
-                    {/* Success banner */}
-                    {success && (
-                        <div className="p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-400 text-sm">
-                            {success}
                         </div>
                     )}
 

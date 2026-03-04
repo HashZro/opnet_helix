@@ -689,3 +689,13 @@
   - UnwrapPage: replaced spinner with skeleton input area (same pattern)
   - StakingPage: replaced spinner with full skeleton panel (mine stats grid + staking panel structure)
   - Build passes: tsc -b + vite build ✓
+
+[2026-03-04] S77 — Added toast notification system
+  - Created src/contexts/ToastContext.tsx: ToastProvider, useToast hook, Toast type (success/error/info)
+  - Created src/components/ToastContainer.tsx: fixed bottom-right overlay, auto-dismiss 5s, dismiss button
+  - App.tsx: wrapped with <ToastProvider>, added <ToastContainer /> outside Layout
+  - WalletButton.tsx: useEffect watches isConnected changes → shows success/info toasts on connect/disconnect
+  - WrapPage.tsx: toast.info on allowance approval + wrap submit, toast.success on success, toast.error with rethrow on failure; removed inline success banner
+  - UnwrapPage.tsx: toast.info on submit, toast.success on success, toast.error on failure; removed inline success banner
+  - StakingPanel.tsx: all three handlers (stake/unstake/claim) wrapped in try/catch with toasts; removed inline success banner, kept error banner for fetch errors
+  - Build passes: tsc -b + vite build ✓

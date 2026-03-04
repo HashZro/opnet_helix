@@ -4,6 +4,7 @@ import { getContract } from 'opnet';
 import { useMines } from '../hooks/useMines';
 import { useMine } from '../hooks/useMine';
 import { useWallet } from '../hooks/useWallet';
+import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
 import { NETWORK } from '../config';
 import { MINE_ABI } from '../lib/contracts';
@@ -28,10 +29,11 @@ export function UnwrapPage() {
     const { data: mine, refetch } = useMine(selectedMine || null);
     const { senderAddress, address: walletAddress, isConnected } = useWallet();
 
+    const toast = useToast();
+
     const [amount, setAmount] = useState('');
     const [estimatedUnderlying, setEstimatedUnderlying] = useState<bigint | null>(null);
     const [previewLoading, setPreviewLoading] = useState(false);
-    const [success, setSuccess] = useState<string | null>(null);
 
     // Sync urlAddress → selectedMine when route param is present
     useEffect(() => {
@@ -72,36 +74,40 @@ export function UnwrapPage() {
         const raw = parseAmount(amount, 18);
         if (raw === 0n) throw new Error('Enter an amount greater than zero');
 
-        setSuccess(null);
+        try {
+            // Get mine contract with sender and simulate unwrap (no allowance needed — burning own tokens)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const mineContract = getContract<any>(
+                selectedMine,
+                MINE_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
+            const unwrapSim = await mineContract.unwrap(raw);
+            if ('error' in (unwrapSim as object)) throw new Error(String((unwrapSim as { error: unknown }).error));
 
-        // Get mine contract with sender and simulate unwrap (no allowance needed — burning own tokens)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mineContract = getContract<any>(
-            selectedMine,
-            MINE_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
-        const unwrapSim = await mineContract.unwrap(raw);
-        if ('error' in (unwrapSim as object)) throw new Error(String((unwrapSim as { error: unknown }).error));
+            toast.info('Transaction submitted');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (unwrapSim as any).sendTransaction({
+                signer: null,
+                mldsaSigner: null,
+                refundTo: walletAddress,
+                maximumAllowedSatToSpend: BigInt(100_000),
+                feeRate: 10,
+                network: NETWORK,
+                minGas: BigInt(100_000),
+            });
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (unwrapSim as any).sendTransaction({
-            signer: null,
-            mldsaSigner: null,
-            refundTo: walletAddress,
-            maximumAllowedSatToSpend: BigInt(100_000),
-            feeRate: 10,
-            network: NETWORK,
-            minGas: BigInt(100_000),
-        });
-
-        setSuccess(`Unwrap successful! Underlying tokens have been sent to your wallet.`);
-        setAmount('');
-        setEstimatedUnderlying(null);
-        refetch();
-    }, [senderAddress, walletAddress, selectedMine, mine, amount, refetch]);
+            toast.success('Unwrap successful! Underlying tokens sent to your wallet.');
+            setAmount('');
+            setEstimatedUnderlying(null);
+            refetch();
+        } catch (err) {
+            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            throw err;
+        }
+    }, [senderAddress, walletAddress, selectedMine, mine, amount, refetch, toast]);
 
     // Derive underlying symbol: strip leading 'x' from xToken symbol (e.g. xMINER → MINER)
     const underlyingSymbol = mine
@@ -130,7 +136,6 @@ export function UnwrapPage() {
                             setSelectedMine(e.target.value);
                             setAmount('');
                             setEstimatedUnderlying(null);
-                            setSuccess(null);
                         }}
                         disabled={minesLoading}
                         className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white focus:border-gray-500 outline-none disabled:opacity-50"
@@ -162,7 +167,7 @@ export function UnwrapPage() {
                     <TokenInput
                         label={`You burn (${mine.symbol})`}
                         value={amount}
-                        onChange={(v) => { setAmount(v); setSuccess(null); }}
+                        onChange={setAmount}
                         max={mine.userXBalance ?? undefined}
                         decimals={18}
                         symbol={mine.symbol}
@@ -193,13 +198,6 @@ export function UnwrapPage() {
                                     {(Number(mine.unwrapFee) / 10).toFixed(1)}%
                                 </span>
                             </div>
-                        </div>
-                    )}
-
-                    {/* Success banner */}
-                    {success && (
-                        <div className="p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-400 text-sm">
-                            {success}
                         </div>
                     )}
 

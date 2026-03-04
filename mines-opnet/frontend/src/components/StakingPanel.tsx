@@ -3,6 +3,7 @@ import { getContract } from 'opnet';
 import { Address } from '@btc-vision/transaction';
 import { useStaking } from '../hooks/useStaking';
 import { useWallet } from '../hooks/useWallet';
+import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
 import { NETWORK, CONTRACT_ADDRESSES } from '../config';
 import { STAKING_ABI, MINER_TOKEN_ABI } from '../lib/contracts';
@@ -41,8 +42,8 @@ type Tab = 'stake' | 'unstake';
 export function StakingPanel({ mineAddress }: StakingPanelProps) {
     const [tab, setTab] = useState<Tab>('stake');
     const [amount, setAmount] = useState('');
-    const [success, setSuccess] = useState<string | null>(null);
 
+    const toast = useToast();
     const { senderAddress, address: walletAddress, isConnected } = useWallet();
     const { data, loading, error, refetch } = useStaking(mineAddress);
 
@@ -51,32 +52,58 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
         const raw = parseAmount(amount, 18);
         if (raw === 0n) throw new Error('Enter an amount greater than zero');
 
-        setSuccess(null);
+        try {
+            // Resolve staking contract Address for allowance approval
+            const stakingAddr = await resolveContractAddress(CONTRACT_ADDRESSES.staking);
 
-        // Resolve staking contract Address for allowance approval
-        const stakingAddr = await resolveContractAddress(CONTRACT_ADDRESSES.staking);
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const minerContract = getContract<any>(
-            CONTRACT_ADDRESSES.minerToken,
-            MINER_TOKEN_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
-
-        // Check current allowance
-        const allowanceRes = await minerContract.allowance(senderAddress, stakingAddr);
-        const currentAllowance = extractU256(allowanceRes, 'allowance');
-
-        // Increase allowance if needed
-        if (currentAllowance < raw) {
-            const needed = raw - currentAllowance;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const allowSim = await minerContract.increaseAllowance(stakingAddr, needed);
-            if ('error' in (allowSim as object)) throw new Error(String((allowSim as { error: unknown }).error));
+            const minerContract = getContract<any>(
+                CONTRACT_ADDRESSES.minerToken,
+                MINER_TOKEN_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
+
+            // Check current allowance
+            const allowanceRes = await minerContract.allowance(senderAddress, stakingAddr);
+            const currentAllowance = extractU256(allowanceRes, 'allowance');
+
+            // Increase allowance if needed
+            if (currentAllowance < raw) {
+                const needed = raw - currentAllowance;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const allowSim = await minerContract.increaseAllowance(stakingAddr, needed);
+                if ('error' in (allowSim as object)) throw new Error(String((allowSim as { error: unknown }).error));
+                toast.info('Approving allowance...');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await (allowSim as any).sendTransaction({
+                    signer: null,
+                    mldsaSigner: null,
+                    refundTo: walletAddress,
+                    maximumAllowedSatToSpend: BigInt(100_000),
+                    feeRate: 10,
+                    network: NETWORK,
+                    minGas: BigInt(100_000),
+                });
+                toast.success('Allowance approved');
+            }
+
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (allowSim as any).sendTransaction({
+            const stakingContract = getContract<any>(
+                CONTRACT_ADDRESSES.staking,
+                STAKING_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
+
+            const stakeSim = await stakingContract.stake(mineAddress, raw);
+            if ('error' in (stakeSim as object)) throw new Error(String((stakeSim as { error: unknown }).error));
+
+            toast.info('Transaction submitted');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (stakeSim as any).sendTransaction({
                 signer: null,
                 mldsaSigner: null,
                 refundTo: walletAddress,
@@ -85,102 +112,90 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
                 network: NETWORK,
                 minGas: BigInt(100_000),
             });
+
+            toast.success('Stake successful!');
+            setAmount('');
+            refetch();
+        } catch (err) {
+            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            throw err;
         }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const stakingContract = getContract<any>(
-            CONTRACT_ADDRESSES.staking,
-            STAKING_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
-
-        const stakeSim = await stakingContract.stake(mineAddress, raw);
-        if ('error' in (stakeSim as object)) throw new Error(String((stakeSim as { error: unknown }).error));
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (stakeSim as any).sendTransaction({
-            signer: null,
-            mldsaSigner: null,
-            refundTo: walletAddress,
-            maximumAllowedSatToSpend: BigInt(100_000),
-            feeRate: 10,
-            network: NETWORK,
-            minGas: BigInt(100_000),
-        });
-
-        setSuccess('Stake successful!');
-        setAmount('');
-        refetch();
-    }, [senderAddress, walletAddress, mineAddress, amount, refetch]);
+    }, [senderAddress, walletAddress, mineAddress, amount, refetch, toast]);
 
     const handleUnstake = useCallback(async () => {
         if (!senderAddress || !walletAddress) throw new Error('Connect wallet first');
         const raw = parseAmount(amount, 18);
         if (raw === 0n) throw new Error('Enter an amount greater than zero');
 
-        setSuccess(null);
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const stakingContract = getContract<any>(
+                CONTRACT_ADDRESSES.staking,
+                STAKING_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const stakingContract = getContract<any>(
-            CONTRACT_ADDRESSES.staking,
-            STAKING_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
+            const unstakeSim = await stakingContract.unstake(mineAddress, raw);
+            if ('error' in (unstakeSim as object)) throw new Error(String((unstakeSim as { error: unknown }).error));
 
-        const unstakeSim = await stakingContract.unstake(mineAddress, raw);
-        if ('error' in (unstakeSim as object)) throw new Error(String((unstakeSim as { error: unknown }).error));
+            toast.info('Transaction submitted');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (unstakeSim as any).sendTransaction({
+                signer: null,
+                mldsaSigner: null,
+                refundTo: walletAddress,
+                maximumAllowedSatToSpend: BigInt(100_000),
+                feeRate: 10,
+                network: NETWORK,
+                minGas: BigInt(100_000),
+            });
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (unstakeSim as any).sendTransaction({
-            signer: null,
-            mldsaSigner: null,
-            refundTo: walletAddress,
-            maximumAllowedSatToSpend: BigInt(100_000),
-            feeRate: 10,
-            network: NETWORK,
-            minGas: BigInt(100_000),
-        });
-
-        setSuccess('Unstake successful!');
-        setAmount('');
-        refetch();
-    }, [senderAddress, walletAddress, mineAddress, amount, refetch]);
+            toast.success('Unstake successful!');
+            setAmount('');
+            refetch();
+        } catch (err) {
+            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            throw err;
+        }
+    }, [senderAddress, walletAddress, mineAddress, amount, refetch, toast]);
 
     const handleClaim = useCallback(async () => {
         if (!senderAddress || !walletAddress) throw new Error('Connect wallet first');
 
-        setSuccess(null);
+        try {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const stakingContract = getContract<any>(
+                CONTRACT_ADDRESSES.staking,
+                STAKING_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+                provider,
+                NETWORK,
+                senderAddress,
+            );
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const stakingContract = getContract<any>(
-            CONTRACT_ADDRESSES.staking,
-            STAKING_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
-            provider,
-            NETWORK,
-            senderAddress,
-        );
+            const claimSim = await stakingContract.claim(mineAddress);
+            if ('error' in (claimSim as object)) throw new Error(String((claimSim as { error: unknown }).error));
 
-        const claimSim = await stakingContract.claim(mineAddress);
-        if ('error' in (claimSim as object)) throw new Error(String((claimSim as { error: unknown }).error));
+            toast.info('Transaction submitted');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (claimSim as any).sendTransaction({
+                signer: null,
+                mldsaSigner: null,
+                refundTo: walletAddress,
+                maximumAllowedSatToSpend: BigInt(100_000),
+                feeRate: 10,
+                network: NETWORK,
+                minGas: BigInt(100_000),
+            });
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (claimSim as any).sendTransaction({
-            signer: null,
-            mldsaSigner: null,
-            refundTo: walletAddress,
-            maximumAllowedSatToSpend: BigInt(100_000),
-            feeRate: 10,
-            network: NETWORK,
-            minGas: BigInt(100_000),
-        });
-
-        setSuccess('Rewards claimed!');
-        refetch();
-    }, [senderAddress, walletAddress, mineAddress, refetch]);
+            toast.success('Rewards claimed!');
+            refetch();
+        } catch (err) {
+            toast.error(`Transaction failed: ${err instanceof Error ? err.message : String(err)}`);
+            throw err;
+        }
+    }, [senderAddress, walletAddress, mineAddress, refetch, toast]);
 
     return (
         <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5">
@@ -206,7 +221,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
             <div className="flex rounded-lg overflow-hidden border border-gray-700">
                 <button
                     type="button"
-                    onClick={() => { setTab('stake'); setAmount(''); setSuccess(null); }}
+                    onClick={() => { setTab('stake'); setAmount(''); }}
                     className={`flex-1 py-2 text-sm font-medium transition-colors ${
                         tab === 'stake'
                             ? 'bg-purple-600 text-white'
@@ -217,7 +232,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
                 </button>
                 <button
                     type="button"
-                    onClick={() => { setTab('unstake'); setAmount(''); setSuccess(null); }}
+                    onClick={() => { setTab('unstake'); setAmount(''); }}
                     className={`flex-1 py-2 text-sm font-medium transition-colors ${
                         tab === 'unstake'
                             ? 'bg-purple-600 text-white'
@@ -234,7 +249,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
                     <TokenInput
                         label="Amount to Stake"
                         value={amount}
-                        onChange={(v) => { setAmount(v); setSuccess(null); }}
+                        onChange={setAmount}
                         max={data.minerBalance}
                         decimals={18}
                         symbol="MINER"
@@ -255,7 +270,7 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
                     <TokenInput
                         label="Amount to Unstake"
                         value={amount}
-                        onChange={(v) => { setAmount(v); setSuccess(null); }}
+                        onChange={setAmount}
                         max={data.stakedBalance}
                         decimals={18}
                         symbol="MINER"
@@ -292,15 +307,10 @@ export function StakingPanel({ mineAddress }: StakingPanelProps) {
                 )}
             </div>
 
-            {/* Error / Success banners */}
+            {/* Error banner (fetch errors, not transaction errors) */}
             {error && (
                 <div className="p-3 bg-red-900/30 border border-red-700 rounded-lg text-red-400 text-sm">
                     {error}
-                </div>
-            )}
-            {success && (
-                <div className="p-3 bg-green-900/30 border border-green-700 rounded-lg text-green-400 text-sm">
-                    {success}
                 </div>
             )}
         </div>

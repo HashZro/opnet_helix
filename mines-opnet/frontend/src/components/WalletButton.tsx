@@ -1,8 +1,21 @@
+import { useEffect, useRef } from 'react';
 import { useWallet } from '../hooks/useWallet';
+import { useToast } from '../contexts/ToastContext';
 import { truncateAddress } from '../lib/helpers';
 
 export function WalletButton() {
     const { address, isConnected, connect, disconnect } = useWallet();
+    const toast = useToast();
+    const prevConnectedRef = useRef(false);
+
+    useEffect(() => {
+        if (isConnected && !prevConnectedRef.current) {
+            toast.success('Wallet connected');
+        } else if (!isConnected && prevConnectedRef.current) {
+            toast.info('Wallet disconnected');
+        }
+        prevConnectedRef.current = isConnected;
+    }, [isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (isConnected && address) {
         return (
