@@ -484,7 +484,7 @@
       "title": "Register Mine in Factory and deploy Staking",
       "description": "Create a script or modify deploy script to call Factory.registerMine(minerTokenAddr, mineAddr). Deploy Staking with xMiner=MinerToken address. Save all addresses to deployed-addresses.json.",
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "acceptance": "Mine registered in Factory. Staking deployed. deployed-addresses.json has all 4 addresses.",
       "model": "opus"
     },

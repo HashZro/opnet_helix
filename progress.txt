@@ -458,3 +458,21 @@
   - Deploy tx: 547dbcd0d556947fe82efc77611b683a3e135656fcde5a359cc2e67aa67501fd
   - Params: name=xMiner, symbol=xMINER, decimals=18, wrapFee=50, unwrapFee=50, controllerFee=100, protocolFee=100
   - Updated deployed-addresses.json with mine address
+
+[2026-03-04] S54 — Registered Mine in Factory and deployed Staking to testnet
+  - Created scripts/register-mine.ts: interaction script using signInteraction (not signDeployment)
+  - Uses SHA256("registerMine") selector, encodes underlying (MinerToken pubkey) + mineAddress (Mine pubkey) as calldata
+  - Fetches Factory contract pubkey via rpcProvider.getCode() for signInteraction's `contract` param
+  - Added "register:mine" npm script to package.json
+  - Registration tx: d10f78d06264d736b4578f77df9ab6d0402a7344550adf25ce600adbb10d8ddf
+  - Set XMINER_ADDRESS in .env to Mine contract pubkey (0x837abe...584af4) — Mine IS the xMiner token
+  - Deployed Staking: npm run deploy:staking succeeded
+  - Staking contract address: opt1sqzzezaycyrhhk78u9r3lsk8vhqggck20uc7p57uw
+  - Staking contract pubkey: 0xba5f4185fee09ccd3d49d36c1e260bea8cbdadc7e99664e31617e5424ceb70d3
+  - Staking funding tx: 23f5d0b1a109dd5c05dffc02d0f146912f2a836b1a3525c097a2f73246382ce8
+  - Staking deploy tx: d2acbe06ab88d79adc46a782fa0bfc422f7c3e255ac22902fb6d526dd5e9591a
+  - Updated deployed-addresses.json with all 4 contract addresses + pubkeys
+  - Added FACTORY_ADDRESS and MINE_ADDRESS to .env and .env.example
+  - PATTERN: signInteraction for calling methods on deployed contracts (vs signDeployment for new contracts)
+  - PATTERN: Use rpcProvider.getCode(bech32Addr).contractPublicKey for contract pubkey resolution
+  - GOTCHA: xMiner = Mine contract (the wrapped xToken), NOT the MinerToken (underlying)

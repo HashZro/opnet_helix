@@ -247,6 +247,49 @@ const result = Blockchain.call(targetContract, cd);
 const returnVal: u256 = result.data.readU256();
 ```
 
+### Contract Interaction Script Pattern (signInteraction)
+```typescript
+import { createHash } from 'node:crypto';
+import { TransactionFactory, BinaryWriter, Address } from '@btc-vision/transaction';
+import { JSONRpcProvider } from 'opnet';
+
+// SHA256 selector
+function sel(sig: string): number {
+    return createHash('sha256').update(sig).digest().readUInt32BE(0);
+}
+
+// Get contract pubkey via RPC
+const code = await rpcProvider.getCode(contractBech32Addr);
+const contractPubkey = (code as any).contractPublicKey;
+const pubkeyHex = contractPubkey instanceof Uint8Array
+    ? '0x' + Buffer.from(contractPubkey).toString('hex')
+    : contractPubkey.toString();
+
+// Build calldata
+const writer = new BinaryWriter();
+writer.writeSelector(sel('methodName'));
+writer.writeAddress(Address.fromString(addr32ByteHex));
+const calldata = new Uint8Array(writer.getBuffer());
+
+// Sign & broadcast
+const factory = new TransactionFactory();
+const result = await factory.signInteraction({
+    to: contractBech32Addr,
+    from: p2tr!,
+    contract: pubkeyHex,
+    calldata,
+    challenge,
+    signer: wallet.keypair,
+    mldsaSigner: wallet.mldsaKeypair,
+    network: NETWORK,
+    utxos,
+    feeRate: 50,
+    priorityFee: 0n,
+    gasSatFee: 10_000n,
+});
+// Broadcast funding tx first, then interaction tx
+```
+
 ## Common Gotchas
 1. `super.onDeployment(_calldata)` MUST be the first line in onDeployment
 2. `StoredU256` second param is `Uint8Array(30)`, NOT `u256.Zero`

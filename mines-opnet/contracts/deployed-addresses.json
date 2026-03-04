@@ -1,7 +1,11 @@
 {
   "network": "testnet",
   "minerToken": "opt1sqqhu97n3gwn7jvfe2ms3j4235y4yn2nktq9n8p6e",
+  "minerTokenPubkey": "0x07bc45ac1b13ce306c792bfeeb56de39668eb8c6e54daaf9aecf1db55add41c8",
   "factory": "opt1sqpaphjdgykdzrzkyc9lm2sqp4ruf7z7tgqv3wvx9",
+  "factoryPubkey": "0x9c07eb1cf97be44831626f87967fa88b6238f733b9b865179c0c7a43a5270b9b",
   "mine": "opt1sqquwqar48unq6wuzdak522dtul6efnyxgul6na78",
-  "staking": ""
+  "minePubkey": "0x837abe5853b9a6effee8fa3ba9e921d43e7a51d89cef4689d165c8d290584af4",
+  "staking": "opt1sqzzezaycyrhhk78u9r3lsk8vhqggck20uc7p57uw",
+  "stakingPubkey": "0xba5f4185fee09ccd3d49d36c1e260bea8cbdadc7e99664e31617e5424ceb70d3"
 }

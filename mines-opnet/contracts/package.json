@@ -12,7 +12,8 @@
     "deploy:miner": "node --experimental-strip-types scripts/deploy-miner.ts",
     "deploy:mine": "node --experimental-strip-types scripts/deploy-mine.ts",
     "deploy:factory": "node --experimental-strip-types scripts/deploy-factory.ts",
-    "deploy:staking": "node --experimental-strip-types scripts/deploy-staking.ts"
+    "deploy:staking": "node --experimental-strip-types scripts/deploy-staking.ts",
+    "register:mine": "node --experimental-strip-types scripts/register-mine.ts"
   },
   "dependencies": {
     "@btc-vision/bitcoin": "7.0.0-alpha.11",
