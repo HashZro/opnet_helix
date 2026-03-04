@@ -212,3 +212,13 @@
   - All use u256.gt() for comparison, store via su(fieldKeySimple()), return true in BytesWriter(1)
   - Selectors: setWrapFee() -> 0xa9528f3c, setUnwrapFee() -> 0x3031fa57, setControllerFee() -> 0xed4bf438, setProtocolFee() -> 0x37a79cd7
   - Build succeeds: Mine.wasm + Mine.abi.json regenerated
+
+[2026-03-03] S27 — Added Mine claimControllerFee method
+  - Public method: claimControllerFee(_calldata: Calldata): BytesWriter
+  - Decorated with @method() and @returns UINT256
+  - CEI pattern: CHECKS (requireOwner, accrued != ZERO) → EFFECTS (reset accumulator to ZERO, decrement _underlyingHeld) → INTERACTIONS (TransferHelper.transfer to sender)
+  - Reads _controllerFeeAccrued, reverts with 'no fee' if zero
+  - Resets accumulator, decrements _underlyingHeld by accrued amount, transfers underlying to owner
+  - All arithmetic via SafeMath
+  - Selector: claimControllerFee() -> 0x27cd0721
+  - Build succeeds: Mine.wasm + Mine.abi.json regenerated

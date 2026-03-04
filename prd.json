@@ -241,7 +241,7 @@
       "title": "Add Mine claimControllerFee method",
       "description": "Add public claimControllerFee(calldata): BytesWriter. requireOwner(). Read _controllerFeeAccrued. If ZERO, throw Revert('no fee'). Reset _controllerFeeAccrued to ZERO. Read _underlying address. Decrement _underlyingHeld by accrued amount. TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued). Return accrued in BytesWriter(32).",
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "acceptance": "Method transfers accrued controller fees to owner, resets accumulator, decrements _underlyingHeld.",
       "model": "opus"
     },

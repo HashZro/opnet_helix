@@ -415,6 +415,33 @@ export class Mine extends OP20 {
         return response;
     }
 
+    // ── Fee claim methods ──
+
+    @method()
+    @returns({ name: 'accrued', type: ABIDataTypes.UINT256 })
+    public claimControllerFee(_calldata: Calldata): BytesWriter {
+        // CHECKS
+        this.requireOwner();
+
+        const ctrlKey: Uint8Array = this.fieldKeySimple(this._controllerFeeAccrued);
+        const accrued: u256 = this.lu(ctrlKey);
+        if (accrued == ZERO) throw new Revert('no fee');
+
+        // EFFECTS — reset accumulator, decrement _underlyingHeld
+        this.su(ctrlKey, ZERO);
+
+        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
+        this.su(heldKey, SafeMath.sub(this.lu(heldKey), accrued));
+
+        // INTERACTIONS — transfer accrued fees to owner
+        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+        TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued);
+
+        const response = new BytesWriter(32);
+        response.writeU256(accrued);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {
