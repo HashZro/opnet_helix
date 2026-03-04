@@ -628,7 +628,7 @@
       "title": "Create WrapPage",
       "description": "Create src/pages/WrapPage.tsx. If URL has :address param, use that mine. Otherwise show mine selector dropdown (from useMines). TokenInput for amount (underlying token). Preview section: calls getWrappedAmount to show estimated xTokens received, shows exchange rate and fee. Wrap button flow: (1) getContract for underlying token with sender, (2) check allowance, (3) if insufficient call increaseAllowance and sendTransaction(signer:null, mldsaSigner:null), (4) getContract for Mine with sender, (5) simulate wrap(amount), (6) sendTransaction. Show success message with new balance. Use useWallet for sender address.",
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "acceptance": "Full wrap flow: select mine \u2192 enter amount \u2192 see preview \u2192 approve allowance \u2192 wrap \u2192 success. All transactions use null signers.",
       "model": "sonnet"
     },
