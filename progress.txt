@@ -429,3 +429,13 @@
   - MinerToken.wasm (35KB), Mine.wasm (41KB), Factory.wasm (19KB), Staking.wasm (25KB) all generated
   - Only warnings are unused event declarations from btc-runtime base classes — non-blocking
   - No fixes needed — all contracts compiled clean
+
+[2026-03-04] S51 — Deployed MinerToken to testnet
+  - Created .env from .env.example (keys were pre-filled)
+  - npm run deploy:miner succeeded — funding tx + deployment tx broadcast
+  - Contract address: opt1sqqhu97n3gwn7jvfe2ms3j4235y4yn2nktq9n8p6e
+  - Contract pubkey: 0x07bc45ac1b13ce306c792bfeeb56de39668eb8c6e54daaf9aecf1db55add41c8
+  - Funding tx: 1afaf7e63107b77cca20a581dad31968c1325ecb52b626f8bcc339269008b4d2
+  - Deploy tx: 8ed1b8e91cab88ea15837bae4b7c7568eee12dbf3a4136b34812771810f8e9a4
+  - Created deployed-addresses.json with minerToken address
+  - Deployer p2tr: opt1pr55ynlpcvfqm40kv5m4743th37xach304jvzzzcyq632qj9w53tqvzmf5k

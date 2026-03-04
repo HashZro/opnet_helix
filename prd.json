@@ -457,7 +457,7 @@
       "title": "Deploy MinerToken to testnet",
       "description": "Run npm run deploy:miner. Save the contract address. Update a deployed-addresses.json file with {minerToken: address}.",
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "acceptance": "MinerToken deployed. Address saved in deployed-addresses.json.",
       "model": "opus"
     },
