@@ -238,6 +238,36 @@ export class Staking extends OP_NET {
         return result.data.readAddress();
     }
 
+    // --- View methods ---
+
+    @method()
+    @returns({ name: 'pending', type: ABIDataTypes.UINT256 })
+    public getRewards(_calldata: Calldata): BytesWriter {
+        const mine: Address = _calldata.readAddress();
+        const staker: Address = _calldata.readAddress();
+
+        const totalPoints: u256 = this.lu(this.mineKey(this.pMineTotalPoints, mine));
+        const storedReward: u256 = this.lu(this.userMineKey(this.pRecordReward, mine, staker));
+        const pending: u256 = SafeMath.add(storedReward, this._newRewards(mine, staker, totalPoints));
+
+        const response = new BytesWriter(32);
+        response.writeU256(pending);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'balance', type: ABIDataTypes.UINT256 })
+    public getStakeBalance(_calldata: Calldata): BytesWriter {
+        const mine: Address = _calldata.readAddress();
+        const staker: Address = _calldata.readAddress();
+
+        const balance: u256 = this.lu(this.userMineKey(this.pRecordBalance, mine, staker));
+
+        const response = new BytesWriter(32);
+        response.writeU256(balance);
+        return response;
+    }
+
     // --- Claim rewards ---
 
     @method()

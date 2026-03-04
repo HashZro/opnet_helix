@@ -421,7 +421,7 @@
       "title": "Add Staking view methods",
       "description": "Add two view methods: getRewards(calldata) \u2014 reads mine Address and staker Address. Reads totalPoints from mineKey. Computes pending = stored reward + _newRewards(mine, staker, totalPoints). Returns pending u256. getStakeBalance(calldata) \u2014 reads mine Address and staker Address. Returns balance from userMineKey(pRecordBalance). Both @method() @returns UINT256.",
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "acceptance": "Both views return correct pending rewards and staked balance.",
       "model": "opus"
     },
