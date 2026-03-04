@@ -228,6 +228,25 @@ asc src/contract-name/index.ts --target targetname --measure --uncheckedBehavior
 - Constants: UPPER_SNAKE_CASE (`MAX_DEPOSIT_WITHDRAW_FEE`, `POINT_MULTIPLIER`)
 - Files: PascalCase for contract files, camelCase for frontend
 
+### Cross-Contract Call Pattern
+```typescript
+import { encodeSelector, Selector } from '@btc-vision/btc-runtime/runtime';
+
+// Static selector (computed once)
+private static readonly MY_SELECTOR: Selector = encodeSelector('methodName');
+
+// Build calldata: selector + params
+const cd = new BytesWriter(4 + 32); // 4 bytes selector + param sizes
+cd.writeSelector(MyContract.MY_SELECTOR);
+cd.writeAddress(someAddress);
+
+// Call target contract — reverts on failure by default
+const result = Blockchain.call(targetContract, cd);
+
+// Parse return value
+const returnVal: u256 = result.data.readU256();
+```
+
 ## Common Gotchas
 1. `super.onDeployment(_calldata)` MUST be the first line in onDeployment
 2. `StoredU256` second param is `Uint8Array(30)`, NOT `u256.Zero`

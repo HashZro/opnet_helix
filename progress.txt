@@ -353,3 +353,15 @@
   - All arithmetic via SafeMath — no raw operators
   - Points-based reward system: rewards proportional to user's staked balance and accumulated points since last update
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-03] S43 — Added Staking _disburse internal method
+  - Private method: _disburse(mineAddr: Address): u256
+  - Uses Blockchain.call() for cross-contract call to Mine.disburseProtocolFee(recipient)
+  - Added imports: encodeSelector, Selector from btc-runtime
+  - Static DISBURSE_SELECTOR via encodeSelector('disburseProtocolFee')
+  - Builds BytesWriter calldata: selector (4 bytes) + Blockchain.contractAddress (32 bytes)
+  - Parses returned u256 (disbursed amount) from CallResult.data
+  - If supply > ZERO and disbursed > ZERO: totalPoints += disbursed * POINT_MULTIPLIER / supply
+  - All arithmetic via SafeMath — no raw operators
+  - PATTERN: Cross-contract calls use Blockchain.call(target, calldata) — returns CallResult with .data BytesReader
+  - Can't compile yet — no index.ts (story S48)

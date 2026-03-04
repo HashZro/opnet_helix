@@ -385,7 +385,7 @@
       "title": "Add Staking _disburse internal method",
       "description": "Add private _disburse(mineAddr: Address): u256. This calls the Mine contract's disburseProtocolFee method to pull accrued protocol fees. Use TransferHelper or direct cross-contract call. Read current mineSupply from mineKey(pMineSupply, mine). If supply > ZERO and disbursed > ZERO: update totalPoints += SafeMath.div(SafeMath.mul(disbursed, POINT_MULTIPLIER), supply). Store updated totalPoints. Return disbursed amount.",
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "acceptance": "_disburse pulls fees from Mine, updates totalPoints proportionally to staked supply.",
       "model": "opus"
     },

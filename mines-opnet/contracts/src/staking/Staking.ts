@@ -9,6 +9,8 @@ import {
     StoredU256,
     TransferHelper,
     Address,
+    encodeSelector,
+    Selector,
 } from '@btc-vision/btc-runtime/runtime';
 import { u256 } from '@btc-vision/as-bignum/assembly';
 
@@ -117,5 +119,37 @@ export class Staking extends OP_NET {
             this.su(rewardKey, SafeMath.add(current, owing));
         }
         this.su(this.userMineKey(this.pRecordLastPoints, mineAddr, user), totalPoints);
+    }
+
+    // --- Disburse: pull protocol fees from Mine and update totalPoints ---
+
+    private static readonly DISBURSE_SELECTOR: Selector = encodeSelector('disburseProtocolFee');
+
+    private _disburse(mineAddr: Address): u256 {
+        // Build calldata: selector + recipient (this contract)
+        const cd = new BytesWriter(4 + 32);
+        cd.writeSelector(Staking.DISBURSE_SELECTOR);
+        cd.writeAddress(Blockchain.contractAddress);
+
+        // Cross-contract call to Mine.disburseProtocolFee(recipient)
+        const result = Blockchain.call(mineAddr, cd);
+        const disbursed: u256 = result.data.readU256();
+
+        // Update totalPoints if there are stakers and fees were disbursed
+        const supplyKey: Uint8Array = this.mineKey(this.pMineSupply, mineAddr);
+        const supply: u256 = this.lu(supplyKey);
+
+        if (supply > ZERO && disbursed > ZERO) {
+            const pointsKey: Uint8Array = this.mineKey(this.pMineTotalPoints, mineAddr);
+            const currentPoints: u256 = this.lu(pointsKey);
+            // totalPoints += disbursed * POINT_MULTIPLIER / supply
+            const newPoints: u256 = SafeMath.add(
+                currentPoints,
+                SafeMath.div(SafeMath.mul(disbursed, POINT_MULTIPLIER), supply),
+            );
+            this.su(pointsKey, newPoints);
+        }
+
+        return disbursed;
     }
 }
