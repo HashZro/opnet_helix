@@ -655,7 +655,7 @@
       "title": "Create useStaking hook",
       "description": "Create src/hooks/useStaking.ts. Takes mine address as param. If wallet connected: fetches staked balance via Staking.getStakeBalance(mine, user), pending rewards via Staking.getRewards(mine, user), user's MINER token balance (for staking). Returns: stakedBalance, pendingRewards, minerBalance, loading, error, refetch.",
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "acceptance": "Hook fetches staking data for a specific mine and user.",
       "model": "sonnet"
     },
