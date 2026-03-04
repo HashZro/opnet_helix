@@ -673,7 +673,7 @@
       "title": "Create StakingPage",
       "description": "Create src/pages/StakingPage.tsx. Mine selector dropdown (from useMines). When mine selected: show StakingPanel for that mine. Also show mine stats (ratio, fees) as context. If no wallet connected, show 'Connect wallet to stake' message.",
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "acceptance": "Page allows selecting a mine and interacting with staking. Wallet required message shown when disconnected.",
       "model": "sonnet"
     },

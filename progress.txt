@@ -670,3 +670,13 @@
   - All transactions use null signers (wallet extension signs)
   - Error and success banners displayed below panel
   - Frontend build passes (tsc + vite build)
+
+[2026-03-04] S75 — Created StakingPage
+  - File: mines-opnet/frontend/src/pages/StakingPage.tsx
+  - Mine selector dropdown (via useMines) auto-selects first mine when loaded
+  - Supports optional :address URL param to pre-select a mine (useParams pattern from WrapPage)
+  - When mine selected: displays mine stats panel (ratio, total underlying, wrap fee, unwrap fee)
+  - Renders StakingPanel component with selected mineAddress
+  - When wallet disconnected: shows yellow "Connect your wallet to stake" banner
+  - Loading spinner while mines list fetches
+  - Build succeeds: no TypeScript errors, tsc -b && vite build pass
