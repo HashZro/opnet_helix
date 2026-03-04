@@ -99,4 +99,23 @@ export class Staking extends OP_NET {
     private la(key: Uint8Array): Address {
         return new BytesReader(Blockchain.getStorageAt(key)).readAddress();
     }
+
+    // --- Rewards internals ---
+
+    private _newRewards(mineAddr: Address, user: Address, totalPoints: u256): u256 {
+        const lastPoints: u256 = this.lu(this.userMineKey(this.pRecordLastPoints, mineAddr, user));
+        const points: u256 = SafeMath.sub(totalPoints, lastPoints);
+        const balance: u256 = this.lu(this.userMineKey(this.pRecordBalance, mineAddr, user));
+        return SafeMath.div(SafeMath.mul(points, balance), POINT_MULTIPLIER);
+    }
+
+    private _updateRewards(mineAddr: Address, user: Address, totalPoints: u256): void {
+        const owing: u256 = this._newRewards(mineAddr, user, totalPoints);
+        if (owing > ZERO) {
+            const rewardKey: Uint8Array = this.userMineKey(this.pRecordReward, mineAddr, user);
+            const current: u256 = this.lu(rewardKey);
+            this.su(rewardKey, SafeMath.add(current, owing));
+        }
+        this.su(this.userMineKey(this.pRecordLastPoints, mineAddr, user), totalPoints);
+    }
 }

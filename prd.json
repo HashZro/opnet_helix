@@ -376,7 +376,7 @@
       "title": "Add Staking _newRewards and _updateRewards internal methods",
       "description": "Add private _newRewards(mineAddr: Address, user: Address, totalPoints: u256): u256. Reads lastPoints from userMineKey(pRecordLastPoints, mine, user). Calculates points = SafeMath.sub(totalPoints, lastPoints). Reads balance from userMineKey(pRecordBalance, mine, user). Returns SafeMath.div(SafeMath.mul(points, balance), POINT_MULTIPLIER). Add private _updateRewards(mineAddr: Address, user: Address, totalPoints: u256): void. Calculates owing = _newRewards(...). If owing > ZERO: adds to stored reward. Updates lastPoints = totalPoints.",
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "acceptance": "Both methods implement points-based reward calculation matching Staking.sol logic.",
       "model": "opus"
     },

@@ -346,3 +346,10 @@
   - Stores _owner as Blockchain.tx.sender via sa(fieldKeySimple(_owner), sender)
   - Follows exact same pattern as Mine/Factory onDeployment
   - Can't compile yet — no index.ts (story S48)
+
+[2026-03-03] S42 — Added Staking _newRewards and _updateRewards internal methods
+  - _newRewards(mineAddr, user, totalPoints): reads lastPoints from pRecordLastPoints, calculates points diff, reads balance from pRecordBalance, returns points * balance / POINT_MULTIPLIER
+  - _updateRewards(mineAddr, user, totalPoints): calls _newRewards, if owing > ZERO adds to pRecordReward, always updates pRecordLastPoints to current totalPoints
+  - All arithmetic via SafeMath — no raw operators
+  - Points-based reward system: rewards proportional to user's staked balance and accumulated points since last update
+  - Can't compile yet — no index.ts (story S48)
