@@ -476,3 +476,17 @@
   - PATTERN: signInteraction for calling methods on deployed contracts (vs signDeployment for new contracts)
   - PATTERN: Use rpcProvider.getCode(bech32Addr).contractPublicKey for contract pubkey resolution
   - GOTCHA: xMiner = Mine contract (the wrapped xToken), NOT the MinerToken (underlying)
+
+[2026-03-04] S55 — Scaffolded React + Vite + TypeScript frontend
+  - Created mines-opnet/frontend/ via npm create vite@latest -- --template react-ts
+  - Installed: @btc-vision/walletconnect@^1.9.12, opnet@1.8.1-beta.13, @btc-vision/transaction@1.8.0-beta.10, @btc-vision/bitcoin@7.0.0-alpha.11, react-router-dom, tailwindcss, @tailwindcss/vite
+  - vite.config.ts: added base './' and @tailwindcss/vite plugin
+  - Created src/styles/globals.css with @import "tailwindcss" and dark theme base (bg-gray-950, text-gray-100)
+  - Updated main.tsx to import globals.css instead of index.css
+  - npm run build succeeds: 32 modules transformed, no errors
+  - NOTE: @tailwindcss/vite plugin uses @import "tailwindcss" (not @tailwind directives) — Tailwind v4 syntax
+
+[2026-03-04] S56 — Created frontend config and provider
+  - File: mines-opnet/frontend/src/config.ts — exports NETWORK (networks.testnet), RPC_URL, CONTRACT_ADDRESSES (all 4 contracts + pubkeys from deployed-addresses.json)
+  - File: mines-opnet/frontend/src/lib/provider.ts — exports singleton JSONRpcProvider(RPC_URL, NETWORK) from 'opnet'
+  - npm run build succeeds: 32 modules, no TypeScript errors

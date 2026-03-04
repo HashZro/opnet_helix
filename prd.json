@@ -493,7 +493,7 @@
       "title": "Scaffold React + Vite + TypeScript frontend",
       "description": "Create mines-opnet/frontend/ using npm create vite@latest -- --template react-ts. Install dependencies: @btc-vision/walletconnect@^1.9.12, opnet@1.8.1-beta.13, @btc-vision/transaction@1.8.0-beta.10, @btc-vision/bitcoin@7.0.0-alpha.11, react-router-dom, tailwindcss, @tailwindcss/vite. Configure vite.config.ts: base './', add tailwind plugin. Create src/styles/globals.css with Tailwind directives and dark theme base styles (bg-gray-950, text-gray-100).",
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run dev starts without errors. Page renders with dark background.",
       "model": "sonnet"
     },
@@ -502,7 +502,7 @@
       "title": "Create frontend config and provider",
       "description": "Create src/config.ts: export NETWORK (networks.testnet), RPC_URL ('https://testnet.opnet.org'), all 4 contract addresses from deployed-addresses.json. Create src/lib/provider.ts: export singleton JSONRpcProvider(RPC_URL, NETWORK). Import from 'opnet'.",
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "acceptance": "Both files exist. Provider can be imported and used.",
       "model": "sonnet"
     },
