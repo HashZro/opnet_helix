@@ -583,7 +583,7 @@
       "title": "Create MineCard component",
       "description": "Create src/components/MineCard.tsx. Props: mine data (address, name, symbol, ratio, wrapFee, unwrapFee, underlyingBalance). Renders a card with: name/symbol header, ratio display (formatted to 4 decimals), fees (as percentages: fee/10 %), underlying balance. Card is clickable \u2014 links to /mine/:address. Dark theme card style (bg-gray-900, border-gray-800, hover effect).",
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "acceptance": "Card renders mine info, links to detail page, dark theme styled.",
       "model": "sonnet"
     },

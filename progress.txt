@@ -561,3 +561,12 @@
   - Connected state: gray dark-themed button showing truncateAddress(address)
   - Both states use rounded-lg, hover transitions, dark theme consistent styling
   - npm run build succeeds: no TypeScript errors
+
+[2026-03-04] S65 — Created MineCard component
+  - File: mines-opnet/frontend/src/components/MineCard.tsx
+  - Props: address, name, symbol, ratio (number), wrapFee (bigint), unwrapFee (bigint), underlyingBalance (bigint)
+  - Card links to /mine/:address via react-router-dom Link
+  - Displays: name/symbol header, truncated address, ratio (toFixed(4)), underlyingBalance (formatBalance 18 decimals), wrap/unwrap fees as percentages (fee/10 %)
+  - Dark theme: bg-gray-900, border-gray-800, hover:border-gray-600, hover:bg-gray-800
+  - Fee colors: wrap=purple-400, unwrap=blue-400
+  - npm run build succeeds: no TypeScript errors
