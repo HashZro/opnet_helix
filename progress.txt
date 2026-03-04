@@ -447,3 +447,14 @@
   - Funding tx: cacb14631bc7ef9337ceaa602f7ad1bcd5a33713e81dfdbe58ab17f100f4286f
   - Deploy tx: 11fa02e27f34fbcda382a3b2cae6240dcca57d715789783720359371954d3fb3
   - Updated deployed-addresses.json with factory address
+
+[2026-03-04] S53 — Deployed Mine to testnet
+  - Updated deploy-mine.ts: controllerFee 50→100 (10%), protocolFee 50→100 (10%) per S53 requirements
+  - Set UNDERLYING_ADDRESS in .env to MinerToken contract pubkey: 0x07bc45ac1b13ce306c792bfeeb56de39668eb8c6e54daaf9aecf1db55add41c8
+  - npm run deploy:mine succeeded — funding tx + deployment tx broadcast
+  - Contract address: opt1sqquwqar48unq6wuzdak522dtul6efnyxgul6na78
+  - Contract pubkey: 0x837abe5853b9a6effee8fa3ba9e921d43e7a51d89cef4689d165c8d290584af4
+  - Funding tx: 370c33a6f09cd6046a49d2e3c24f49af7d706edc61b7ece03e944badf4f56e60
+  - Deploy tx: 547dbcd0d556947fe82efc77611b683a3e135656fcde5a359cc2e67aa67501fd
+  - Params: name=xMiner, symbol=xMINER, decimals=18, wrapFee=50, unwrapFee=50, controllerFee=100, protocolFee=100
+  - Updated deployed-addresses.json with mine address

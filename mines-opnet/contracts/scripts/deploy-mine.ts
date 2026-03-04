@@ -52,8 +52,8 @@ const MINE_SYMBOL   = 'xMINER';
 // Fee params (basis points out of 1000)
 const WRAP_FEE       = 50n;   // 5%
 const UNWRAP_FEE     = 50n;   // 5%
-const CONTROLLER_FEE = 50n;   // 5% of fee goes to controller
-const PROTOCOL_FEE   = 50n;   // 5% of fee goes to protocol
+const CONTROLLER_FEE = 100n;  // 10% of fee goes to controller
+const PROTOCOL_FEE   = 100n;  // 10% of fee goes to protocol
 
 // ---------------------------------------------------------------------------
 // Load wallet from EC_PRIVATE_KEY + MLDSA_PRIVATE_KEY

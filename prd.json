@@ -475,7 +475,7 @@
       "title": "Deploy Mine to testnet",
       "description": "Update deploy-mine.ts with MinerToken address as underlying. Set name='xMINER', symbol='xMINER', decimals=18, wrapFee=50 (5%), unwrapFee=50 (5%), controllerFee=100 (10%), protocolFee=100 (10%). Deploy. Save address.",
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "acceptance": "Mine deployed with correct params. Address saved.",
       "model": "opus"
     },
