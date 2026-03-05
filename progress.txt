@@ -810,3 +810,10 @@
   - App.tsx has /wrap/:address route — WrapPage loads Moto as underlying correctly
   - Build passes: tsc -b (0 TypeScript errors) + vite build ✓ (80 modules)
   - All acceptance criteria met: card visible, Wrap navigates correctly, WrapPage shows MOTO
+
+[2026-03-05] S93 — Remove controller/protocol fee storage from Mine.ts
+  - Deleted 4 storage pointer declarations: _controllerFee, _protocolFee, _controllerFeeAccrued, _protocolFeeAccrued
+  - Rewrote WrapResult class to have exactly 2 fields: xAmount: u256, feeAmount: u256
+  - Simplified _underlyingBalance() to return this.lu(this.fieldKeySimple(this._underlyingHeld)) directly
+  - File has TypeScript errors (expected) — remaining method bodies reference removed fields; will be cleaned up in S94-S101
+  - Did NOT compile (as instructed — further edits follow in S94-S101)

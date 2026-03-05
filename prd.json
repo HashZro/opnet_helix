@@ -829,6 +829,141 @@
       "passes": true,
       "acceptance": "xMoto card visible. Wrap button navigates correctly. WrapPage loads Moto as underlying.",
       "model": "sonnet"
+    },
+    {
+      "id": "S93",
+      "title": "Remove controller/protocol fee storage from Mine.ts",
+      "description": "Edit contracts/src/mine/Mine.ts. (1) Delete the 4 storage pointer declarations: _controllerFee, _protocolFee, _controllerFeeAccrued, _protocolFeeAccrued. (2) Rewrite the WrapResult class to hold exactly 2 fields: xAmount: u256 and feeAmount: u256 — remove stakersFee, controllerFeeAmount, protocolFeeAmount fields and update the constructor accordingly. (3) Rewrite _underlyingBalance() to simply return this.lu(this.fieldKeySimple(this._underlyingHeld)) — remove all subtraction of accrued fees. Do NOT compile yet — further edits follow in S94–S101.",
+      "priority": 27,
+      "passes": true,
+      "acceptance": "WrapResult class has exactly 2 fields (xAmount, feeAmount). _underlyingBalance() has no references to _controllerFeeAccrued or _protocolFeeAccrued. No references to the 4 removed storage pointer names anywhere in Mine.ts.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S94",
+      "title": "Remove controller/protocol fee methods from Mine.ts",
+      "description": "Edit contracts/src/mine/Mine.ts. Delete the following 9 methods entirely (including their @method() and @returns() decorators): claimControllerFee, claimProtocolFee, disburseProtocolFee, setControllerFee, setProtocolFee, getControllerFee, getProtocolFee, getControllerFeeAccrued, getProtocolFeeAccrued. Also delete the constant MAX_CONTROLLER_PROTOCOL_FEE at the top of the file. Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "None of the 9 method names appear in Mine.ts. MAX_CONTROLLER_PROTOCOL_FEE constant is gone. All other methods remain intact: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, getWrapFee, getUnwrapFee, setWrapFee, setUnwrapFee, getOwner, getUnderlying.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S95",
+      "title": "Simplify _calcWrap() and wrap() in Mine.ts — fees stay in pool",
+      "description": "Edit contracts/src/mine/Mine.ts. Rewrite _calcWrap() as follows: if supply==ZERO return new WrapResult(amount, ZERO) (first wrap 1:1 no fee). Otherwise: feeAmount = SafeMath.div(SafeMath.mul(amount, wrapFee), FEE_DENOMINATOR); netAmount = SafeMath.sub(amount, feeAmount); xAmount = SafeMath.div(SafeMath.mul(supply, netAmount), this._underlyingBalance()); return new WrapResult(xAmount, feeAmount). The feeAmount stays in the pool (not split out). Simplify wrap(): remove all ctrlKey/protoKey accumulator updates. Keep: TransferHelper.transferFrom to pull underlying in, update _underlyingHeld += amount (full amount including fee), mint xTokens. Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "_calcWrap() has no references to controllerFee, protocolFee, stakersFee, ctrlKey, protoKey, or any accumulator. wrap() has no accumulator update lines. _underlyingHeld is incremented by the full amount (fee included). First wrap is 1:1; subsequent wraps yield fewer xTokens relative to amount deposited.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S96",
+      "title": "Simplify unwrap() in Mine.ts — fee stays in pool",
+      "description": "Edit contracts/src/mine/Mine.ts. Rewrite unwrap() as follows: (1) keep: underlyingAmount = _getUnderlyingAmount(xAmount). (2) keep: feeAmount = SafeMath.div(SafeMath.mul(underlyingAmount, unwrapFeeRate), FEE_DENOMINATOR). (3) keep: netUnderlying = SafeMath.sub(underlyingAmount, feeAmount). (4) keep: _burn sender xAmount. (5) REMOVE: all controllerFeeAmount, protocolFeeAmount calculations and ctrlKey/protoKey accumulator updates. (6) keep: _underlyingHeld decremented by netUnderlying ONLY (feeAmount remains in pool permanently). (7) keep: TransferHelper.transfer netUnderlying to sender. Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "unwrap() has no references to controllerFee, protocolFee, ctrlKey, protoKey, controllerFeeAmount, or protocolFeeAmount. _underlyingHeld is decremented only by netUnderlying. Sender receives underlyingAmount*(1 - unwrapFee/1000). feeAmount stays locked in contract forever, growing the pool ratio.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S97",
+      "title": "Update Mine.ts onDeployment() — remove old fee params",
+      "description": "Edit contracts/src/mine/Mine.ts. In onDeployment(): remove the two _calldata.readU256() lines for controllerFee and protocolFee. Remove the two this.su() calls that stored them. After this change onDeployment() reads exactly 6 calldata values in this order: underlying (readAddress), decimals (readU8), name (readStringWithLength), symbol (readStringWithLength), wrapFee (readU256), unwrapFee (readU256). Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "onDeployment() contains exactly 6 calldata reads (1 Address, 1 u8, 2 strings, 2 u256). No controllerFee or protocolFee variable or su() call present. Calldata order is: underlying → decimals → name → symbol → wrapFee → unwrapFee.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S98",
+      "title": "Add AMM pool whitelist storage and setter/getter to Mine.ts",
+      "description": "Edit contracts/src/mine/Mine.ts. (1) Add storage pointer: private readonly _ammPool: u16 = Blockchain.nextPointer; (after the existing pointer declarations). (2) Add private requireAmmPool(): void — reads _ammPool via la(); if Blockchain.tx.sender != storedPool throw new Revert('not amm pool'). (3) Add @method() setAmmPool(_calldata): BytesWriter — requireOwner(); reads Address from calldata via readAddress(); stores via sa(fieldKeySimple(_ammPool), addr); returns BytesWriter with writeBoolean(true). @returns({ name: 'success', type: ABIDataTypes.BOOL }). (4) Add @method() getAmmPool(_calldata): BytesWriter — reads and returns Address. @returns({ name: 'pool', type: ABIDataTypes.ADDRESS }). Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "_ammPool storage pointer declared. requireAmmPool() helper exists and reverts 'not amm pool' for non-pool callers. setAmmPool() has requireOwner() guard. getAmmPool() returns stored address. Both new methods have @method() decorator.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S99",
+      "title": "Add AMM buy/sell fee storage, setters, and getters to Mine.ts",
+      "description": "Edit contracts/src/mine/Mine.ts. (1) Add 2 storage pointers: private readonly _ammBuyFee: u16 = Blockchain.nextPointer; and private readonly _ammSellFee: u16 = Blockchain.nextPointer;. (2) Add setAmmBuyFee(_calldata): requireOwner(); read u256; if gt(fee, MAX_DEPOSIT_WITHDRAW_FEE) throw Revert('fee too high'); store; return bool true. (3) Add setAmmSellFee(_calldata): same pattern. (4) Add getAmmBuyFee(_calldata): return lu(_ammBuyFee). (5) Add getAmmSellFee(_calldata): return lu(_ammSellFee). All 4 decorated with @method() and @returns(). setters return BOOL, getters return UINT256. Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "_ammBuyFee and _ammSellFee storage pointers declared. Both setters have requireOwner() and validate against MAX_DEPOSIT_WITHDRAW_FEE. Both getters return stored u256 (0 if unset). All 4 methods have @method() decorator.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S100",
+      "title": "Add notifyAmmFee() method to Mine.ts",
+      "description": "Edit contracts/src/mine/Mine.ts. Add notifyAmmFee(_calldata: Calldata): BytesWriter with @method() @returns({ name: 'amount', type: ABIDataTypes.UINT256 }). Implementation (CEI order): CHECKS — call requireAmmPool(); read amount: u256 = _calldata.readU256(); if amount==ZERO throw Revert('zero amount'). EFFECTS — read heldKey; su(heldKey, SafeMath.add(lu(heldKey), amount)). INTERACTIONS — read underlying via la(_underlying); TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount). Return BytesWriter(32) with writeU256(amount). This function is called by the whitelisted AMM pool AFTER it has approved the Mine contract to spend the fee tokens. Do NOT compile yet.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "notifyAmmFee() exists with @method() decorator. Calling from non-pool address reverts 'not amm pool'. Calling with 0 reverts 'zero amount'. On success: _underlyingHeld increases by amount; underlying tokens are pulled from caller via transferFrom. CEI order respected: held update happens before transferFrom call.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S101",
+      "title": "Update Mine onDeployment() for AMM params, compile Mine, update ABIs",
+      "description": "Edit contracts/src/mine/Mine.ts onDeployment(): after reading unwrapFee add: const ammBuyFee: u256 = _calldata.readU256(); const ammSellFee: u256 = _calldata.readU256(); then store both: this.su(this.fieldKeySimple(this._ammBuyFee), ammBuyFee); this.su(this.fieldKeySimple(this._ammSellFee), ammSellFee);. Final calldata order: underlying, decimals, name, symbol, wrapFee, unwrapFee, ammBuyFee, ammSellFee (8 values). Then compile the Mine target: cd contracts && npx asc src/mine/index.ts --config asconfig.json --target mine (check asconfig.json for exact target name). Then manually update contracts/abis/Mine.abi.json, Mine.abi.ts, Mine.d.ts to reflect the new method set (add AMM methods, remove old fee-split methods).",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "onDeployment() reads 8 calldata values. npx asc exits 0. Mine.abi.json contains: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, getWrapFee, getUnwrapFee, setWrapFee, setUnwrapFee, getOwner, getUnderlying, setAmmPool, getAmmPool, setAmmBuyFee, setAmmSellFee, getAmmBuyFee, getAmmSellFee, notifyAmmFee. Mine.abi.json does NOT contain: claimControllerFee, claimProtocolFee, disburseProtocolFee, setControllerFee, setProtocolFee, getControllerFee, getProtocolFee. Mine.d.ts interface updated to match.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S102",
+      "title": "Delete Staking contract files and ABIs",
+      "description": "Delete the following files/directories: contracts/src/staking/Staking.ts, contracts/src/staking/index.ts, contracts/src/staking/ (directory), contracts/abis/Staking.abi.json, contracts/abis/Staking.abi.ts, contracts/abis/Staking.d.ts, contracts/scripts/deploy-staking.ts. After deletion, grep contracts/ for any remaining imports of staking and remove them.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "None of the listed paths exist on disk. contracts/src/ has no staking/ subdirectory. No file in contracts/ imports from ./staking or ../staking. contracts/abis/ has no Staking.* files.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S103",
+      "title": "Remove staking from contracts build config",
+      "description": "Edit contracts/asconfig.json: remove the 'staking' entry from the targets object. All other targets (miner, mine, factory) must remain unchanged. Edit contracts/package.json: remove any npm script that references 'staking' (e.g. build:staking, deploy:staking). Do not remove other scripts.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "contracts/asconfig.json has no 'staking' key under targets. contracts/package.json has no script name or command referencing 'staking'. All non-staking targets and scripts are unchanged.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S104",
+      "title": "Remove staking from frontend and verify build",
+      "description": "Delete files: frontend/src/pages/StakingPage.tsx, frontend/src/components/StakingPanel.tsx, frontend/src/hooks/useStaking.ts. Edit frontend/src/App.tsx: remove the StakingPage import line and the /staking Route entry. Edit frontend/src/components/Navbar.tsx: remove the staking nav link (the <Link to='/staking'> element or equivalent). Then run: cd frontend && npm run build.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "The 3 deleted files do not exist. App.tsx has no StakingPage import or /staking Route. Navbar.tsx has no /staking link. npm run build exits 0 with no TypeScript errors. grep -r 'useStaking\\|StakingPanel\\|StakingPage' frontend/src returns no results.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S105",
+      "title": "Remove mine() faucet from MinerToken.ts, rebuild, update ABIs",
+      "description": "Edit contracts/src/miner-token/MinerToken.ts: delete the entire mine(_calldata: Calldata): BytesWriter method including its @method() and @returns() decorators. Compile the miner target: cd contracts && npx asc src/miner-token/index.ts --config asconfig.json --target miner (check asconfig.json for exact target name). Update contracts/abis/MinerToken.abi.json to remove the 'mine' selector entry. Update MinerToken.abi.ts and MinerToken.d.ts accordingly.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "MinerToken.ts has no mine() method. npx asc exits 0. MinerToken.abi.json does not contain a 'mine' selector. MinerToken.d.ts has no mine method signature. Standard OP20 methods remain in ABI.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S106",
+      "title": "Remove faucet from frontend and verify build",
+      "description": "Delete file: frontend/src/pages/FaucetPage.tsx. Edit frontend/src/App.tsx: remove the FaucetPage import and the /faucet Route entry. Edit frontend/src/pages/HomePage.tsx: remove the faucet button and any UI related to MinerToken minting / 'Get MINER' button that was added in S84. Then run: cd frontend && npm run build.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "FaucetPage.tsx does not exist. App.tsx has no FaucetPage import or /faucet Route. HomePage.tsx has no faucet button or reference to the mine() method. npm run build exits 0 with no TypeScript errors. grep -r 'FaucetPage\\|faucet' frontend/src returns no results.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S107",
+      "title": "Update all Mine deploy scripts for new constructor signature",
+      "description": "Edit the following 5 scripts: contracts/scripts/deploy-mine.ts, deploy-mine-crystal.ts, deploy-mine-lava.ts, deploy-mine-moto.ts, deploy-mine-storm.ts. Per script: (1) Remove CONTROLLER_FEE constant and its calldata encoding. (2) Remove PROTOCOL_FEE constant and its calldata encoding. (3) Add const AMM_BUY_FEE = 50n; and const AMM_SELL_FEE = 50n; (4) Update calldata encoding to match new onDeployment() order: [underlying (Address bytes), decimals (u8), name (string with length prefix), symbol (string with length prefix), wrapFee (u256 BE), unwrapFee (u256 BE), ammBuyFee (u256 BE), ammSellFee (u256 BE)]. Keep existing wrapFee=25n and unwrapFee=50n defaults. Verify with: cd contracts && npx tsc --noEmit.",
+      "priority": 27,
+      "passes": false,
+      "acceptance": "All 5 scripts have no CONTROLLER_FEE or PROTOCOL_FEE references. All 5 have AMM_BUY_FEE=50n and AMM_SELL_FEE=50n. Calldata encodes exactly 8 args in the specified order. npx tsc --noEmit exits 0 with no errors.",
+      "model": "sonnet"
     }
   ]
 }

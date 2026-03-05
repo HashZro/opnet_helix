@@ -15,20 +15,11 @@ import { u256 } from '@btc-vision/as-bignum/assembly';
 // Result container for _calcWrap (AssemblyScript has no tuple returns)
 class WrapResult {
     xAmount: u256;
-    stakersFee: u256;
-    controllerFeeAmount: u256;
-    protocolFeeAmount: u256;
+    feeAmount: u256;
 
-    constructor(
-        xAmount: u256,
-        stakersFee: u256,
-        controllerFeeAmount: u256,
-        protocolFeeAmount: u256,
-    ) {
+    constructor(xAmount: u256, feeAmount: u256) {
         this.xAmount = xAmount;
-        this.stakersFee = stakersFee;
-        this.controllerFeeAmount = controllerFeeAmount;
-        this.protocolFeeAmount = protocolFeeAmount;
+        this.feeAmount = feeAmount;
     }
 }
 
@@ -46,10 +37,6 @@ export class Mine extends OP20 {
     private readonly _factoryAddr: u16 = Blockchain.nextPointer;         // Factory/deployer address
     private readonly _wrapFee: u16 = Blockchain.nextPointer;             // Wrap fee (basis points / 1000)
     private readonly _unwrapFee: u16 = Blockchain.nextPointer;           // Unwrap fee (basis points / 1000)
-    private readonly _controllerFee: u16 = Blockchain.nextPointer;       // Controller fee share (basis points / 1000)
-    private readonly _protocolFee: u16 = Blockchain.nextPointer;         // Protocol fee share (basis points / 1000)
-    private readonly _controllerFeeAccrued: u16 = Blockchain.nextPointer; // Accumulated controller fees
-    private readonly _protocolFeeAccrued: u16 = Blockchain.nextPointer;  // Accumulated protocol fees
     private readonly _underlyingHeld: u16 = Blockchain.nextPointer;      // Self-tracked underlying balance
 
     // ── Storage key helpers ──
@@ -110,10 +97,7 @@ export class Mine extends OP20 {
     // ── Internal balance ──
 
     private _underlyingBalance(): u256 {
-        const held = this.lu(this.fieldKeySimple(this._underlyingHeld));
-        const ctrlAccrued = this.lu(this.fieldKeySimple(this._controllerFeeAccrued));
-        const protoAccrued = this.lu(this.fieldKeySimple(this._protocolFeeAccrued));
-        return SafeMath.sub(SafeMath.sub(held, ctrlAccrued), protoAccrued);
+        return this.lu(this.fieldKeySimple(this._underlyingHeld));
     }
 
     // ── Conversion helpers ──
