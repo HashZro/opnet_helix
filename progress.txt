@@ -961,3 +961,12 @@
   - All stat labels #888, values #000
   - Wrap Link: outlined hover-invert via useState, Sometype Mono
   - npm run build exits 0
+
+[2026-03-05] S112 — TokenInput + TransactionButton redesign (industrial form controls)
+  - TokenInput: replaced all Tailwind with inline styles. Container: 1px solid #000 border, white bg, flex stretch.
+  - Input: transparent bg, no border, Sometype Mono 0.9rem, black text.
+  - MAX button: borderLeft separator (borderLeft/borderTop:none/borderRight:none/borderBottom:none to avoid TS duplicate key), Sometype Mono 0.7rem.
+  - Symbol badge: borderLeft separator, Sometype Mono, black text.
+  - TransactionButton: added hovered state, inline style button with instant invert on hover, 40% opacity when disabled.
+  - Removed all purple gradient, bg-gray-*, rounded-lg, transition classes.
+  - npm run build exits 0 (tsc + vite).

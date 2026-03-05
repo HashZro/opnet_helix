@@ -17,16 +17,16 @@ export function TokenInput({ value, onChange, max, decimals, symbol, label, disa
     }
 
     return (
-        <div className="space-y-1">
-            <div className="flex items-center justify-between">
-                <label className="text-sm text-gray-400">{label}</label>
+        <div style={{ marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <label style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Sometype Mono', display: 'block' }}>{label}</label>
                 {max !== undefined && (
-                    <span className="text-xs text-gray-500">
+                    <span style={{ fontSize: '0.7rem', color: '#888' }}>
                         Max: {formatBalance(max, decimals)} {symbol}
                     </span>
                 )}
             </div>
-            <div className="flex items-center bg-gray-800 border border-gray-700 rounded-lg overflow-hidden focus-within:border-gray-500 transition-colors">
+            <div style={{ display: 'flex', alignItems: 'stretch', border: '1px solid #000', background: '#fff' }}>
                 <input
                     type="number"
                     value={value}
@@ -34,19 +34,20 @@ export function TokenInput({ value, onChange, max, decimals, symbol, label, disa
                     disabled={disabled}
                     placeholder="0.0"
                     min="0"
-                    className="flex-1 bg-transparent px-3 py-3 text-white placeholder-gray-600 outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', padding: '10px 12px', color: '#000', fontFamily: 'Sometype Mono', fontSize: '0.9rem' }}
+                    className="[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 />
                 {max !== undefined && (
                     <button
                         type="button"
                         onClick={handleMax}
                         disabled={disabled}
-                        className="px-3 py-1 mr-1 text-xs font-semibold text-purple-400 hover:text-purple-300 hover:bg-gray-700 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        style={{ borderLeft: '1px solid #000', borderTop: 'none', borderRight: 'none', borderBottom: 'none', background: 'transparent', color: '#000', padding: '4px 10px', fontFamily: 'Sometype Mono', fontSize: '0.7rem', cursor: 'pointer' }}
                     >
                         MAX
                     </button>
                 )}
-                <span className="px-3 py-3 text-sm font-medium text-gray-300 bg-gray-750 border-l border-gray-700">
+                <span style={{ borderLeft: '1px solid #000', padding: '10px 12px', fontSize: '0.8rem', color: '#000', background: '#fff', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
                     {symbol}
                 </span>
             </div>
