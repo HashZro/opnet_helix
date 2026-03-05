@@ -817,3 +817,13 @@
   - Simplified _underlyingBalance() to return this.lu(this.fieldKeySimple(this._underlyingHeld)) directly
   - File has TypeScript errors (expected) — remaining method bodies reference removed fields; will be cleaned up in S94-S101
   - Did NOT compile (as instructed — further edits follow in S94-S101)
+
+[2026-03-05] S94 — Removed controller/protocol fee methods from Mine.ts
+  - Deleted MAX_CONTROLLER_PROTOCOL_FEE constant
+  - Deleted 9 methods: claimControllerFee, claimProtocolFee, disburseProtocolFee,
+    setControllerFee, setProtocolFee, getControllerFee, getProtocolFee,
+    getControllerFeeAccrued, getProtocolFeeAccrued
+  - Also removed section-comment headers for the deleted method groups
+  - Did NOT compile (as instructed) — residual references to _controllerFee,
+    _protocolFee, _controllerFeeAccrued, _protocolFeeAccrued remain in
+    _calcWrap, wrap, unwrap, onDeployment — future stories will clean these up

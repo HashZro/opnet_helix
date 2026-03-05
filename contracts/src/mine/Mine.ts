@@ -25,7 +25,6 @@ class WrapResult {
 
 // Fee limits (basis points out of 1000)
 const MAX_DEPOSIT_WITHDRAW_FEE: u256 = u256.fromU32(200);
-const MAX_CONTROLLER_PROTOCOL_FEE: u256 = u256.fromU32(100);
 const FEE_DENOMINATOR: u256 = u256.fromU32(1000);
 const ZERO: u256 = u256.fromU32(0);
 
@@ -299,38 +298,6 @@ export class Mine extends OP20 {
         return response;
     }
 
-    @method()
-    @returns({ name: 'controllerFee', type: ABIDataTypes.UINT256 })
-    public getControllerFee(_calldata: Calldata): BytesWriter {
-        const response = new BytesWriter(32);
-        response.writeU256(this.lu(this.fieldKeySimple(this._controllerFee)));
-        return response;
-    }
-
-    @method()
-    @returns({ name: 'protocolFee', type: ABIDataTypes.UINT256 })
-    public getProtocolFee(_calldata: Calldata): BytesWriter {
-        const response = new BytesWriter(32);
-        response.writeU256(this.lu(this.fieldKeySimple(this._protocolFee)));
-        return response;
-    }
-
-    @method()
-    @returns({ name: 'protocolFeeAccrued', type: ABIDataTypes.UINT256 })
-    public getProtocolFeeAccrued(_calldata: Calldata): BytesWriter {
-        const response = new BytesWriter(32);
-        response.writeU256(this.lu(this.fieldKeySimple(this._protocolFeeAccrued)));
-        return response;
-    }
-
-    @method()
-    @returns({ name: 'controllerFeeAccrued', type: ABIDataTypes.UINT256 })
-    public getControllerFeeAccrued(_calldata: Calldata): BytesWriter {
-        const response = new BytesWriter(32);
-        response.writeU256(this.lu(this.fieldKeySimple(this._controllerFeeAccrued)));
-        return response;
-    }
-
     // ── Address getter views ──
 
     @method()
@@ -372,114 +339,6 @@ export class Mine extends OP20 {
         this.su(this.fieldKeySimple(this._unwrapFee), fee);
         const response = new BytesWriter(1);
         response.writeBoolean(true);
-        return response;
-    }
-
-    @method()
-    @returns({ name: 'success', type: ABIDataTypes.BOOL })
-    public setControllerFee(_calldata: Calldata): BytesWriter {
-        this.requireOwnerOrFactory();
-        const fee: u256 = _calldata.readU256();
-        if (u256.gt(fee, MAX_CONTROLLER_PROTOCOL_FEE)) throw new Revert('fee too high');
-        this.su(this.fieldKeySimple(this._controllerFee), fee);
-        const response = new BytesWriter(1);
-        response.writeBoolean(true);
-        return response;
-    }
-
-    @method()
-    @returns({ name: 'success', type: ABIDataTypes.BOOL })
-    public setProtocolFee(_calldata: Calldata): BytesWriter {
-        this.requireFactoryOwner();
-        const fee: u256 = _calldata.readU256();
-        if (u256.gt(fee, MAX_CONTROLLER_PROTOCOL_FEE)) throw new Revert('fee too high');
-        this.su(this.fieldKeySimple(this._protocolFee), fee);
-        const response = new BytesWriter(1);
-        response.writeBoolean(true);
-        return response;
-    }
-
-    // ── Fee claim methods ──
-
-    @method()
-    @returns({ name: 'accrued', type: ABIDataTypes.UINT256 })
-    public claimControllerFee(_calldata: Calldata): BytesWriter {
-        // CHECKS
-        this.requireOwner();
-
-        const ctrlKey: Uint8Array = this.fieldKeySimple(this._controllerFeeAccrued);
-        const accrued: u256 = this.lu(ctrlKey);
-        if (accrued == ZERO) throw new Revert('no fee');
-
-        // EFFECTS — reset accumulator, decrement _underlyingHeld
-        this.su(ctrlKey, ZERO);
-
-        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
-        this.su(heldKey, SafeMath.sub(this.lu(heldKey), accrued));
-
-        // INTERACTIONS — transfer accrued fees to owner
-        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
-        TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued);
-
-        const response = new BytesWriter(32);
-        response.writeU256(accrued);
-        return response;
-    }
-
-    @method()
-    @returns({ name: 'accrued', type: ABIDataTypes.UINT256 })
-    public claimProtocolFee(_calldata: Calldata): BytesWriter {
-        // CHECKS
-        this.requireFactoryOwner();
-
-        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
-        const accrued: u256 = this.lu(protoKey);
-        if (accrued == ZERO) throw new Revert('no fee');
-
-        // EFFECTS — reset accumulator, decrement _underlyingHeld
-        this.su(protoKey, ZERO);
-
-        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
-        this.su(heldKey, SafeMath.sub(this.lu(heldKey), accrued));
-
-        // INTERACTIONS — transfer accrued fees to factory owner
-        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
-        TransferHelper.transfer(underlying, Blockchain.tx.sender, accrued);
-
-        const response = new BytesWriter(32);
-        response.writeU256(accrued);
-        return response;
-    }
-
-    // ── Disburse protocol fee (called by Staking contract) ──
-
-    @method()
-    @returns({ name: 'accrued', type: ABIDataTypes.UINT256 })
-    public disburseProtocolFee(_calldata: Calldata): BytesWriter {
-        const recipient: Address = _calldata.readAddress();
-
-        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
-        const accrued: u256 = this.lu(protoKey);
-
-        // Return ZERO gracefully — staking calls this speculatively
-        if (accrued == ZERO) {
-            const response = new BytesWriter(32);
-            response.writeU256(ZERO);
-            return response;
-        }
-
-        // EFFECTS — reset accumulator, decrement _underlyingHeld
-        this.su(protoKey, ZERO);
-
-        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
-        this.su(heldKey, SafeMath.sub(this.lu(heldKey), accrued));
-
-        // INTERACTIONS — transfer accrued fees to recipient (Staking contract)
-        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
-        TransferHelper.transfer(underlying, recipient, accrued);
-
-        const response = new BytesWriter(32);
-        response.writeU256(accrued);
         return response;
     }
 
