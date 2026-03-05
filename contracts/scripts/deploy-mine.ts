@@ -40,7 +40,7 @@ const GAS_SAT_FEE  = 10_000n;
 // Mine deployment parameters
 // These match the order read by Mine.onDeployment():
 //   underlying (Address), decimals (u8), name (string), symbol (string),
-//   wrapFee (u256), unwrapFee (u256), controllerFee (u256), protocolFee (u256)
+//   wrapFee (u256), unwrapFee (u256), ammBuyFee (u256), ammSellFee (u256)
 // ---------------------------------------------------------------------------
 const UNDERLYING_ADDRESS = process.env.UNDERLYING_ADDRESS
     ?? '0x0000000000000000000000000000000000000000000000000000000000000000';
@@ -50,10 +50,10 @@ const MINE_NAME     = 'xMiner';
 const MINE_SYMBOL   = 'xMINER';
 
 // Fee params (basis points out of 1000)
-const WRAP_FEE       = 50n;   // 5%
-const UNWRAP_FEE     = 50n;   // 5%
-const CONTROLLER_FEE = 100n;  // 10% of fee goes to controller
-const PROTOCOL_FEE   = 100n;  // 10% of fee goes to protocol
+const WRAP_FEE     = 50n;   // 5%
+const UNWRAP_FEE   = 50n;   // 5%
+const AMM_BUY_FEE  = 50n;   // AMM buy fee
+const AMM_SELL_FEE = 50n;   // AMM sell fee
 
 // ---------------------------------------------------------------------------
 // Load wallet from EC_PRIVATE_KEY + MLDSA_PRIVATE_KEY
@@ -95,14 +95,14 @@ writer.writeStringWithLength(MINE_NAME);
 writer.writeStringWithLength(MINE_SYMBOL);
 writer.writeU256(WRAP_FEE);
 writer.writeU256(UNWRAP_FEE);
-writer.writeU256(CONTROLLER_FEE);
-writer.writeU256(PROTOCOL_FEE);
+writer.writeU256(AMM_BUY_FEE);
+writer.writeU256(AMM_SELL_FEE);
 
 const calldata = writer.getBuffer();
 console.log(`Calldata        : ${calldata.length} bytes`);
 console.log(`Underlying      : ${UNDERLYING_ADDRESS}`);
 console.log(`Name/Symbol     : ${MINE_NAME} / ${MINE_SYMBOL}`);
-console.log(`Fees (wrap/unwrap/ctrl/proto): ${WRAP_FEE}/${UNWRAP_FEE}/${CONTROLLER_FEE}/${PROTOCOL_FEE}`);
+console.log(`Fees (wrap/unwrap/ammBuy/ammSell): ${WRAP_FEE}/${UNWRAP_FEE}/${AMM_BUY_FEE}/${AMM_SELL_FEE}`);
 
 // ---------------------------------------------------------------------------
 // Load compiled WASM binary

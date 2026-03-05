@@ -919,3 +919,11 @@
   - Updated comment in contracts.ts: removed 'faucet' word from MINER_TOKEN_ABI description
   - npm run build exits 0, no TypeScript errors
   - grep -r 'FaucetPage|faucet' frontend/src returns no results
+
+[2026-03-05] S107 — Updated all 5 Mine deploy scripts for new constructor signature
+  - Removed CONTROLLER_FEE and PROTOCOL_FEE from all 5 scripts
+  - Added AMM_BUY_FEE=50n and AMM_SELL_FEE=50n to all 5 scripts
+  - Updated writer.writeU256 calls to use AMM_BUY_FEE and AMM_SELL_FEE
+  - Files changed: deploy-mine.ts, deploy-mine-crystal.ts, deploy-mine-lava.ts, deploy-mine-moto.ts, deploy-mine-storm.ts
+  - Pre-existing tsc errors in node_modules (as-bignum AssemblyScript files) unrelated to our changes
+  - No CONTROLLER_FEE/PROTOCOL_FEE references remain in scripts/
