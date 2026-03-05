@@ -775,6 +775,60 @@
       "passes": true,
       "acceptance": "Screenshots saved. Description written. GitHub repo ready. Tweet drafted.",
       "model": "sonnet"
+    },
+    {
+      "id": "S87",
+      "title": "Create deploy-mine-moto.ts script",
+      "description": "Create mines-opnet/contracts/scripts/deploy-mine-moto.ts. Reuses existing Mine.wasm. UNDERLYING_ADDRESS = process.env.MOTO_UNDERLYING. MINE_NAME = 'xMoto', MINE_SYMBOL = 'xMOTO'. Same fees as other mines (WRAP_FEE=50n, UNWRAP_FEE=50n, CONTROLLER_FEE=100n, PROTOCOL_FEE=100n). Add MOTO_UNDERLYING=0xfd4473840751d58d9f8b73bdd57d6c5260453d5518bd7cd02d0a4cf3df9bf4dd to .env.",
+      "priority": 26,
+      "passes": true,
+      "acceptance": "Script created. MOTO_UNDERLYING set in .env.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S88",
+      "title": "Create register-mine-moto.ts script",
+      "description": "Create mines-opnet/contracts/scripts/register-mine-moto.ts. Calls Factory.registerMine(MOTO_UNDERLYING, MOTO_MINE_ADDRESS). Uses FACTORY_ADDRESS, MOTO_UNDERLYING, MOTO_MINE_ADDRESS from .env.",
+      "priority": 26,
+      "passes": true,
+      "acceptance": "Script created. Reads MOTO_MINE_ADDRESS from .env.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S89",
+      "title": "Deploy xMoto Mine to testnet",
+      "description": "Run: cd mines-opnet/contracts && npx ts-node scripts/deploy-mine-moto.ts. Capture contractAddress (bech32) and contractPubKey (0x hex). Add to .env: MOTO_MINE_ADDRESS=<pubkey> and MOTO_MINE_BECH32=<bech32>.",
+      "priority": 26,
+      "passes": true,
+      "acceptance": "Deploy tx confirmed. MOTO_MINE_ADDRESS and MOTO_MINE_BECH32 added to .env. Address: opt1sqzet9gfcfyvh50qvlw5d2p0cdzndg9spa5zgr238",
+      "model": "sonnet"
+    },
+    {
+      "id": "S90",
+      "title": "Register xMoto Mine with Factory",
+      "description": "Run: npx ts-node scripts/register-mine-moto.ts. Confirm register tx broadcasts. Update mines-opnet/frontend/src/config.ts: add motoTokenPubkey, xMotoMine (MOTO_MINE_BECH32), xMotoMinePubkey (MOTO_MINE_ADDRESS).",
+      "priority": 26,
+      "passes": true,
+      "acceptance": "registerMine tx confirmed (2268a7e9...). config.ts updated with xMoto addresses.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S91",
+      "title": "Add Wrap button to MineCard",
+      "description": "Modify mines-opnet/frontend/src/components/MineCard.tsx. Add a 'Wrap' button at the bottom of the card that links to /wrap/:address. Use e.stopPropagation() so click does not bubble to the outer Link. Rename label 'Underlying Balance' to 'Total Wrapped'.",
+      "priority": 26,
+      "passes": true,
+      "acceptance": "MineCard shows 'Total Wrapped' label and a 'Wrap' button linking to /wrap/:address.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S92",
+      "title": "Verify xMoto card on HomePage",
+      "description": "Load frontend. Confirm xMoto card appears in the mines grid (fetched via useMines from Factory). Card shows name 'xMoto', symbol 'xMOTO', Total Wrapped balance (0 initially), and a working Wrap button that navigates to /wrap/<xMoto-mine-address> with Moto as the underlying token input.",
+      "priority": 26,
+      "passes": true,
+      "acceptance": "xMoto card visible. Wrap button navigates correctly. WrapPage loads Moto as underlying.",
+      "model": "sonnet"
     }
   ]
 }

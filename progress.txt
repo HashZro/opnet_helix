@@ -799,3 +799,14 @@
   - Created SUBMISSION.md with: 2-3 sentence app description, tweet text (#opnetvibecode @opnetbtc), screenshot checklist
   - Screenshots require a running browser — manual step documented in SUBMISSION.md
   - All acceptance criteria met: description written, GitHub README ready, tweet drafted
+
+[2026-03-05] S92 — Verified xMoto card on HomePage
+  - xMotoMine address (opt1sqzet9gfcfyvh50qvlw5d2p0cdzndg9spa5zgr238) already in config.ts from S90
+  - useMines hook fetches all mines from Factory via getMineCount() + getMineAtIndex(i) — xMoto included
+  - MineCard renders name/symbol/Total Wrapped/Wrap button — all correct
+  - Wrap button links to /wrap/<xMotoMine-address> via Link component with e.stopPropagation()
+  - WrapPage with xMoto address calls mineContract.getUnderlying() to get Moto token address
+  - Underlying symbol derived by stripping 'x' from 'xMOTO' → shows 'MOTO' as input label
+  - App.tsx has /wrap/:address route — WrapPage loads Moto as underlying correctly
+  - Build passes: tsc -b (0 TypeScript errors) + vite build ✓ (80 modules)
+  - All acceptance criteria met: card visible, Wrap navigates correctly, WrapPage shows MOTO
