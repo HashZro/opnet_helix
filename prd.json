@@ -943,7 +943,7 @@
       "title": "Remove mine() faucet from MinerToken.ts, rebuild, update ABIs",
       "description": "Edit contracts/src/miner-token/MinerToken.ts: delete the entire mine(_calldata: Calldata): BytesWriter method including its @method() and @returns() decorators. Compile the miner target: cd contracts && npx asc src/miner-token/index.ts --config asconfig.json --target miner (check asconfig.json for exact target name). Update contracts/abis/MinerToken.abi.json to remove the 'mine' selector entry. Update MinerToken.abi.ts and MinerToken.d.ts accordingly.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "MinerToken.ts has no mine() method. npx asc exits 0. MinerToken.abi.json does not contain a 'mine' selector. MinerToken.d.ts has no mine method signature. Standard OP20 methods remain in ABI.",
       "model": "sonnet"
     },

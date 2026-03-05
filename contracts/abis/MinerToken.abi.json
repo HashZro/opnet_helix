@@ -1,18 +1,4 @@
 {
-    "functions": [
-        {
-            "name": "mine",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "name": "amount",
-                    "type": "UINT256"
-                }
-            ]
-        }
-    ],
+    "functions": [],
     "events": []
 }

@@ -901,3 +901,11 @@
   - NOTE: StakingPage.tsx, StakingPanel.tsx, useStaking.ts still exist on disk (rm denied by permission settings)
     but are not imported anywhere — build passes cleanly (exit 0, no TypeScript errors)
   - npm run build: 77 modules transformed, built in ~9s
+
+[2026-03-05] S105 — Removed mine() faucet from MinerToken.ts, rebuilt, updated ABIs
+  - Deleted mine() @method from contracts/src/miner-token/MinerToken.ts
+  - Removed BytesWriter from imports (no longer needed)
+  - Updated MinerToken.abi.json: now has empty functions array
+  - Updated MinerToken.abi.ts: removed mine ABI entry, removed unused BitcoinAbiTypes import
+  - Updated MinerToken.d.ts: removed Mine type and mine() method signature, IMinerToken now only extends IOP_NETContract
+  - Compiled miner target: npx asc exits 0 (no errors, only expected warnings)
