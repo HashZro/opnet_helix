@@ -8,8 +8,7 @@ import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
 import { NETWORK } from '../config';
-import { MINE_ABI, MINER_TOKEN_ABI, OP_20_ABI } from '../lib/contracts';
-import { CONTRACT_ADDRESSES } from '../config';
+import { MINE_ABI, OP_20_ABI } from '../lib/contracts';
 import { TokenInput } from '../components/TokenInput';
 import { TransactionButton } from '../components/TransactionButton';
 import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
@@ -80,42 +79,6 @@ export function WrapPage() {
         }, 500);
         return () => clearTimeout(timer);
     }, [amount, selectedMine, mine]);
-
-    const [faucetLoading, setFaucetLoading] = useState(false);
-
-    const handleFaucet = useCallback(async () => {
-        if (!senderAddress || !walletAddress) throw new Error('Connect wallet first');
-        setFaucetLoading(true);
-        try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const minerContract = getContract<any>(
-                CONTRACT_ADDRESSES.minerToken,
-                MINER_TOKEN_ABI as any,
-                provider,
-                NETWORK,
-                senderAddress,
-            );
-            const sim = await minerContract.mine();
-            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
-            toast.info('Minting test MINER tokens...');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (sim as any).sendTransaction({
-                signer: null,
-                mldsaSigner: null,
-                refundTo: walletAddress,
-                maximumAllowedSatToSpend: BigInt(100_000),
-                feeRate: 10,
-                network: NETWORK,
-                minGas: BigInt(100_000),
-            });
-            toast.success('1000 MINER minted to your wallet!');
-            refetch();
-        } catch (err) {
-            toast.error(`Faucet failed: ${parseContractError(err)}`);
-        } finally {
-            setFaucetLoading(false);
-        }
-    }, [senderAddress, walletAddress, refetch, toast]);
 
     const handleWrap = useCallback(async () => {
         if (!senderAddress || !walletAddress || !selectedMine || !mine) {
@@ -309,20 +272,6 @@ export function WrapPage() {
                             Your {underlyingSymbol} balance:{' '}
                             {formatBalance(mine.userUnderlyingBalance, 18)} {underlyingSymbol}
                         </p>
-                    )}
-
-                    {/* Faucet — get 1000 test MINER tokens */}
-                    {isConnected && (
-                        <div className="mt-4 pt-4 border-t border-gray-800 text-center">
-                            <p className="text-xs text-gray-500 mb-2">Need test tokens?</p>
-                            <button
-                                onClick={handleFaucet}
-                                disabled={faucetLoading}
-                                className="text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                {faucetLoading ? 'Minting…' : 'Get 1000 MINER (Testnet Faucet)'}
-                            </button>
-                        </div>
                     )}
                 </div>
             )}

@@ -909,3 +909,13 @@
   - Updated MinerToken.abi.ts: removed mine ABI entry, removed unused BitcoinAbiTypes import
   - Updated MinerToken.d.ts: removed Mine type and mine() method signature, IMinerToken now only extends IOP_NETContract
   - Compiled miner target: npx asc exits 0 (no errors, only expected warnings)
+
+[2026-03-05] S106 — Remove faucet from frontend and verify build
+  - Deleted frontend/src/pages/FaucetPage.tsx (was untracked, deleted via node fs.unlinkSync)
+  - App.tsx and HomePage.tsx already had no FaucetPage references
+  - Removed { label: 'Faucet', to: '/faucet' } from Navbar.tsx NAV_LINKS
+  - Removed faucetLoading state, handleFaucet callback, and faucet UI section from WrapPage.tsx
+  - Removed MINER_TOKEN_ABI and CONTRACT_ADDRESSES imports from WrapPage.tsx (no longer needed)
+  - Updated comment in contracts.ts: removed 'faucet' word from MINER_TOKEN_ABI description
+  - npm run build exits 0, no TypeScript errors
+  - grep -r 'FaucetPage|faucet' frontend/src returns no results

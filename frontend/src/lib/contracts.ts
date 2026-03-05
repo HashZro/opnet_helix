@@ -3,7 +3,7 @@ import { ABIDataTypes, BitcoinAbiTypes, OP_20_ABI, OP_NET_ABI } from 'opnet';
 // Re-export standard OP_20 ABI for token interactions
 export { OP_20_ABI };
 
-// MinerToken ABI — OP_20 token with free mine() faucet method
+// MinerToken ABI — OP_20 token
 export const MINER_TOKEN_ABI = [
     {
         name: 'mine',

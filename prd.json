@@ -952,7 +952,7 @@
       "title": "Remove faucet from frontend and verify build",
       "description": "Delete file: frontend/src/pages/FaucetPage.tsx. Edit frontend/src/App.tsx: remove the FaucetPage import and the /faucet Route entry. Edit frontend/src/pages/HomePage.tsx: remove the faucet button and any UI related to MinerToken minting / 'Get MINER' button that was added in S84. Then run: cd frontend && npm run build.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "FaucetPage.tsx does not exist. App.tsx has no FaucetPage import or /faucet Route. HomePage.tsx has no faucet button or reference to the mine() method. npm run build exits 0 with no TypeScript errors. grep -r 'FaucetPage\\|faucet' frontend/src returns no results.",
       "model": "sonnet"
     },
