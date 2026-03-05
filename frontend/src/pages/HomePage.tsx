@@ -1,29 +1,21 @@
-import { useState, useCallback } from 'react';
-import { getContract } from 'opnet';
 import { useMines } from '../hooks/useMines';
-import { useWallet } from '../hooks/useWallet';
-import { useToast } from '../contexts/ToastContext';
 import { MineCard } from '../components/MineCard';
-import { provider } from '../lib/provider';
-import { NETWORK, CONTRACT_ADDRESSES } from '../config';
-import { MINER_TOKEN_ABI } from '../lib/contracts';
-import { parseContractError } from '../lib/helpers';
 
 function SkeletonCard() {
     return (
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-5 animate-pulse">
+        <div style={{ border: '1px solid #eee', background: '#fff', padding: '20px' }} className="animate-pulse">
             <div className="flex items-center justify-between mb-4">
                 <div>
-                    <div className="h-5 w-24 bg-gray-800 rounded mb-2" />
-                    <div className="h-4 w-16 bg-gray-800 rounded" />
+                    <div style={{ background: '#eee', height: '20px', marginBottom: '8px', borderRadius: 0 }} className="w-24" />
+                    <div style={{ background: '#eee', height: '16px', borderRadius: 0 }} className="w-16" />
                 </div>
-                <div className="h-4 w-20 bg-gray-800 rounded" />
+                <div style={{ background: '#eee', height: '16px', borderRadius: 0 }} className="w-20" />
             </div>
             <div className="space-y-2">
                 {[1, 2, 3, 4].map((i) => (
                     <div key={i} className="flex justify-between">
-                        <div className="h-4 w-28 bg-gray-800 rounded" />
-                        <div className="h-4 w-16 bg-gray-800 rounded" />
+                        <div style={{ background: '#eee', height: '16px', borderRadius: 0 }} className="w-28" />
+                        <div style={{ background: '#eee', height: '16px', borderRadius: 0 }} className="w-16" />
                     </div>
                 ))}
             </div>
@@ -33,69 +25,23 @@ function SkeletonCard() {
 
 export function HomePage() {
     const { mines, loading, error } = useMines();
-    const { senderAddress, address: walletAddress, isConnected } = useWallet();
-    const toast = useToast();
-    const [faucetLoading, setFaucetLoading] = useState(false);
-
-    const handleFaucet = useCallback(async () => {
-        if (!senderAddress || !walletAddress) {
-            toast.error('Connect your wallet first');
-            return;
-        }
-        setFaucetLoading(true);
-        try {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const minerContract = getContract<any>(
-                CONTRACT_ADDRESSES.minerToken,
-                MINER_TOKEN_ABI as any,
-                provider,
-                NETWORK,
-                senderAddress,
-            );
-            const sim = await minerContract.mine();
-            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
-            toast.info('Minting test MINER tokens...');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (sim as any).sendTransaction({
-                signer: null,
-                mldsaSigner: null,
-                refundTo: walletAddress,
-                maximumAllowedSatToSpend: BigInt(100_000),
-                feeRate: 10,
-                network: NETWORK,
-                minGas: BigInt(100_000),
-            });
-            toast.success('1000 MINER minted to your wallet!');
-        } catch (err) {
-            toast.error(`Faucet failed: ${parseContractError(err)}`);
-        } finally {
-            setFaucetLoading(false);
-        }
-    }, [senderAddress, walletAddress, toast]);
 
     return (
-        <div className="max-w-6xl mx-auto p-4 md:p-6">
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Mines</h1>
-                    <p className="text-gray-400">Wrap OP_20 tokens into yield-bearing xTokens on Bitcoin L1.</p>
-                </div>
-                {isConnected && (
-                    <button
-                        onClick={handleFaucet}
-                        disabled={faucetLoading}
-                        className="shrink-0 text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:border-purple-500 hover:text-purple-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                    >
-                        {faucetLoading ? 'Minting…' : '🪙 Get 1000 MINER'}
-                    </button>
-                )}
+        <div style={{ padding: '48px 0' }}>
+            <div style={{ marginBottom: '16px' }}>
+                <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontFamily: 'Mulish', fontWeight: 700, fontSize: '1.5rem', color: '#000', lineHeight: 1.1 }}>
+                    <span style={{ fontFamily: 'Sometype Mono', fontSize: '1rem', fontWeight: 400 }}>&#8801;</span>Helix <strong>Genomes</strong>
+                </h1>
+                <p style={{ fontFamily: 'Sometype Mono', fontSize: '0.8rem', color: '#888', marginTop: '8px' }}>Wrap OP-20 tokens into yield-bearing xTokens on Bitcoin L1.</p>
             </div>
 
             {error && (
-                <div className="bg-red-900/30 border border-red-700 text-red-300 rounded-lg p-4 mb-6">
-                    {error}
+                <div style={{ border: '1px solid #000', padding: '16px', marginBottom: '24px', fontFamily: 'Sometype Mono', fontSize: '0.8rem', color: '#000' }}>
+                    [!] {error}
                 </div>
             )}
+
+            <div style={{ backgroundImage: 'repeating-linear-gradient(to right, #000 0px, #000 1px, transparent 1px, transparent 6px)', height: '16px', width: '100%', margin: '32px 0' }} />
 
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -104,9 +50,9 @@ export function HomePage() {
                     ))}
                 </div>
             ) : mines.length === 0 ? (
-                <div className="text-center py-20 text-gray-500">
-                    <p className="text-xl">No mines found</p>
-                    <p className="text-sm mt-2">No mines have been registered yet.</p>
+                <div style={{ textAlign: 'center', padding: '80px 0', color: '#888', fontFamily: 'Sometype Mono' }}>
+                    <p>No mines found</p>
+                    <p style={{ marginTop: '8px', fontSize: '0.85rem' }}>No mines have been registered yet.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

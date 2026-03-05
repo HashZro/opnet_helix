@@ -970,3 +970,14 @@
   - TransactionButton: added hovered state, inline style button with instant invert on hover, 40% opacity when disabled.
   - Removed all purple gradient, bg-gray-*, rounded-lg, transition classes.
   - npm run build exits 0 (tsc + vite).
+
+[2026-03-05] S113 — HomePage redesign — section heading with glyph, tick divider, monochrome grid
+  - Rewrote frontend/src/pages/HomePage.tsx visual layer
+  - Page container: padding 48px 0, no max-width class
+  - Heading: Mulish 700 1.5rem with ≡ glyph prefix in Sometype Mono, "Helix Genomes" title
+  - Subtext: Sometype Mono 0.8rem #888
+  - Tick-mark divider: repeating-linear-gradient black dashes before mine grid
+  - Skeleton cards: white bg, #eee skeleton blocks, 1px #eee border, no radius
+  - Empty state: Sometype Mono #888 centered
+  - Error: 1px black border, Sometype Mono, [!] prefix
+  - Build passes: npm run build exits 0
