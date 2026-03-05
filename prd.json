@@ -1069,7 +1069,7 @@
       "title": "CreateMineModal — bundle Mine.wasm into frontend",
       "description": "Copy contracts/build/Mine.wasm to frontend/public/Mine.wasm. In CreateMineModal.tsx, add a loadBytecode() async function that does: const resp = await fetch('./Mine.wasm'); const buf = await resp.arrayBuffer(); return new Uint8Array(buf). Call it inside handleDeploy (not on mount). Add a console.log to confirm the WASM loaded and its byte length. Run: cd frontend && npm run build.",
       "priority": 31,
-      "passes": false,
+      "passes": true,
       "acceptance": "Mine.wasm is in frontend/public/. fetch('./Mine.wasm') resolves without 404. console.log prints byte length > 0.",
       "model": "sonnet"
     },

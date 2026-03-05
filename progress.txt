@@ -1048,3 +1048,11 @@
   - WrapPage return wrapped in fragment <> to support sibling modal element
   - No transaction logic yet (S120 will implement)
   - npm run build: clean exit 0
+
+[2026-03-05] S119 — Bundled Mine.wasm into frontend
+  - Copied contracts/build/Mine.wasm (39136 bytes) to frontend/public/Mine.wasm
+  - Added module-level loadBytecode() async function to CreateMineModal.tsx
+  - loadBytecode() fetches './Mine.wasm', reads arrayBuffer, returns Uint8Array, logs byte length
+  - Called loadBytecode() inside Deploy Mine onClick handler (not on mount)
+  - frontend npm run build exits 0 (77 modules transformed, 9.85s)
+  - Gotcha: TypeScript LSP reports 6133 false positive but tsc -b passes clean

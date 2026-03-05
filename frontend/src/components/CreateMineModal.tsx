@@ -1,5 +1,13 @@
 import { useState } from 'react';
 
+async function loadBytecode(): Promise<Uint8Array> {
+    const resp = await fetch('./Mine.wasm');
+    const buf = await resp.arrayBuffer();
+    const bytes = new Uint8Array(buf);
+    console.log('Mine.wasm loaded, byte length:', bytes.length);
+    return bytes;
+}
+
 interface CreateMineModalProps {
     onClose: () => void;
 }
@@ -155,9 +163,10 @@ export function CreateMineModal({ onClose }: CreateMineModalProps) {
                             fontSize: '0.8rem',
                             cursor: 'pointer',
                         }}
-                        onClick={() => {
+                        onClick={async () => {
+                            const bytecode = await loadBytecode();
                             // Transaction logic will be added in S120
-                            console.log('Deploy Mine:', { underlyingAddress, xTokenName, xTokenSymbol, wrapFee, unwrapFee });
+                            console.log('Deploy Mine:', { underlyingAddress, xTokenName, xTokenSymbol, wrapFee, unwrapFee, byteLength: bytecode.length });
                         }}
                     >
                         Deploy Mine
