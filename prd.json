@@ -934,7 +934,7 @@
       "title": "Remove staking from frontend and verify build",
       "description": "Delete files: frontend/src/pages/StakingPage.tsx, frontend/src/components/StakingPanel.tsx, frontend/src/hooks/useStaking.ts. Edit frontend/src/App.tsx: remove the StakingPage import line and the /staking Route entry. Edit frontend/src/components/Navbar.tsx: remove the staking nav link (the <Link to='/staking'> element or equivalent). Then run: cd frontend && npm run build.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "The 3 deleted files do not exist. App.tsx has no StakingPage import or /staking Route. Navbar.tsx has no /staking link. npm run build exits 0 with no TypeScript errors. grep -r 'useStaking\\|StakingPanel\\|StakingPage' frontend/src returns no results.",
       "model": "sonnet"
     },

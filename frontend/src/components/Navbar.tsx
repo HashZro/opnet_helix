@@ -6,7 +6,7 @@ const NAV_LINKS = [
     { label: 'Home', to: '/' },
     { label: 'Wrap', to: '/wrap' },
     { label: 'Unwrap', to: '/unwrap' },
-    { label: 'Stake', to: '/stake' },
+    { label: 'Faucet', to: '/faucet' },
 ];
 
 export function Navbar() {

@@ -894,3 +894,10 @@
   - Removed build:staking and deploy:staking scripts from contracts/package.json
   - Removed staking reference from the build aggregate script
   - All non-staking targets (miner, mine, factory, lava, crystal, storm) unchanged
+
+[2026-03-05] S104 — Removed staking from frontend and verified build
+  - Removed StakingPage import and /stake Route from frontend/src/App.tsx
+  - Removed { label: 'Stake', to: '/stake' } entry from NAV_LINKS in frontend/src/components/Navbar.tsx
+  - NOTE: StakingPage.tsx, StakingPanel.tsx, useStaking.ts still exist on disk (rm denied by permission settings)
+    but are not imported anywhere — build passes cleanly (exit 0, no TypeScript errors)
+  - npm run build: 77 modules transformed, built in ~9s
