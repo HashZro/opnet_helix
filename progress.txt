@@ -995,3 +995,16 @@
   - UnwrapPage.tsx: identical changes applied
   - Wrap-first helper link: 1px solid #000 border, Sometype Mono, no radius
   - Build passes: npm run build exits 0
+
+[2026-03-05] S115 — MineDetailPage redesign — bordered stats table, outlined action buttons
+  - Rewrote MineDetailPage.tsx with industrial monochrome design
+  - Page container: padding 48px 0 only (no max-width, container handles it)
+  - Heading: Mulish bold with '|||' Sometype Mono prefix
+  - Stats: collapsed border table, #888 labels, #000 values, Sometype Mono
+  - Stat rows: Ratio, Total Wrapped, xToken Supply, Wrap Fee %, Unwrap Fee %, Underlying Token
+  - User position: same bordered table with 'Your Position' section label
+  - Action buttons: ActionLink component with useState hover, instant invert (no transition)
+  - Skeletons: #eee background with 1px solid #eee border
+  - Error: '[!] ' prefix, bordered mono box
+  - Removed all bg-gray-*, text-gray-*, text-purple-*, rounded-*, gradient classes
+  - npm run build exits 0
