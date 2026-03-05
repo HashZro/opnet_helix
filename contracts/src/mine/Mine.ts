@@ -23,6 +23,7 @@ class WrapResult {
     }
 }
 
+
 // Fee limits (basis points out of 1000)
 const MAX_DEPOSIT_WITHDRAW_FEE: u256 = u256.fromU32(200);
 const FEE_DENOMINATOR: u256 = u256.fromU32(1000);
@@ -109,45 +110,29 @@ export class Mine extends OP20 {
 
     // ── Fee calculation ──
 
-    // Port of Mine.sol _calcWrap (lines 479-502)
+    // _calcWrap: fee stays in pool, grows the xToken ratio over time
     private _calcWrap(amount: u256): WrapResult {
         const supply: u256 = this._totalSupply.value;
 
         if (supply == ZERO) {
-            // First wrap: 1:1 ratio, no fees
-            return new WrapResult(amount, ZERO, ZERO, ZERO);
+            // First wrap: 1:1 ratio, no fee
+            return new WrapResult(amount, ZERO);
         }
 
         // feeAmount = amount * wrapFee / 1000
         const wrapFee: u256 = this.lu(this.fieldKeySimple(this._wrapFee));
         const feeAmount: u256 = SafeMath.div(SafeMath.mul(amount, wrapFee), FEE_DENOMINATOR);
 
-        // controllerFeeAmount = feeAmount * controllerFee / 1000
-        const ctrlFeeRate: u256 = this.lu(this.fieldKeySimple(this._controllerFee));
-        const controllerFeeAmount: u256 = SafeMath.div(
-            SafeMath.mul(feeAmount, ctrlFeeRate),
-            FEE_DENOMINATOR,
-        );
-
-        // protocolFeeAmount = feeAmount * protocolFee / 1000
-        const protoFeeRate: u256 = this.lu(this.fieldKeySimple(this._protocolFee));
-        const protocolFeeAmount: u256 = SafeMath.div(
-            SafeMath.mul(feeAmount, protoFeeRate),
-            FEE_DENOMINATOR,
-        );
-
-        // stakersFee = feeAmount - controllerFeeAmount - protocolFeeAmount
-        const stakersFee: u256 = SafeMath.sub(
-            SafeMath.sub(feeAmount, controllerFeeAmount),
-            protocolFeeAmount,
-        );
-
-        // xAmount = totalSupply * (amount - feeAmount) / (underlyingBalance + stakersFee)
+        // netAmount = amount - feeAmount
         const netAmount: u256 = SafeMath.sub(amount, feeAmount);
-        const denominator: u256 = SafeMath.add(this._underlyingBalance(), stakersFee);
-        const xAmount: u256 = SafeMath.div(SafeMath.mul(supply, netAmount), denominator);
 
-        return new WrapResult(xAmount, stakersFee, controllerFeeAmount, protocolFeeAmount);
+        // xAmount = supply * netAmount / underlyingBalance
+        const xAmount: u256 = SafeMath.div(
+            SafeMath.mul(supply, netAmount),
+            this._underlyingBalance(),
+        );
+
+        return new WrapResult(xAmount, feeAmount);
     }
 
     // ── Public methods ──
@@ -160,13 +145,8 @@ export class Mine extends OP20 {
         // CHECKS
         if (amount == ZERO) throw new Revert('zero amount');
 
-        // EFFECTS — calculate fees, update accumulators
+        // EFFECTS — calculate xTokens to mint (fee stays in pool)
         const result: WrapResult = this._calcWrap(amount);
-
-        const ctrlKey: Uint8Array = this.fieldKeySimple(this._controllerFeeAccrued);
-        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
-        this.su(ctrlKey, SafeMath.add(this.lu(ctrlKey), result.controllerFeeAmount));
-        this.su(protoKey, SafeMath.add(this.lu(protoKey), result.protocolFeeAmount));
 
         // INTERACTIONS — transfer underlying in, update held balance, mint xTokens
         const underlying: Address = this.la(this.fieldKeySimple(this._underlying));

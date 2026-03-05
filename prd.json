@@ -853,7 +853,7 @@
       "title": "Simplify _calcWrap() and wrap() in Mine.ts \u2014 fees stay in pool",
       "description": "Edit contracts/src/mine/Mine.ts. Rewrite _calcWrap() as follows: if supply==ZERO return new WrapResult(amount, ZERO) (first wrap 1:1 no fee). Otherwise: feeAmount = SafeMath.div(SafeMath.mul(amount, wrapFee), FEE_DENOMINATOR); netAmount = SafeMath.sub(amount, feeAmount); xAmount = SafeMath.div(SafeMath.mul(supply, netAmount), this._underlyingBalance()); return new WrapResult(xAmount, feeAmount). The feeAmount stays in the pool (not split out). Simplify wrap(): remove all ctrlKey/protoKey accumulator updates. Keep: TransferHelper.transferFrom to pull underlying in, update _underlyingHeld += amount (full amount including fee), mint xTokens. Do NOT compile yet.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "_calcWrap() has no references to controllerFee, protocolFee, stakersFee, ctrlKey, protoKey, or any accumulator. wrap() has no accumulator update lines. _underlyingHeld is incremented by the full amount (fee included). First wrap is 1:1; subsequent wraps yield fewer xTokens relative to amount deposited.",
       "model": "sonnet"
     },

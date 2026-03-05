@@ -827,3 +827,11 @@
   - Did NOT compile (as instructed) — residual references to _controllerFee,
     _protocolFee, _controllerFeeAccrued, _protocolFeeAccrued remain in
     _calcWrap, wrap, unwrap, onDeployment — future stories will clean these up
+
+[2026-03-05] S95 — Simplified _calcWrap() and wrap() in Mine.ts — fees stay in pool
+  - Rewrote _calcWrap(): supply==ZERO returns WrapResult(amount, ZERO) for 1:1 first wrap
+  - Otherwise: feeAmount = amount*wrapFee/1000; netAmount = amount-feeAmount; xAmount = supply*netAmount/underlyingBalance
+  - WrapResult now has 2 fields only (xAmount, feeAmount) — removed controllerFeeAmount/protocolFeeAmount
+  - Removed ctrlKey/protoKey accumulator update lines from wrap()
+  - _underlyingHeld incremented by full amount (fee included) — fee permanently grows pool ratio
+  - unwrap() still has old fee accumulator code (S96 covers that); onDeployment() still reads controllerFee/protocolFee (S97)
