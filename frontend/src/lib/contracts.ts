@@ -1,4 +1,6 @@
-import { ABIDataTypes, BitcoinAbiTypes, OP_20_ABI, OP_NET_ABI } from 'opnet';
+import { ABIDataTypes, BitcoinAbiTypes, OP_20_ABI, OP_NET_ABI, MOTOSWAP_ROUTER_ABI } from 'opnet';
+
+export { MOTOSWAP_ROUTER_ABI };
 
 // Re-export standard OP_20 ABI for token interactions
 export { OP_20_ABI };
@@ -65,30 +67,6 @@ export const MINE_ABI = [
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getControllerFee',
-        inputs: [],
-        outputs: [{ name: 'controllerFee', type: ABIDataTypes.UINT256 }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'getProtocolFee',
-        inputs: [],
-        outputs: [{ name: 'protocolFee', type: ABIDataTypes.UINT256 }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'getProtocolFeeAccrued',
-        inputs: [],
-        outputs: [{ name: 'protocolFeeAccrued', type: ABIDataTypes.UINT256 }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'getControllerFeeAccrued',
-        inputs: [],
-        outputs: [{ name: 'controllerFeeAccrued', type: ABIDataTypes.UINT256 }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
         name: 'getUnderlying',
         inputs: [],
         outputs: [{ name: 'underlying', type: ABIDataTypes.ADDRESS }],
@@ -122,24 +100,6 @@ export const MINE_ABI = [
         name: 'setProtocolFee',
         inputs: [],
         outputs: [{ name: 'success', type: ABIDataTypes.BOOL }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'claimControllerFee',
-        inputs: [],
-        outputs: [{ name: 'accrued', type: ABIDataTypes.UINT256 }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'claimProtocolFee',
-        inputs: [],
-        outputs: [{ name: 'accrued', type: ABIDataTypes.UINT256 }],
-        type: BitcoinAbiTypes.Function,
-    },
-    {
-        name: 'disburseProtocolFee',
-        inputs: [],
-        outputs: [{ name: 'accrued', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
     ...OP_20_ABI,
