@@ -39,6 +39,8 @@ export class Mine extends OP20 {
     private readonly _unwrapFee: u16 = Blockchain.nextPointer;           // Unwrap fee (basis points / 1000)
     private readonly _underlyingHeld: u16 = Blockchain.nextPointer;      // Self-tracked underlying balance
     private readonly _ammPool: u16 = Blockchain.nextPointer;             // Whitelisted AMM pool address
+    private readonly _ammBuyFee: u16 = Blockchain.nextPointer;           // AMM buy fee (basis points / 1000)
+    private readonly _ammSellFee: u16 = Blockchain.nextPointer;          // AMM sell fee (basis points / 1000)
 
     // ── Storage key helpers ──
 
@@ -327,6 +329,48 @@ export class Mine extends OP20 {
     public getAmmPool(_calldata: Calldata): BytesWriter {
         const response = new BytesWriter(32);
         response.writeAddress(this.la(this.fieldKeySimple(this._ammPool)));
+        return response;
+    }
+
+    // ── AMM fee setters/getters ──
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setAmmBuyFee(_calldata: Calldata): BytesWriter {
+        this.requireOwner();
+        const fee: u256 = _calldata.readU256();
+        if (u256.gt(fee, MAX_DEPOSIT_WITHDRAW_FEE)) throw new Revert('fee too high');
+        this.su(this.fieldKeySimple(this._ammBuyFee), fee);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setAmmSellFee(_calldata: Calldata): BytesWriter {
+        this.requireOwner();
+        const fee: u256 = _calldata.readU256();
+        if (u256.gt(fee, MAX_DEPOSIT_WITHDRAW_FEE)) throw new Revert('fee too high');
+        this.su(this.fieldKeySimple(this._ammSellFee), fee);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'ammBuyFee', type: ABIDataTypes.UINT256 })
+    public getAmmBuyFee(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._ammBuyFee)));
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'ammSellFee', type: ABIDataTypes.UINT256 })
+    public getAmmSellFee(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeU256(this.lu(this.fieldKeySimple(this._ammSellFee)));
         return response;
     }
 

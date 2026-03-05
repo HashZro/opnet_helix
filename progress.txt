@@ -857,3 +857,12 @@
   - Added getAmmPool(): reads and returns stored Address
   - Both methods decorated with @method() and @returns()
   - Did NOT compile (per story instructions — compilation deferred to S101)
+
+[2026-03-05] S99 — Added AMM buy/sell fee storage, setters, and getters to Mine.ts
+  - Added 2 storage pointers: _ammBuyFee and _ammSellFee (Blockchain.nextPointer)
+  - setAmmBuyFee(): requireOwner(), validates fee <= MAX_DEPOSIT_WITHDRAW_FEE, stores, returns bool true
+  - setAmmSellFee(): same pattern
+  - getAmmBuyFee(): returns lu(_ammBuyFee) as UINT256
+  - getAmmSellFee(): returns lu(_ammSellFee) as UINT256
+  - All 4 decorated with @method() and @returns()
+  - Did NOT compile (per story instructions — compile happens in S101)
