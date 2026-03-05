@@ -898,7 +898,7 @@
       "title": "Add notifyAmmFee() method to Mine.ts",
       "description": "Edit contracts/src/mine/Mine.ts. Add notifyAmmFee(_calldata: Calldata): BytesWriter with @method() @returns({ name: 'amount', type: ABIDataTypes.UINT256 }). Implementation (CEI order): CHECKS — call requireAmmPool(); read amount: u256 = _calldata.readU256(); if amount==ZERO throw Revert('zero amount'). EFFECTS — read heldKey; su(heldKey, SafeMath.add(lu(heldKey), amount)). INTERACTIONS — read underlying via la(_underlying); TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount). Return BytesWriter(32) with writeU256(amount). This function is called by the whitelisted AMM pool AFTER it has approved the Mine contract to spend the fee tokens. Do NOT compile yet.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "notifyAmmFee() exists with @method() decorator. Calling from non-pool address reverts 'not amm pool'. Calling with 0 reverts 'zero amount'. On success: _underlyingHeld increases by amount; underlying tokens are pulled from caller via transferFrom. CEI order respected: held update happens before transferFrom call.",
       "model": "sonnet"
     },

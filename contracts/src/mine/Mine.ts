@@ -374,6 +374,29 @@ export class Mine extends OP20 {
         return response;
     }
 
+    // ── AMM fee notification ──
+
+    @method()
+    @returns({ name: 'amount', type: ABIDataTypes.UINT256 })
+    public notifyAmmFee(_calldata: Calldata): BytesWriter {
+        // CHECKS
+        this.requireAmmPool();
+        const amount: u256 = _calldata.readU256();
+        if (amount == ZERO) throw new Revert('zero amount');
+
+        // EFFECTS
+        const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);
+        this.su(heldKey, SafeMath.add(this.lu(heldKey), amount));
+
+        // INTERACTIONS
+        const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+        TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount);
+
+        const response = new BytesWriter(32);
+        response.writeU256(amount);
+        return response;
+    }
+
     // ── Lifecycle ──
 
     public override onDeployment(_calldata: Calldata): void {

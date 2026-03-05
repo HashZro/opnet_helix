@@ -866,3 +866,9 @@
   - getAmmSellFee(): returns lu(_ammSellFee) as UINT256
   - All 4 decorated with @method() and @returns()
   - Did NOT compile (per story instructions — compile happens in S101)
+
+[2026-03-05] S100 — Added notifyAmmFee() to Mine.ts
+  - CEI order: requireAmmPool() check → read amount → revert if zero → update _underlyingHeld → transferFrom
+  - Placed between AMM fee getters and Lifecycle section
+  - @method() + @returns({ name: 'amount', type: ABIDataTypes.UINT256 }) decorators applied
+  - Not compiled (per story instructions — S101 handles compilation)
