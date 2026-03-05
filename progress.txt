@@ -933,3 +933,12 @@
   - Rewrote frontend/src/index.css: CSS vars (--color-bg, --color-fg, --color-border, --color-muted), reset *, button styles, body min-height
   - Updated frontend/src/styles/globals.css: replaced bg-gray-950/text-gray-100/font-sans with bg-white/text-black, appended @layer base with border-radius:0 and Mulish headings
   - npm run build passes (76 modules, no TS errors)
+
+[2026-03-05] S109 — Navbar redesign — industrial HELIX brand, slash-prefixed links
+  - Rewrote frontend/src/components/Navbar.tsx with inline styles only (no Tailwind dark classes)
+  - Nav: borderBottom 1px solid #000, bg white, sticky top-0 z-100
+  - Brand: 'HELIX' in Mulish 800 uppercase, link to '/'
+  - Links: '/Wrap' and '/Unwrap' (slash is part of label), Sometype Mono 0.8rem, hover underline only
+  - Removed 'Home' link from NAV_LINKS
+  - Mobile menu: borderTop 1px solid #000, white bg, flex column gap 12px
+  - npm run build passes (0 TypeScript errors, vite build succeeds)

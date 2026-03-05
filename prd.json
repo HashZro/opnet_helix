@@ -979,7 +979,7 @@
       "title": "Navbar redesign — industrial HELIX brand, slash-prefixed links",
       "description": "Rewrite frontend/src/components/Navbar.tsx. Change nav link labels to '/Wrap' and '/Unwrap' (slash is part of label). Remove 'Home' link. Nav element style: borderBottom:'1px solid #000', background:'#fff', position:'sticky', top:0, zIndex:100. Inner container div style: maxWidth:'900px', margin:'0 auto', height:'48px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 2rem'. Brand Link to '/' style: fontFamily:'Mulish', fontWeight:800, fontSize:'1.1rem', textTransform:'uppercase', letterSpacing:'0.05em', color:'#000', textDecoration:'none', text 'HELIX'. Desktop links: display flex gap:24px. Each Link style: fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#000', textDecoration:'none'. On hover: textDecoration:'underline' only, no background change. Mobile menu div style: borderTop:'1px solid #000', padding:'12px 2rem', background:'#fff', display:'flex', flexDirection:'column', gap:'12px'. Remove all Tailwind classes with bg-gray-900, border-gray-800, text-gray-400, text-white, hover:text-white, rounded. Run: cd frontend && npm run build.",
       "priority": 28,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. Navbar: white bg, 1px black bottom border, 48px height. Brand 'HELIX' in Mulish 800 uppercase. Nav links '/Wrap' and '/Unwrap' in Sometype Mono. No gray or purple colors. Mobile hamburger collapses links correctly.",
       "model": "sonnet"
     },

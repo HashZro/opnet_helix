@@ -3,29 +3,30 @@ import { Link } from 'react-router-dom';
 import { WalletButton } from './WalletButton';
 
 const NAV_LINKS = [
-    { label: 'Home', to: '/' },
-    { label: 'Wrap', to: '/wrap' },
-    { label: 'Unwrap', to: '/unwrap' },
+    { label: '/Wrap', to: '/wrap' },
+    { label: '/Unwrap', to: '/unwrap' },
 ];
 
 export function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
 
     return (
-        <nav className="w-full bg-gray-900 border-b border-gray-800 px-4 py-3">
-            <div className="max-w-6xl mx-auto flex items-center justify-between">
-                {/* Logo */}
-                <Link to="/" className="text-lg font-bold text-white tracking-tight">
-                    Mines Protocol
+        <nav style={{ borderBottom: '1px solid #000', background: '#fff', position: 'sticky', top: 0, zIndex: 100 }}>
+            <div style={{ maxWidth: '900px', margin: '0 auto', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem' }}>
+                {/* Brand */}
+                <Link to="/" style={{ fontFamily: 'Mulish, sans-serif', fontWeight: 800, fontSize: '1.1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#000', textDecoration: 'none' }}>
+                    HELIX
                 </Link>
 
                 {/* Desktop nav */}
-                <div className="hidden md:flex items-center gap-6">
+                <div style={{ display: 'flex', gap: '24px' }}>
                     {NAV_LINKS.map((link) => (
                         <Link
                             key={link.to}
                             to={link.to}
-                            className="text-gray-400 hover:text-white text-sm font-medium transition-colors"
+                            style={{ fontFamily: 'Sometype Mono, monospace', fontSize: '0.8rem', color: '#000', textDecoration: 'none' }}
+                            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
                         >
                             {link.label}
                         </Link>
@@ -33,21 +34,22 @@ export function Navbar() {
                 </div>
 
                 {/* Wallet + hamburger */}
-                <div className="flex items-center gap-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div className="hidden md:block">
                         <WalletButton />
                     </div>
                     <button
-                        className="md:hidden p-2.5 text-gray-400 hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+                        style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: '8px', color: '#000' }}
+                        className="md:hidden"
                         onClick={() => setMenuOpen((prev) => !prev)}
                         aria-label="Toggle menu"
                     >
                         {menuOpen ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                             </svg>
                         )}
@@ -57,18 +59,18 @@ export function Navbar() {
 
             {/* Mobile menu */}
             {menuOpen && (
-                <div className="md:hidden mt-3 pb-2 border-t border-gray-800 pt-3 flex flex-col gap-3">
+                <div style={{ borderTop: '1px solid #000', padding: '12px 2rem', background: '#fff', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {NAV_LINKS.map((link) => (
                         <Link
                             key={link.to}
                             to={link.to}
-                            className="text-gray-400 hover:text-white text-sm font-medium px-1 py-2.5 min-h-[44px] flex items-center transition-colors"
+                            style={{ fontFamily: 'Sometype Mono, monospace', fontSize: '0.8rem', color: '#000', textDecoration: 'none' }}
                             onClick={() => setMenuOpen(false)}
                         >
                             {link.label}
                         </Link>
                     ))}
-                    <div className="pt-2">
+                    <div>
                         <WalletButton />
                     </div>
                 </div>
