@@ -1042,7 +1042,7 @@
       "title": "Spinner + ToastContainer redesign — monochrome black/white only",
       "description": "Redesign 2 components. (1) frontend/src/components/Spinner.tsx: Read file. Replace colored border Tailwind classes (border-purple-*, border-blue-*, border-indigo-*) with border-black and border-t-transparent (or inline style border:'2px solid #000', borderTopColor:'transparent'). Keep animate-spin class or equivalent @keyframes. borderRadius:50% is the one allowed exception to the no-radius rule for spinners. (2) frontend/src/components/ToastContainer.tsx and any Toast subcomponent inside it: Replace bg-green-*, bg-red-*, bg-blue-*, bg-emerald-* with background:'#fff'. Replace border-green-*, border-red-*, border-blue-* with border:'1px solid #000'. Replace text-green-*, text-red-*, text-blue-*, text-emerald-* with color:'#000'. Add fontFamily:'Sometype Mono', fontSize:'0.75rem' to toast item. Prepend type prefix to message: success → '[OK] ', error → '[!] ', info → '[i] '. Keep fixed positioning, z-index, and auto-dismiss timer unchanged. Run: cd frontend && npm run build.",
       "priority": 30,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. Spinner: black border with transparent top edge, monochrome. Toasts: white bg, 1px black border, black Sometype Mono text, type indicated by text prefix ([OK] / [!] / [i]). No green/red/blue/purple in either component.",
       "model": "sonnet"
     },

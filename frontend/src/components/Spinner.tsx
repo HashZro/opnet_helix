@@ -1,7 +1,15 @@
 export function Spinner({ size = 6 }: { size?: number }) {
+    const px = size * 4;
     return (
         <div
-            className={`w-${size} h-${size} border-2 border-purple-500 border-t-transparent rounded-full animate-spin`}
+            className="animate-spin"
+            style={{
+                width: px,
+                height: px,
+                border: '2px solid #000',
+                borderTopColor: 'transparent',
+                borderRadius: '50%',
+            }}
         />
     );
 }

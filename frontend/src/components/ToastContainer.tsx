@@ -1,15 +1,9 @@
 import { useToast } from '../contexts/ToastContext';
 
-const TYPE_STYLES = {
-    success: 'bg-green-900/90 border-green-600 text-green-300',
-    error: 'bg-red-900/90 border-red-600 text-red-300',
-    info: 'bg-blue-900/90 border-blue-600 text-blue-300',
-};
-
-const TYPE_ICONS = {
-    success: '✓',
-    error: '✕',
-    info: 'ℹ',
+const TYPE_PREFIX: Record<string, string> = {
+    success: '[OK] ',
+    error: '[!] ',
+    info: '[i] ',
 };
 
 export function ToastContainer() {
@@ -18,20 +12,30 @@ export function ToastContainer() {
     if (toasts.length === 0) return null;
 
     return (
-        <div className="fixed bottom-4 right-4 z-[99999] flex flex-col gap-2 max-w-sm w-full pointer-events-none">
+        <div style={{ position: 'fixed', bottom: '16px', right: '16px', zIndex: 99999, display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '360px', width: '100%', pointerEvents: 'none' }}>
             {toasts.map(toast => (
                 <div
                     key={toast.id}
-                    className={`flex items-start gap-3 px-4 py-3 rounded-lg border text-sm shadow-lg backdrop-blur-sm pointer-events-auto ${TYPE_STYLES[toast.type]}`}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '8px',
+                        padding: '10px 14px',
+                        background: '#fff',
+                        border: '1px solid #000',
+                        fontFamily: 'Sometype Mono, monospace',
+                        fontSize: '0.75rem',
+                        color: '#000',
+                        pointerEvents: 'auto',
+                    }}
                 >
-                    <span className="font-bold text-base leading-tight mt-0.5 flex-shrink-0">
-                        {TYPE_ICONS[toast.type]}
+                    <span style={{ flex: 1, wordBreak: 'break-word' }}>
+                        {TYPE_PREFIX[toast.type] ?? ''}{toast.message}
                     </span>
-                    <span className="flex-1 leading-snug break-words">{toast.message}</span>
                     <button
                         type="button"
                         onClick={() => removeToast(toast.id)}
-                        className="opacity-60 hover:opacity-100 text-lg leading-none ml-1 flex-shrink-0"
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', lineHeight: 1, color: '#000', flexShrink: 0 }}
                         aria-label="Dismiss"
                     >
                         ×

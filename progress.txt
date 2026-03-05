@@ -1008,3 +1008,16 @@
   - Error: '[!] ' prefix, bordered mono box
   - Removed all bg-gray-*, text-gray-*, text-purple-*, rounded-*, gradient classes
   - npm run build exits 0
+
+[2026-03-05] S116 — Spinner + ToastContainer redesign — monochrome black/white only
+  - Spinner.tsx: replaced border-purple-500 border-t-transparent rounded-full with inline styles
+    border:'2px solid #000', borderTopColor:'transparent', borderRadius:'50%'
+    Size computed as size*4 px (matching Tailwind w-N = N*4px)
+    Kept animate-spin class for CSS animation
+  - ToastContainer.tsx: replaced TYPE_STYLES/TYPE_ICONS with TYPE_PREFIX map
+    success → '[OK] ', error → '[!] ', info → '[i] '
+    All colors replaced: background:'#fff', border:'1px solid #000', color:'#000'
+    Font: Sometype Mono, fontSize:'0.75rem'
+    Fixed positioning, z-index:99999, auto-dismiss logic unchanged
+    Removed all bg-green-*, bg-red-*, bg-blue-*, text-green-*, text-red-*, text-blue-*, rounded-*
+  - npm run build exits 0
