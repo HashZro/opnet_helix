@@ -849,3 +849,11 @@
   - Removed this.su() calls for _controllerFee and _protocolFee (2 lines)
   - onDeployment() now reads exactly 6 calldata values: underlying → decimals → name → symbol → wrapFee → unwrapFee
   - No compile step per story instructions
+
+[2026-03-05] S98 — Add AMM pool whitelist storage and setter/getter to Mine.ts
+  - Added _ammPool: u16 = Blockchain.nextPointer storage pointer (after _underlyingHeld)
+  - Added requireAmmPool() private helper: reads _ammPool via la(); reverts 'not amm pool' if sender != pool
+  - Added setAmmPool(): requireOwner() guard, reads Address from calldata, stores via sa(), returns bool true
+  - Added getAmmPool(): reads and returns stored Address
+  - Both methods decorated with @method() and @returns()
+  - Did NOT compile (per story instructions — compilation deferred to S101)

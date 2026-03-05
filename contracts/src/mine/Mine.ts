@@ -38,6 +38,7 @@ export class Mine extends OP20 {
     private readonly _wrapFee: u16 = Blockchain.nextPointer;             // Wrap fee (basis points / 1000)
     private readonly _unwrapFee: u16 = Blockchain.nextPointer;           // Unwrap fee (basis points / 1000)
     private readonly _underlyingHeld: u16 = Blockchain.nextPointer;      // Self-tracked underlying balance
+    private readonly _ammPool: u16 = Blockchain.nextPointer;             // Whitelisted AMM pool address
 
     // ── Storage key helpers ──
 
@@ -79,6 +80,11 @@ export class Mine extends OP20 {
     private requireOwner(): void {
         const owner = this.la(this.fieldKeySimple(this._owner));
         if (Blockchain.tx.sender != owner) throw new Revert('not owner');
+    }
+
+    private requireAmmPool(): void {
+        const pool = this.la(this.fieldKeySimple(this._ammPool));
+        if (Blockchain.tx.sender != pool) throw new Revert('not amm pool');
     }
 
     private requireFactoryOwner(): void {
@@ -300,6 +306,27 @@ export class Mine extends OP20 {
         this.su(this.fieldKeySimple(this._unwrapFee), fee);
         const response = new BytesWriter(1);
         response.writeBoolean(true);
+        return response;
+    }
+
+    // ── AMM pool whitelist ──
+
+    @method()
+    @returns({ name: 'success', type: ABIDataTypes.BOOL })
+    public setAmmPool(_calldata: Calldata): BytesWriter {
+        this.requireOwner();
+        const addr: Address = _calldata.readAddress();
+        this.sa(this.fieldKeySimple(this._ammPool), addr);
+        const response = new BytesWriter(1);
+        response.writeBoolean(true);
+        return response;
+    }
+
+    @method()
+    @returns({ name: 'pool', type: ABIDataTypes.ADDRESS })
+    public getAmmPool(_calldata: Calldata): BytesWriter {
+        const response = new BytesWriter(32);
+        response.writeAddress(this.la(this.fieldKeySimple(this._ammPool)));
         return response;
     }
 
