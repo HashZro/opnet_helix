@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatBalance, truncateAddress } from '../lib/helpers';
 
 export interface MineCardProps {
@@ -14,38 +15,54 @@ export interface MineCardProps {
 export function MineCard({ address, name, symbol, ratio, wrapFee, unwrapFee, underlyingBalance }: MineCardProps) {
     const wrapFeePercent = (Number(wrapFee) / 10).toFixed(1);
     const unwrapFeePercent = (Number(unwrapFee) / 10).toFixed(1);
+    const navigate = useNavigate();
+    const [hovered, setHovered] = useState(false);
 
     return (
-        <Link
-            to={`/mine/${address}`}
-            className="block bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-gray-600 hover:bg-gray-800 transition-colors duration-200 cursor-pointer"
+        <div
+            onClick={() => navigate(`/mine/${address}`)}
+            style={{ position: 'relative', border: '1px solid #000', background: '#fff', padding: '20px', cursor: 'pointer' }}
         >
-            <div className="flex items-center justify-between mb-4">
+            <div aria-hidden="true" style={{ position: 'absolute', top: '-1px', right: '-1px', width: '16px', height: '16px', borderTop: '1px solid #000', borderRight: '1px solid #000' }} />
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <div>
-                    <h3 className="text-lg font-semibold text-white">{name}</h3>
-                    <span className="text-sm text-gray-400">{symbol}</span>
+                    <h3 style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1rem', color: '#000' }}>{name}</h3>
+                    <span style={{ fontSize: '0.8rem', color: '#888' }}>{symbol}</span>
                 </div>
-                <span className="text-xs text-gray-500 font-mono">{truncateAddress(address)}</span>
+                <span style={{ fontSize: '0.7rem', color: '#888', fontFamily: 'Sometype Mono' }}>{truncateAddress(address)}</span>
             </div>
 
-            <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Ratio</span>
-                    <span className="text-white font-mono">{ratio.toFixed(4)}</span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '12px 0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>Ratio</span>
+                    <span style={{ color: '#000', fontSize: '0.8rem' }}>{ratio.toFixed(4)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Underlying Balance</span>
-                    <span className="text-white font-mono">{formatBalance(underlyingBalance, 18)}</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>Total Wrapped</span>
+                    <span style={{ color: '#000', fontSize: '0.8rem' }}>{formatBalance(underlyingBalance, 18)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Wrap Fee</span>
-                    <span className="text-purple-400">{wrapFeePercent}%</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>Wrap Fee</span>
+                    <span style={{ color: '#000', fontSize: '0.8rem' }}>{wrapFeePercent}%</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Unwrap Fee</span>
-                    <span className="text-blue-400">{unwrapFeePercent}%</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: '#888', fontSize: '0.8rem' }}>Unwrap Fee</span>
+                    <span style={{ color: '#000', fontSize: '0.8rem' }}>{unwrapFeePercent}%</span>
                 </div>
             </div>
-        </Link>
+
+            <Link
+                to={`/wrap/${address}`}
+                onClick={(e) => e.stopPropagation()}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+                style={{ display: 'block', width: '100%', textAlign: 'center', border: '1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', padding: '8px', fontFamily: 'Sometype Mono', fontSize: '0.8rem', marginTop: '16px', textDecoration: 'none' }}
+            >
+                Wrap →
+            </Link>
+
+            <div aria-hidden="true" style={{ position: 'absolute', bottom: '-1px', left: '-1px', width: '16px', height: '16px', borderBottom: '1px solid #000', borderLeft: '1px solid #000' }} />
+        </div>
     );
 }

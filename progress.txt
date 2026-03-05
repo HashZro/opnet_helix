@@ -950,3 +950,14 @@
   - Added left rail decorative div: absolute positioned, 1px black vertical line, 60vh tall, starts 80px from top
   - Main element: maxWidth 900px, centered with margin:0 auto, padding:0 2rem, flex:1
   - npm run build passes (0 TypeScript errors, vite build succeeds)
+
+[2026-03-05] S111 — MineCard redesign: bordered card with corner bracket motifs
+  - Replaced all Tailwind classes with inline styles
+  - Outer div: position:relative, 1px solid #000 border, white bg, no radius
+  - Top-right and bottom-left corner bracket decorations (absolute positioned 16x16px divs)
+  - Mine name h3: Mulish 700 1rem #000
+  - Symbol: 0.8rem #888, Address: 0.7rem #888 Sometype Mono
+  - Stats container: flex column gap:6px margin:12px 0
+  - All stat labels #888, values #000
+  - Wrap Link: outlined hover-invert via useState, Sometype Mono
+  - npm run build exits 0
