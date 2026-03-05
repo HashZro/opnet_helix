@@ -15,10 +15,20 @@
       "textFile": "build/Factory.wat",
       "use": ["abort=src/factory/index/abort"]
     },
-    "staking": {
-      "outFile": "build/Staking.wasm",
-      "textFile": "build/Staking.wat",
-      "use": ["abort=src/staking/index/abort"]
+    "lava": {
+      "outFile": "build/LavaToken.wasm",
+      "textFile": "build/LavaToken.wat",
+      "use": ["abort=src/lava-token/index/abort"]
+    },
+    "crystal": {
+      "outFile": "build/CrystalToken.wasm",
+      "textFile": "build/CrystalToken.wat",
+      "use": ["abort=src/crystal-token/index/abort"]
+    },
+    "storm": {
+      "outFile": "build/StormToken.wasm",
+      "textFile": "build/StormToken.wat",
+      "use": ["abort=src/storm-token/index/abort"]
     }
   },
   "options": {

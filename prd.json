@@ -925,7 +925,7 @@
       "title": "Remove staking from contracts build config",
       "description": "Edit contracts/asconfig.json: remove the 'staking' entry from the targets object. All other targets (miner, mine, factory) must remain unchanged. Edit contracts/package.json: remove any npm script that references 'staking' (e.g. build:staking, deploy:staking). Do not remove other scripts.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/asconfig.json has no 'staking' key under targets. contracts/package.json has no script name or command referencing 'staking'. All non-staking targets and scripts are unchanged.",
       "model": "sonnet"
     },

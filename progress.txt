@@ -888,3 +888,9 @@
   - Used `git rm` (not bare rm) to delete tracked files cleanly
   - No remaining import statements referencing ./staking or ../staking in contracts/
   - Note: package.json, asconfig.json, deployed-addresses.json still reference staking — handled in S103
+
+[2026-03-05] S103 — Removed staking from contracts build config
+  - Deleted 'staking' target from contracts/asconfig.json (outFile, textFile, use entries)
+  - Removed build:staking and deploy:staking scripts from contracts/package.json
+  - Removed staking reference from the build aggregate script
+  - All non-staking targets (miner, mine, factory, lava, crystal, storm) unchanged
