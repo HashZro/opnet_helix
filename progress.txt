@@ -1028,3 +1028,23 @@
   - Both connected/disconnected buttons share same style object (1px black border, white<->black invert)
   - Sometype Mono font, 0.75rem, padding 6px 16px, no CSS transition
   - npm run build: exits 0, no TypeScript errors
+
+[2026-03-05] xMoto Mine Registration
+  - Verified: Moto token opt1sqzkx6wm5acawl9m6nay2mjsm6wagv7gazcgtczds pubkey matches .env MOTO_UNDERLYING
+  - Verified: xMotoMine opt1sqzet9gfcfyvh50qvlw5d2p0cdzndg9spa5zgr238 was already deployed for this token
+  - Ran register-mine-moto.ts → Factory.registerMine(motoUnderlying, xMotoMine)
+  - Funding tx: abf599c0fed882cc32a9d1d9c8369491f08d367b5f10b908bb5fc3c5d333df64
+  - Register tx: 7a724fefad573a5c3a74666c290534288f89af0af108020c2aa26adf0e500dc2
+  - Added motoToken bech32 address to frontend/src/config.ts
+  - Frontend build: clean (no TypeScript errors)
+  - xMoto mine now auto-discoverable via Factory getMineCount/getMineAtIndex
+
+[2026-03-05] S118 — CreateMineModal UI shell on WrapPage
+  - Created frontend/src/components/CreateMineModal.tsx: full-screen overlay modal
+  - Fixed overlay: position:fixed, inset:0, z-index:9998 backdrop + z-index:9999 white box
+  - Modal fields: underlying token address, xToken name, symbol, wrap fee bps, unwrap fee bps (defaults 50/50)
+  - Deploy Mine button (black bg) + Cancel button (outlined), backdrop click closes modal
+  - Added '+ Create Wrapper' button to WrapPage mine selector header area
+  - WrapPage return wrapped in fragment <> to support sibling modal element
+  - No transaction logic yet (S120 will implement)
+  - npm run build: clean exit 0

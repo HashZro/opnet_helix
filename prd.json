@@ -1054,6 +1054,42 @@
       "passes": true,
       "acceptance": "npm run build exits 0. WalletButton: 1px black border, white bg, black text in both states. Hover instantly inverts to black bg white text (no animation delay). Sometype Mono font. No purple or blue colors. Connect/disconnect still functions.",
       "model": "sonnet"
+    },
+    {
+      "id": "S118",
+      "title": "CreateMineModal — UI shell on WrapPage",
+      "description": "Add a 'Create Wrapper' button to frontend/src/pages/WrapPage.tsx (top-right area, next to the mine selector). Create frontend/src/components/CreateMineModal.tsx: a full-screen overlay modal (position:fixed, inset:0, z-index:9999, black bg at 50% opacity). Inside: a centered white box (max-width:480px, border:'1px solid #000', padding:24px, Sometype Mono font). Fields: (1) Underlying token address (text input, placeholder: 'opt1sq... token address'), (2) xToken name (text, placeholder: 'xFoo'), (3) xToken symbol (text, placeholder: 'xFOO'), (4) Wrap fee bps (number, default 50), (5) Unwrap fee bps (number, default 50). Buttons: 'Deploy Mine' (black bg, white text) and 'Cancel' (outlined). Modal opens when 'Create Wrapper' is clicked; 'Cancel' or clicking the backdrop closes it. No transaction logic yet — just UI state. Run: cd frontend && npm run build.",
+      "priority": 31,
+      "passes": true,
+      "acceptance": "npm run build exits 0. WrapPage shows 'Create Wrapper' button. Clicking it opens modal overlay. Modal has 5 input fields and two buttons. Cancel closes modal. No transactions sent yet.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S119",
+      "title": "CreateMineModal — bundle Mine.wasm into frontend",
+      "description": "Copy contracts/build/Mine.wasm to frontend/public/Mine.wasm. In CreateMineModal.tsx, add a loadBytecode() async function that does: const resp = await fetch('./Mine.wasm'); const buf = await resp.arrayBuffer(); return new Uint8Array(buf). Call it inside handleDeploy (not on mount). Add a console.log to confirm the WASM loaded and its byte length. Run: cd frontend && npm run build.",
+      "priority": 31,
+      "passes": false,
+      "acceptance": "Mine.wasm is in frontend/public/. fetch('./Mine.wasm') resolves without 404. console.log prints byte length > 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S120",
+      "title": "CreateMineModal — deploy Mine contract via wallet",
+      "description": "Implement handleDeploy in CreateMineModal.tsx. Use useWallet() to get senderAddress, address (walletAddress), and isConnected. Import TransactionFactory, OPNetLimitedProvider, Wallet from '@btc-vision/transaction'; BinaryWriter, Address from '@btc-vision/transaction'; networks from '@btc-vision/bitcoin'. Steps: (1) Load Mine.wasm bytecode via fetch. (2) Resolve underlying token pubkey: const code = await (provider as any).getCode(underlyingAddress); extract contractPublicKey as '0x...' hex. (3) Build calldata with BinaryWriter: writeAddress(Address.fromString(underlyingPubkey)), writeU8(18), writeStringWithLength(name), writeStringWithLength(symbol), writeU256(BigInt(wrapFee)), writeU256(BigInt(unwrapFee)), writeU256(BigInt(wrapFee)), writeU256(BigInt(unwrapFee)). (4) Use TransactionFactory.signDeployment with signer:null, mldsaSigner:null, network:NETWORK, utxos (fetch via OPNetLimitedProvider.fetchUTXOMultiAddr for walletAddress), challenge from rpc.getChallenge(). (5) Broadcast fundingTransaction then interactionTransaction via OPNetLimitedProvider. (6) Store deployed contractAddress and contractPubKey in state, show toast. Run: cd frontend && npm run build.",
+      "priority": 31,
+      "passes": false,
+      "acceptance": "npm run build exits 0. Clicking Deploy Mine with valid inputs broadcasts two transactions. Toast shows contract address on success.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S121",
+      "title": "CreateMineModal — register deployed Mine in Factory",
+      "description": "After successful Mine deployment (contractAddress and contractPubKey available), automatically call Factory.registerMine. Use the existing register-mine pattern from frontend: (1) Get Factory pubkey via (provider as any).getCode(CONTRACT_ADDRESSES.factory) → contractPublicKey. (2) Build calldata: BinaryWriter with writeSelector(sha256('registerMine').first4bytes), writeAddress(Address.fromString(underlyingPubkey)), writeAddress(Address.fromString(deployedMinePubkey)). (3) Fetch fresh UTXOs. (4) Get new challenge. (5) Use TransactionFactory.signInteraction with to:CONTRACT_ADDRESSES.factory, from:walletAddress, contract:factoryPubkeyHex, calldata, signer:null, mldsaSigner:null. (6) Broadcast. (7) Toast success with register tx hash. (8) Call a prop onMineCreated() so WrapPage refreshes the mine list. Run: cd frontend && npm run build.",
+      "priority": 31,
+      "passes": false,
+      "acceptance": "npm run build exits 0. After deploy tx broadcasts, register tx is also broadcast. onMineCreated() callback triggers useMines() refetch. New mine appears in list after block confirmation.",
+      "model": "sonnet"
     }
   ]
 }

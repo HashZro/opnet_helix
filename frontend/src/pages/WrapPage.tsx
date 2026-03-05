@@ -11,6 +11,7 @@ import { NETWORK } from '../config';
 import { MINE_ABI, OP_20_ABI } from '../lib/contracts';
 import { TokenInput } from '../components/TokenInput';
 import { TransactionButton } from '../components/TransactionButton';
+import { CreateMineModal } from '../components/CreateMineModal';
 import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
 
 // Resolve a contract's Address object from its bech32 address via RPC
@@ -47,6 +48,7 @@ export function WrapPage() {
     const [amount, setAmount] = useState('');
     const [estimatedXAmount, setEstimatedXAmount] = useState<bigint | null>(null);
     const [previewLoading, setPreviewLoading] = useState(false);
+    const [showCreateModal, setShowCreateModal] = useState(false);
 
     // Sync urlAddress → selectedMine when route param is present
     useEffect(() => {
@@ -175,6 +177,7 @@ export function WrapPage() {
             : '1.0000';
 
     return (
+        <>
         <div style={{ padding: '48px 0', maxWidth: '520px', margin: '0 auto' }}>
             <h1 style={{ fontFamily: 'Mulish, sans-serif', fontWeight: 700, fontSize: '1.5rem', color: '#000', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <span style={{ fontFamily: 'Sometype Mono, monospace', fontWeight: 400 }}>···</span>
@@ -184,7 +187,23 @@ export function WrapPage() {
             {/* Mine selector — only shown when no :address URL param */}
             {!urlAddress && (
                 <div style={{ marginBottom: '24px' }}>
-                    <label style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Sometype Mono, monospace', display: 'block', marginBottom: '4px' }}>Select Mine</label>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <label style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Sometype Mono, monospace' }}>Select Mine</label>
+                        <button
+                            onClick={() => setShowCreateModal(true)}
+                            style={{
+                                border: '1px solid #000',
+                                background: '#fff',
+                                color: '#000',
+                                padding: '4px 10px',
+                                fontFamily: 'Sometype Mono, monospace',
+                                fontSize: '0.7rem',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            + Create Wrapper
+                        </button>
+                    </div>
                     <select
                         value={selectedMine}
                         onChange={(e) => {
@@ -279,5 +298,10 @@ export function WrapPage() {
                 </div>
             )}
         </div>
+
+        {showCreateModal && (
+            <CreateMineModal onClose={() => setShowCreateModal(false)} />
+        )}
+        </>
     );
 }
