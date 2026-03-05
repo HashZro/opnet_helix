@@ -1078,7 +1078,7 @@
       "title": "CreateMineModal — deploy Mine contract via wallet",
       "description": "Implement handleDeploy in CreateMineModal.tsx. Use useWallet() to get senderAddress, address (walletAddress), and isConnected. Import TransactionFactory, OPNetLimitedProvider, Wallet from '@btc-vision/transaction'; BinaryWriter, Address from '@btc-vision/transaction'; networks from '@btc-vision/bitcoin'. Steps: (1) Load Mine.wasm bytecode via fetch. (2) Resolve underlying token pubkey: const code = await (provider as any).getCode(underlyingAddress); extract contractPublicKey as '0x...' hex. (3) Build calldata with BinaryWriter: writeAddress(Address.fromString(underlyingPubkey)), writeU8(18), writeStringWithLength(name), writeStringWithLength(symbol), writeU256(BigInt(wrapFee)), writeU256(BigInt(unwrapFee)), writeU256(BigInt(wrapFee)), writeU256(BigInt(unwrapFee)). (4) Use TransactionFactory.signDeployment with signer:null, mldsaSigner:null, network:NETWORK, utxos (fetch via OPNetLimitedProvider.fetchUTXOMultiAddr for walletAddress), challenge from rpc.getChallenge(). (5) Broadcast fundingTransaction then interactionTransaction via OPNetLimitedProvider. (6) Store deployed contractAddress and contractPubKey in state, show toast. Run: cd frontend && npm run build.",
       "priority": 31,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. Clicking Deploy Mine with valid inputs broadcasts two transactions. Toast shows contract address on success.",
       "model": "sonnet"
     },

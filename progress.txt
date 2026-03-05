@@ -1056,3 +1056,13 @@
   - Called loadBytecode() inside Deploy Mine onClick handler (not on mount)
   - frontend npm run build exits 0 (77 modules transformed, 9.85s)
   - Gotcha: TypeScript LSP reports 6133 false positive but tsc -b passes clean
+
+[2026-03-05] S120 — CreateMineModal deploy Mine contract via wallet
+  - Implemented handleDeploy in CreateMineModal.tsx with full deployment flow
+  - Imports: TransactionFactory, OPNetLimitedProvider, BinaryWriter, Address from @btc-vision/transaction
+  - Steps: load Mine.wasm → getCode(underlyingAddress) → build calldata with BinaryWriter → fetch UTXOs → getChallenge → signDeployment(signer:null as any) → broadcast funding + deploy txs
+  - Calldata order: writeAddress(underlyingPubkey), writeU8(18), writeStringWithLength(name), writeStringWithLength(symbol), writeU256(wrapFee×2), writeU256(unwrapFee×2) (matches Mine.onDeployment)
+  - Added isDeploying, deployedContractAddress, deployedContractPubKey state
+  - Post-deploy: shows deployed address/pubkey in modal + toast.success
+  - Gotcha: TypeScript rejects signer:null for signDeployment — fixed with `null as any` cast
+  - npm run build exits 0 (77 modules, 9.43s)
