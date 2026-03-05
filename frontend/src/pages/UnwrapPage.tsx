@@ -123,13 +123,16 @@ export function UnwrapPage() {
             : '1.0000';
 
     return (
-        <div className="max-w-lg mx-auto p-4 md:p-6">
-            <h1 className="text-2xl font-bold mb-6">Unwrap Tokens</h1>
+        <div style={{ padding: '48px 0', maxWidth: '520px', margin: '0 auto' }}>
+            <h1 style={{ fontFamily: 'Mulish, sans-serif', fontWeight: 700, fontSize: '1.5rem', color: '#000', marginBottom: '32px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span style={{ fontFamily: 'Sometype Mono, monospace', fontWeight: 400 }}>···</span>
+                Unwrap Tokens
+            </h1>
 
             {/* Mine selector — only shown when no :address URL param */}
             {!urlAddress && (
-                <div className="mb-6">
-                    <label className="block text-sm text-gray-400 mb-1">Select Mine</label>
+                <div style={{ marginBottom: '24px' }}>
+                    <label style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Sometype Mono, monospace', display: 'block', marginBottom: '4px' }}>Select Mine</label>
                     <select
                         value={selectedMine}
                         onChange={(e) => {
@@ -138,7 +141,7 @@ export function UnwrapPage() {
                             setEstimatedUnderlying(null);
                         }}
                         disabled={minesLoading}
-                        className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-3 text-white focus:border-gray-500 outline-none disabled:opacity-50"
+                        style={{ width: '100%', border: '1px solid #000', background: '#fff', color: '#000', padding: '10px 12px', fontFamily: 'Sometype Mono, monospace', fontSize: '0.85rem', outline: 'none', appearance: 'none', opacity: minesLoading ? 0.5 : 1 }}
                     >
                         <option value="">— Select a mine —</option>
                         {mines.map((m) => (
@@ -152,17 +155,17 @@ export function UnwrapPage() {
 
             {/* Skeleton input area while mine data loads */}
             {selectedMine && !mine && (
-                <div className="space-y-4 animate-pulse">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div>
-                        <div className="h-4 w-36 bg-gray-700 rounded mb-2" />
-                        <div className="h-12 bg-gray-800 rounded-lg" />
+                        <div style={{ background: '#eee', height: '16px', marginBottom: '8px', width: '144px' }} />
+                        <div style={{ background: '#eee', height: '48px', marginBottom: '8px' }} />
                     </div>
-                    <div className="h-10 bg-gray-800 rounded-lg" />
+                    <div style={{ background: '#eee', height: '40px' }} />
                 </div>
             )}
 
             {selectedMine && mine && (
-                <div className="space-y-4">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {/* Amount input */}
                     <TokenInput
                         label={`You burn (${mine.symbol})`}
@@ -176,25 +179,25 @@ export function UnwrapPage() {
 
                     {/* Preview section */}
                     {(previewLoading || estimatedUnderlying !== null) && (
-                        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 space-y-2">
-                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Preview</p>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-400">You receive (est.)</span>
-                                <span className="text-white font-medium">
+                        <div style={{ border: '1px solid #000', padding: '16px', marginTop: '8px' }}>
+                            <p style={{ fontSize: '0.65rem', color: '#888', fontFamily: 'Sometype Mono, monospace', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Preview</p>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ color: '#888', fontSize: '0.85rem' }}>You receive (est.)</span>
+                                <span style={{ color: '#000', fontSize: '0.85rem' }}>
                                     {previewLoading
                                         ? '...'
                                         : `${formatBalance(estimatedUnderlying ?? 0n, 18)} ${underlyingSymbol}`}
                                 </span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-400">Exchange rate</span>
-                                <span className="text-gray-300">
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ color: '#888', fontSize: '0.85rem' }}>Exchange rate</span>
+                                <span style={{ color: '#000', fontSize: '0.85rem' }}>
                                     1 {mine.symbol} ≈ {unwrapRate} {underlyingSymbol}
                                 </span>
                             </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-400">Unwrap fee</span>
-                                <span className="text-blue-400">
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: '#888', fontSize: '0.85rem' }}>Unwrap fee</span>
+                                <span style={{ color: '#000', fontSize: '0.85rem' }}>
                                     {(Number(mine.unwrapFee) / 10).toFixed(1)}%
                                 </span>
                             </div>
@@ -203,7 +206,7 @@ export function UnwrapPage() {
 
                     {/* Action */}
                     {!isConnected ? (
-                        <p className="text-center text-gray-500 text-sm py-4">
+                        <p style={{ textAlign: 'center', color: '#888', fontSize: '0.85rem', fontFamily: 'Sometype Mono, monospace', padding: '16px 0' }}>
                             Connect your wallet to unwrap tokens
                         </p>
                     ) : (
@@ -216,7 +219,7 @@ export function UnwrapPage() {
 
                     {/* User balance info */}
                     {isConnected && mine.userXBalance !== null && (
-                        <p className="text-xs text-center text-gray-600">
+                        <p style={{ fontSize: '0.75rem', textAlign: 'center', color: '#888', fontFamily: 'Sometype Mono, monospace' }}>
                             Your {mine.symbol} balance:{' '}
                             {formatBalance(mine.userXBalance, 18)} {mine.symbol}
                         </p>
@@ -224,11 +227,11 @@ export function UnwrapPage() {
 
                     {/* Wrap-first helper — shown when connected but has no xTokens */}
                     {isConnected && mine.userXBalance !== null && mine.userXBalance === 0n && (
-                        <div className="mt-4 pt-4 border-t border-gray-800 text-center">
-                            <p className="text-xs text-gray-500 mb-2">No {mine.symbol} to unwrap?</p>
+                        <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #eee', textAlign: 'center' }}>
+                            <p style={{ fontSize: '0.75rem', color: '#888', fontFamily: 'Sometype Mono, monospace', marginBottom: '8px' }}>No {mine.symbol} to unwrap?</p>
                             <Link
                                 to={`/wrap/${selectedMine}`}
-                                className="text-sm px-4 py-2 rounded-lg border border-gray-700 text-gray-400 hover:border-gray-500 hover:text-gray-200 transition-colors inline-block"
+                                style={{ fontSize: '0.8rem', padding: '8px 16px', border: '1px solid #000', color: '#000', fontFamily: 'Sometype Mono, monospace', display: 'inline-block', textDecoration: 'none' }}
                             >
                                 Wrap tokens first →
                             </Link>

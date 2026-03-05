@@ -981,3 +981,17 @@
   - Empty state: Sometype Mono #888 centered
   - Error: 1px black border, Sometype Mono, [!] prefix
   - Build passes: npm run build exits 0
+
+[2026-03-05] S114 — WrapPage + UnwrapPage redesign — industrial form layout
+  - WrapPage.tsx: replaced className-based styling with inline styles throughout
+  - Page container: padding:'48px 0', maxWidth:'520px', margin:'0 auto'
+  - h1: Mulish 700 1.5rem black with '···' glyph prefix in Sometype Mono
+  - Mine selector label: Sometype Mono 0.75rem #888
+  - Select: 1px solid #000, white bg, Sometype Mono, no radius, appearance:none
+  - Skeleton: #eee blocks, no radius
+  - Preview box: 1px solid #000, white bg; labels #888, values #000
+  - Connect wallet message: Sometype Mono #888
+  - Balance info: Sometype Mono 0.75rem #888
+  - UnwrapPage.tsx: identical changes applied
+  - Wrap-first helper link: 1px solid #000 border, Sometype Mono, no radius
+  - Build passes: npm run build exits 0
