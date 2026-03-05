@@ -988,7 +988,7 @@
       "title": "Layout redesign — white bg, 900px container, left rail",
       "description": "Rewrite frontend/src/components/Layout.tsx. Outer wrapper: style={{ position:'relative', minHeight:'100vh', background:'#fff', color:'#000', display:'flex', flexDirection:'column' }}. Remove className 'flex flex-col min-h-screen bg-gray-950 text-gray-100'. Add left rail div as first child inside outer wrapper (before Navbar): <div aria-hidden='true' style={{ position:'absolute', left:'calc((100vw - 900px) / 2 - 28px)', top:'80px', width:'1px', background:'#000', height:'60vh', pointerEvents:'none' }} />. Main element: style={{ maxWidth:'900px', margin:'0 auto', padding:'0 2rem', flex:1, width:'100%' }}. Remove className 'flex-1' from main. Keep Navbar at top inside outer wrapper. Run: cd frontend && npm run build.",
       "priority": 28,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. Pages show white background, black text. Content centered at max 900px with 2rem horizontal padding. A 1px black vertical line appears left of the content area (starts 80px from top, 60vh tall). No gray backgrounds in Layout.",
       "model": "sonnet"
     },

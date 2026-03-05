@@ -942,3 +942,11 @@
   - Removed 'Home' link from NAV_LINKS
   - Mobile menu: borderTop 1px solid #000, white bg, flex column gap 12px
   - npm run build passes (0 TypeScript errors, vite build succeeds)
+
+[2026-03-05] S110 — Layout redesign: white bg, 900px container, left rail
+  - Rewrote frontend/src/components/Layout.tsx
+  - Outer wrapper: inline style with position:relative, white bg, black text, flex column
+  - Removed Tailwind: flex flex-col min-h-screen bg-gray-950 text-gray-100
+  - Added left rail decorative div: absolute positioned, 1px black vertical line, 60vh tall, starts 80px from top
+  - Main element: maxWidth 900px, centered with margin:0 auto, padding:0 2rem, flex:1
+  - npm run build passes (0 TypeScript errors, vite build succeeds)

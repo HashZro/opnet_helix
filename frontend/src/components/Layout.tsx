@@ -7,9 +7,10 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
     return (
-        <div className="flex flex-col min-h-screen bg-gray-950 text-gray-100">
+        <div style={{ position: 'relative', minHeight: '100vh', background: '#fff', color: '#000', display: 'flex', flexDirection: 'column' }}>
+            <div aria-hidden='true' style={{ position: 'absolute', left: 'calc((100vw - 900px) / 2 - 28px)', top: '80px', width: '1px', background: '#000', height: '60vh', pointerEvents: 'none' }} />
             <Navbar />
-            <main className="flex-1">
+            <main style={{ maxWidth: '900px', margin: '0 auto', padding: '0 2rem', flex: 1, width: '100%' }}>
                 {children}
             </main>
         </div>
