@@ -871,7 +871,7 @@
       "title": "Update Mine.ts onDeployment() \u2014 remove old fee params",
       "description": "Edit contracts/src/mine/Mine.ts. In onDeployment(): remove the two _calldata.readU256() lines for controllerFee and protocolFee. Remove the two this.su() calls that stored them. After this change onDeployment() reads exactly 6 calldata values in this order: underlying (readAddress), decimals (readU8), name (readStringWithLength), symbol (readStringWithLength), wrapFee (readU256), unwrapFee (readU256). Do NOT compile yet.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "onDeployment() contains exactly 6 calldata reads (1 Address, 1 u8, 2 strings, 2 u256). No controllerFee or protocolFee variable or su() call present. Calldata order is: underlying \u2192 decimals \u2192 name \u2192 symbol \u2192 wrapFee \u2192 unwrapFee.",
       "model": "sonnet"
     },

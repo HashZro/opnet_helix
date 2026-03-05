@@ -843,3 +843,9 @@
   - Kept: netUnderlying = underlyingAmount - feeAmount (feeAmount stays locked in pool)
   - _underlyingHeld decremented by netUnderlying only; feeAmount grows pool ratio permanently
   - onDeployment() still reads controllerFee/protocolFee calldata args (S97 covers that)
+
+[2026-03-05] S97 — Updated Mine.ts onDeployment() — removed old fee params
+  - Removed _calldata.readU256() for controllerFee and protocolFee (2 lines)
+  - Removed this.su() calls for _controllerFee and _protocolFee (2 lines)
+  - onDeployment() now reads exactly 6 calldata values: underlying → decimals → name → symbol → wrapFee → unwrapFee
+  - No compile step per story instructions

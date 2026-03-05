@@ -315,8 +315,6 @@ export class Mine extends OP20 {
         const symbol: string = _calldata.readStringWithLength();
         const wrapFee: u256 = _calldata.readU256();
         const unwrapFee: u256 = _calldata.readU256();
-        const controllerFee: u256 = _calldata.readU256();
-        const protocolFee: u256 = _calldata.readU256();
 
         // Unlimited supply — minting is driven by wrap deposits
         const maxSupply: u256 = u256.Max;
@@ -328,7 +326,5 @@ export class Mine extends OP20 {
         this.sa(this.fieldKeySimple(this._factoryAddr), Blockchain.tx.sender);
         this.su(this.fieldKeySimple(this._wrapFee), wrapFee);
         this.su(this.fieldKeySimple(this._unwrapFee), unwrapFee);
-        this.su(this.fieldKeySimple(this._controllerFee), controllerFee);
-        this.su(this.fieldKeySimple(this._protocolFee), protocolFee);
     }
 }
