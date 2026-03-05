@@ -916,7 +916,7 @@
       "title": "Delete Staking contract files and ABIs",
       "description": "Delete the following files/directories: contracts/src/staking/Staking.ts, contracts/src/staking/index.ts, contracts/src/staking/ (directory), contracts/abis/Staking.abi.json, contracts/abis/Staking.abi.ts, contracts/abis/Staking.d.ts, contracts/scripts/deploy-staking.ts. After deletion, grep contracts/ for any remaining imports of staking and remove them.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "None of the listed paths exist on disk. contracts/src/ has no staking/ subdirectory. No file in contracts/ imports from ./staking or ../staking. contracts/abis/ has no Staking.* files.",
       "model": "sonnet"
     },

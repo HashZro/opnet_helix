@@ -880,3 +880,11 @@
   - Transform auto-generated Mine.abi.json, Mine.abi.ts, Mine.d.ts with correct method set
   - Old fee-split methods (claimControllerFee, claimProtocolFee, disburseProtocolFee, setControllerFee, setProtocolFee, getControllerFee, getProtocolFee) are gone from ABIs
   - All AMM methods present: setAmmPool, getAmmPool, setAmmBuyFee, setAmmSellFee, getAmmBuyFee, getAmmSellFee, notifyAmmFee
+
+[2026-03-05] S102 — Deleted Staking contract files and ABIs
+  - Removed: contracts/src/staking/Staking.ts, contracts/src/staking/index.ts, contracts/src/staking/ (dir)
+  - Removed: contracts/abis/Staking.abi.json, Staking.abi.ts, Staking.d.ts
+  - Removed: contracts/scripts/deploy-staking.ts
+  - Used `git rm` (not bare rm) to delete tracked files cleanly
+  - No remaining import statements referencing ./staking or ../staking in contracts/
+  - Note: package.json, asconfig.json, deployed-addresses.json still reference staking — handled in S103
