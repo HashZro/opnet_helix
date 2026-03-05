@@ -927,3 +927,9 @@
   - Files changed: deploy-mine.ts, deploy-mine-crystal.ts, deploy-mine-lava.ts, deploy-mine-moto.ts, deploy-mine-storm.ts
   - Pre-existing tsc errors in node_modules (as-bignum AssemblyScript files) unrelated to our changes
   - No CONTROLLER_FEE/PROTOCOL_FEE references remain in scripts/
+
+[2026-03-05] S108 — Foundation: Fonts, CSS variables, global reset
+  - Updated frontend/index.html: added Google Fonts preconnect + stylesheet for Sometype Mono (400;500;700) and Mulish (400;700;800), changed title to HELIX
+  - Rewrote frontend/src/index.css: CSS vars (--color-bg, --color-fg, --color-border, --color-muted), reset *, button styles, body min-height
+  - Updated frontend/src/styles/globals.css: replaced bg-gray-950/text-gray-100/font-sans with bg-white/text-black, appended @layer base with border-radius:0 and Mulish headings
+  - npm run build passes (76 modules, no TS errors)

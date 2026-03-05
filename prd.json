@@ -964,6 +964,96 @@
       "passes": true,
       "acceptance": "All 5 scripts have no CONTROLLER_FEE or PROTOCOL_FEE references. All 5 have AMM_BUY_FEE=50n and AMM_SELL_FEE=50n. Calldata encodes exactly 8 args in the specified order. npx tsc --noEmit exits 0 with no errors.",
       "model": "sonnet"
+    },
+    {
+      "id": "S108",
+      "title": "Foundation: Fonts, CSS variables, global reset",
+      "description": "Apply the HELIX design foundation across 3 files. (1) frontend/index.html: add Google Fonts preconnect + stylesheet link for Sometype Mono (wght 400;500;700) and Mulish (wght 400;700;800). Change <title> to 'HELIX'. (2) frontend/src/index.css: replace entire file with: :root { --color-bg:#fff; --color-fg:#000; --color-border:#000; --color-muted:#888; font-family:'Sometype Mono',monospace; background:#fff; color:#000; line-height:1.5; } * { box-sizing:border-box; margin:0; padding:0; border-radius:0!important; } a { color:#000; text-decoration:none; } a:hover { text-decoration:underline; } button { border-radius:0; border:1px solid #000; background:transparent; color:#000; cursor:pointer; font-family:'Sometype Mono',monospace; } body { min-width:320px; min-height:100vh; } (3) frontend/src/styles/globals.css: keep @import 'tailwindcss' line and walletconnect fix CSS unchanged. In the @layer base block replace 'bg-gray-950 text-gray-100 font-sans' with 'bg-white text-black'. Append at end of file: @layer base { * { border-radius: 0 !important; } h1,h2,h3,h4,h5,h6 { font-family: 'Mulish', sans-serif; } }. Run: cd frontend && npm run build.",
+      "priority": 28,
+      "passes": true,
+      "acceptance": "npm run build exits 0. index.html has Google Fonts links for Sometype Mono and Mulish. Title is HELIX. index.css has CSS vars --color-bg --color-fg --color-border --color-muted. globals.css @layer base uses bg-white text-black. Body background is white, text is black. No border-radius on any element.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S109",
+      "title": "Navbar redesign — industrial HELIX brand, slash-prefixed links",
+      "description": "Rewrite frontend/src/components/Navbar.tsx. Change nav link labels to '/Wrap' and '/Unwrap' (slash is part of label). Remove 'Home' link. Nav element style: borderBottom:'1px solid #000', background:'#fff', position:'sticky', top:0, zIndex:100. Inner container div style: maxWidth:'900px', margin:'0 auto', height:'48px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 2rem'. Brand Link to '/' style: fontFamily:'Mulish', fontWeight:800, fontSize:'1.1rem', textTransform:'uppercase', letterSpacing:'0.05em', color:'#000', textDecoration:'none', text 'HELIX'. Desktop links: display flex gap:24px. Each Link style: fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#000', textDecoration:'none'. On hover: textDecoration:'underline' only, no background change. Mobile menu div style: borderTop:'1px solid #000', padding:'12px 2rem', background:'#fff', display:'flex', flexDirection:'column', gap:'12px'. Remove all Tailwind classes with bg-gray-900, border-gray-800, text-gray-400, text-white, hover:text-white, rounded. Run: cd frontend && npm run build.",
+      "priority": 28,
+      "passes": false,
+      "acceptance": "npm run build exits 0. Navbar: white bg, 1px black bottom border, 48px height. Brand 'HELIX' in Mulish 800 uppercase. Nav links '/Wrap' and '/Unwrap' in Sometype Mono. No gray or purple colors. Mobile hamburger collapses links correctly.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S110",
+      "title": "Layout redesign — white bg, 900px container, left rail",
+      "description": "Rewrite frontend/src/components/Layout.tsx. Outer wrapper: style={{ position:'relative', minHeight:'100vh', background:'#fff', color:'#000', display:'flex', flexDirection:'column' }}. Remove className 'flex flex-col min-h-screen bg-gray-950 text-gray-100'. Add left rail div as first child inside outer wrapper (before Navbar): <div aria-hidden='true' style={{ position:'absolute', left:'calc((100vw - 900px) / 2 - 28px)', top:'80px', width:'1px', background:'#000', height:'60vh', pointerEvents:'none' }} />. Main element: style={{ maxWidth:'900px', margin:'0 auto', padding:'0 2rem', flex:1, width:'100%' }}. Remove className 'flex-1' from main. Keep Navbar at top inside outer wrapper. Run: cd frontend && npm run build.",
+      "priority": 28,
+      "passes": false,
+      "acceptance": "npm run build exits 0. Pages show white background, black text. Content centered at max 900px with 2rem horizontal padding. A 1px black vertical line appears left of the content area (starts 80px from top, 60vh tall). No gray backgrounds in Layout.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S111",
+      "title": "MineCard redesign — bordered card with corner bracket motifs",
+      "description": "Rewrite frontend/src/components/MineCard.tsx styles. Outer div: style={{ position:'relative', border:'1px solid #000', background:'#fff', padding:'20px', cursor:'pointer' }}. Remove rounded-xl, bg-gray-900, hover:bg-gray-800, border-gray-800, transition-colors. Add top-right bracket as first child: <div aria-hidden='true' style={{ position:'absolute', top:'-1px', right:'-1px', width:'16px', height:'16px', borderTop:'1px solid #000', borderRight:'1px solid #000' }} />. Add bottom-left bracket as last child before closing outer div: <div aria-hidden='true' style={{ position:'absolute', bottom:'-1px', left:'-1px', width:'16px', height:'16px', borderBottom:'1px solid #000', borderLeft:'1px solid #000' }} />. Mine name h3: style={{ fontFamily:'Mulish', fontWeight:700, fontSize:'1rem', color:'#000' }}. Remove text-lg, font-semibold, text-white. Symbol span: style={{ fontSize:'0.8rem', color:'#888' }}. Address span: style={{ fontSize:'0.7rem', color:'#888', fontFamily:'Sometype Mono' }}. Stat labels span: color:'#888', fontSize:'0.8rem'. Stat values span: color:'#000', fontSize:'0.8rem'. Remove text-gray-400, text-white, text-purple-400, text-blue-400. Stats container: display:'flex', flexDirection:'column', gap:'6px', margin:'12px 0'. Each stat row: display:'flex', justifyContent:'space-between'. Wrap Link: add hovered state via useState, style={{ display:'block', width:'100%', textAlign:'center', border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', padding:'8px', fontFamily:'Sometype Mono', fontSize:'0.8rem', marginTop:'16px', textDecoration:'none' }}, onMouseEnter/Leave toggles hovered. Remove bg-purple-600, rounded-lg from Link. Run: cd frontend && npm run build.",
+      "priority": 29,
+      "passes": false,
+      "acceptance": "npm run build exits 0. MineCard: white bg, 1px black border, zero radius. Corner brackets at top-right and bottom-left. All text #000 or #888. No purple, blue, or dark backgrounds. Wrap button outlined, instant hover invert. Mine name in Mulish 700.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S112",
+      "title": "TokenInput + TransactionButton redesign — industrial form controls",
+      "description": "Rewrite styles in 2 files. (1) frontend/src/components/TokenInput.tsx: Label style: fontSize:'0.75rem', color:'#888', fontFamily:'Sometype Mono', display:'block', marginBottom:'4px'. Max span style: fontSize:'0.7rem', color:'#888'. Input container div style: display:'flex', alignItems:'stretch', border:'1px solid #000', background:'#fff'. Remove bg-gray-800, border-gray-700, rounded-lg, focus-within classes, overflow-hidden. Input element style: flex:1, background:'transparent', border:'none', outline:'none', padding:'10px 12px', color:'#000', fontFamily:'Sometype Mono', fontSize:'0.9rem'. Remove text-white, placeholder-gray-600, appearance classes. MAX button style: borderLeft:'1px solid #000', background:'transparent', color:'#000', padding:'4px 10px', fontFamily:'Sometype Mono', fontSize:'0.7rem', cursor:'pointer', border:'none' then override borderLeft:'1px solid #000' (use a style object with only borderLeft). Remove text-purple-400, hover:bg-gray-700, rounded, mr-1. Symbol badge span style: borderLeft:'1px solid #000', padding:'10px 12px', fontSize:'0.8rem', color:'#000', background:'#fff', whiteSpace:'nowrap', display:'flex', alignItems:'center'. Remove bg-gray-750, text-gray-300. (2) frontend/src/components/TransactionButton.tsx: Add const [hovered, setHovered] = useState(false). Button style: border:'1px solid #000', background: hovered && !disabled ? '#000' : '#fff', color: hovered && !disabled ? '#fff' : '#000', width:'100%', padding:'10px 16px', fontFamily:'Sometype Mono', fontSize:'0.8rem', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.4 : 1. Add onMouseEnter/Leave for hovered state. Remove all purple gradient, rounded-lg, transition classes. Run: cd frontend && npm run build.",
+      "priority": 29,
+      "passes": false,
+      "acceptance": "npm run build exits 0. TokenInput: 1px black border container, white bg, black text, MAX button with left-border separator, symbol badge with left-border separator, no radius, no purple. TransactionButton: outlined black border white bg, instant hover invert, 40% opacity when disabled.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S113",
+      "title": "HomePage redesign — section heading with glyph, tick divider, monochrome grid",
+      "description": "Rewrite frontend/src/pages/HomePage.tsx visual layer. (1) Page container: style={{ padding:'48px 0' }}. Remove className 'max-w-6xl mx-auto p-4 md:p-6'. (2) Replace entire heading block with: <div style={{ marginBottom:'16px' }}><h1 style={{ display:'flex', alignItems:'center', gap:'12px', fontFamily:'Mulish', fontWeight:700, fontSize:'1.5rem', color:'#000', lineHeight:1.1 }}><span style={{ fontFamily:'Sometype Mono', fontSize:'1rem', fontWeight:400 }}>&#8801;</span>Helix <strong>Genomes</strong></h1><p style={{ fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#888', marginTop:'8px' }}>Wrap OP-20 tokens into yield-bearing xTokens on Bitcoin L1.</p></div>. (3) Add tick-mark divider before mine grid: <div style={{ backgroundImage:'repeating-linear-gradient(to right, #000 0px, #000 1px, transparent 1px, transparent 6px)', height:'16px', width:'100%', margin:'32px 0' }} />. (4) Skeleton card outer: style={{ border:'1px solid #eee', background:'#fff', padding:'20px' }}, inner skeleton blocks: style={{ background:'#eee', height:'NNpx', marginBottom:'8px', borderRadius:0 }}. Remove bg-gray-900, bg-gray-800, rounded-xl. (5) Empty state: style={{ textAlign:'center', padding:'80px 0', color:'#888', fontFamily:'Sometype Mono' }}. Remove text-gray-500. (6) Error block: style={{ border:'1px solid #000', padding:'16px', marginBottom:'24px', fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#000' }}, prepend '[!] ' to message. Remove bg-red-900/30, border-red-700, text-red-300, rounded-lg. Run: cd frontend && npm run build.",
+      "priority": 29,
+      "passes": false,
+      "acceptance": "npm run build exits 0. HomePage: heading shows glyph prefix + 'Helix Genomes' in Mulish 700. Tick-mark divider appears between heading and grid. Skeleton uses white/#eee. Error is bordered monochrome box with [!] prefix. No dark backgrounds or purple colors.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S114",
+      "title": "WrapPage + UnwrapPage redesign — industrial form layout",
+      "description": "Apply identical style changes to both frontend/src/pages/WrapPage.tsx and frontend/src/pages/UnwrapPage.tsx. (1) Page container: style={{ padding:'48px 0', maxWidth:'520px', margin:'0 auto' }}. Remove 'max-w-lg mx-auto p-4 md:p-6'. (2) h1: style={{ fontFamily:'Mulish', fontWeight:700, fontSize:'1.5rem', color:'#000', marginBottom:'32px', display:'flex', alignItems:'center', gap:'10px' }}. Prepend <span style={{ fontFamily:'Sometype Mono', fontWeight:400 }}>&#xB7;&#xB7;&#xB7;</span> before title text. (3) Mine selector label: style={{ fontSize:'0.75rem', color:'#888', fontFamily:'Sometype Mono', display:'block', marginBottom:'4px' }}. (4) Select: style={{ width:'100%', border:'1px solid #000', background:'#fff', color:'#000', padding:'10px 12px', fontFamily:'Sometype Mono', fontSize:'0.85rem', outline:'none', appearance:'none' }}. Remove bg-gray-800, border-gray-700, rounded-lg. (5) Skeleton blocks: style={{ background:'#eee', height:'NNpx', marginBottom:'8px' }}. Remove bg-gray-700, bg-gray-800. (6) Preview box: style={{ border:'1px solid #000', padding:'16px', marginTop:'8px' }}. Remove bg-gray-900, rounded-lg. Preview 'Preview' label: style={{ fontSize:'0.65rem', color:'#888', fontFamily:'Sometype Mono', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'8px' }}. Preview row labels: color:'#888'. Preview row values: color:'#000'. Remove text-gray-400, text-purple-400, text-gray-300. (7) Connect wallet message: style={{ textAlign:'center', color:'#888', fontSize:'0.85rem', fontFamily:'Sometype Mono', padding:'16px 0' }}. (8) Balance info: style={{ fontSize:'0.75rem', textAlign:'center', color:'#888', fontFamily:'Sometype Mono' }}. Run: cd frontend && npm run build.",
+      "priority": 29,
+      "passes": false,
+      "acceptance": "npm run build exits 0. WrapPage and UnwrapPage: white background throughout. Heading has '···' glyph prefix in Mulish. Select has 1px black border, no radius. Preview box has 1px black border white bg. Labels #888, values #000. No bg-gray-* or purple colors.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S115",
+      "title": "MineDetailPage redesign — bordered stats table, outlined action buttons",
+      "description": "Rewrite frontend/src/pages/MineDetailPage.tsx styles. (1) Page container: style={{ padding:'48px 0' }}. (2) Title h1/heading: style={{ fontFamily:'Mulish', fontWeight:700, fontSize:'1.5rem', color:'#000', marginBottom:'32px', display:'flex', alignItems:'center', gap:'10px' }}. Prepend <span style={{ fontFamily:'Sometype Mono', fontWeight:400 }}>|||</span>. (3) Replace stat card divs with <table style={{ borderCollapse:'collapse', width:'100%', border:'1px solid #000', marginBottom:'32px' }}>. Each stat: <tr><td style={{ border:'1px solid #000', padding:'10px 14px', fontSize:'0.8rem', fontFamily:'Sometype Mono', color:'#888', width:'40%' }}>label</td><td style={{ border:'1px solid #000', padding:'10px 14px', fontSize:'0.8rem', fontFamily:'Sometype Mono', color:'#000' }}>value</td></tr>. Stat rows: Ratio, Total Wrapped, xToken Supply, Wrap Fee %, Unwrap Fee %, Underlying Token. (4) User position section (wallet connected): same bordered table for 'Your xToken Balance' and 'Your Underlying Value'. Add section label above: style={{ fontSize:'0.7rem', color:'#888', fontFamily:'Sometype Mono', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'8px' }} text 'Your Position'. (5) Action buttons row: style={{ display:'flex', gap:'16px', marginTop:'32px' }}. Each Link/button: style={{ flex:1, border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', padding:'10px', fontFamily:'Sometype Mono', fontSize:'0.8rem', textAlign:'center', textDecoration:'none', display:'block', cursor:'pointer' }}, use per-button hovered state. (6) Skeleton: border:'1px solid #eee', background:'#eee'. (7) Error: bordered mono box '[!] ' prefix. Remove all bg-gray-*, text-gray-*, text-purple-*, rounded-*. Run: cd frontend && npm run build.",
+      "priority": 29,
+      "passes": false,
+      "acceptance": "npm run build exits 0. MineDetailPage: stats in bordered table, #888 labels #000 values in Sometype Mono. '|||' glyph heading in Mulish. Action buttons outlined, instant hover invert. No dark colors or radius.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S116",
+      "title": "Spinner + ToastContainer redesign — monochrome black/white only",
+      "description": "Redesign 2 components. (1) frontend/src/components/Spinner.tsx: Read file. Replace colored border Tailwind classes (border-purple-*, border-blue-*, border-indigo-*) with border-black and border-t-transparent (or inline style border:'2px solid #000', borderTopColor:'transparent'). Keep animate-spin class or equivalent @keyframes. borderRadius:50% is the one allowed exception to the no-radius rule for spinners. (2) frontend/src/components/ToastContainer.tsx and any Toast subcomponent inside it: Replace bg-green-*, bg-red-*, bg-blue-*, bg-emerald-* with background:'#fff'. Replace border-green-*, border-red-*, border-blue-* with border:'1px solid #000'. Replace text-green-*, text-red-*, text-blue-*, text-emerald-* with color:'#000'. Add fontFamily:'Sometype Mono', fontSize:'0.75rem' to toast item. Prepend type prefix to message: success → '[OK] ', error → '[!] ', info → '[i] '. Keep fixed positioning, z-index, and auto-dismiss timer unchanged. Run: cd frontend && npm run build.",
+      "priority": 30,
+      "passes": false,
+      "acceptance": "npm run build exits 0. Spinner: black border with transparent top edge, monochrome. Toasts: white bg, 1px black border, black Sometype Mono text, type indicated by text prefix ([OK] / [!] / [i]). No green/red/blue/purple in either component.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S117",
+      "title": "WalletButton redesign — outlined monochrome, instant hover invert",
+      "description": "Rewrite frontend/src/components/WalletButton.tsx. Read file first. Add: const [hovered, setHovered] = useState(false). Both connected and disconnected button style: border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', fontFamily:'Sometype Mono', fontSize:'0.75rem', padding:'6px 16px', cursor:'pointer'. Add onMouseEnter={() => setHovered(true)} and onMouseLeave={() => setHovered(false)}. Disconnected label: 'Connect Wallet'. Connected label: truncated address (use existing truncateAddress helper or addr.slice(0,8)+'...'+addr.slice(-6)). Keep all existing onClick connect/disconnect logic unchanged. Remove className props containing bg-purple-*, bg-blue-*, bg-indigo-*, hover:bg-*, text-purple-*, text-blue-*, text-white, rounded-*, border-purple-*, border-blue-*. Do NOT add any CSS transition property. Run: cd frontend && npm run build.",
+      "priority": 30,
+      "passes": false,
+      "acceptance": "npm run build exits 0. WalletButton: 1px black border, white bg, black text in both states. Hover instantly inverts to black bg white text (no animation delay). Sometype Mono font. No purple or blue colors. Connect/disconnect still functions.",
+      "model": "sonnet"
     }
   ]
 }
