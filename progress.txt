@@ -1066,3 +1066,15 @@
   - Post-deploy: shows deployed address/pubkey in modal + toast.success
   - Gotcha: TypeScript rejects signer:null for signDeployment — fixed with `null as any` cast
   - npm run build exits 0 (77 modules, 9.43s)
+
+[2026-03-05] S121 — CreateMineModal register deployed Mine in Factory
+  - Added computeSelector(sig) async helper using Web Crypto API (crypto.subtle.digest SHA-256)
+  - Added onMineCreated?: () => void prop to CreateMineModalProps
+  - After deploy broadcast: auto-triggers registerMine flow inline in handleDeploy
+  - registerMine flow: getCode(factory) → computeSelector('registerMine') → BinaryWriter(selector+underlyingPubkey+minePubkey) → fresh UTXOs → fresh challenge → signInteraction(signer:null as any) → broadcast funding + interaction txs
+  - Broadcasts: regFundingTransaction then regInteractionTransaction; toasts success with tx hash
+  - Calls onMineCreated?.() after successful register
+  - Added refetch to useMines hook: refetchKey state + useCallback, returned as { ..., refetch }
+  - WrapPage: destructures refetchMines from useMines(); passes onMineCreated={() => { setShowCreateModal(false); refetchMines(); }} to CreateMineModal
+  - Gotcha: LSP reports 6133 false positives for useCallback/refetchKey/onMineCreated — tsc -b passes clean
+  - npm run build exits 0 (77 modules, 8.64s)

@@ -1087,7 +1087,7 @@
       "title": "CreateMineModal — register deployed Mine in Factory",
       "description": "After successful Mine deployment (contractAddress and contractPubKey available), automatically call Factory.registerMine. Use the existing register-mine pattern from frontend: (1) Get Factory pubkey via (provider as any).getCode(CONTRACT_ADDRESSES.factory) → contractPublicKey. (2) Build calldata: BinaryWriter with writeSelector(sha256('registerMine').first4bytes), writeAddress(Address.fromString(underlyingPubkey)), writeAddress(Address.fromString(deployedMinePubkey)). (3) Fetch fresh UTXOs. (4) Get new challenge. (5) Use TransactionFactory.signInteraction with to:CONTRACT_ADDRESSES.factory, from:walletAddress, contract:factoryPubkeyHex, calldata, signer:null, mldsaSigner:null. (6) Broadcast. (7) Toast success with register tx hash. (8) Call a prop onMineCreated() so WrapPage refreshes the mine list. Run: cd frontend && npm run build.",
       "priority": 31,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. After deploy tx broadcasts, register tx is also broadcast. onMineCreated() callback triggers useMines() refetch. New mine appears in list after block confirmation.",
       "model": "sonnet"
     }

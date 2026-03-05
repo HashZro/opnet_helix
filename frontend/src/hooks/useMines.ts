@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { getContract } from 'opnet';
 import { provider } from '../lib/provider';
 import { NETWORK, CONTRACT_ADDRESSES } from '../config';
@@ -37,6 +37,9 @@ export function useMines() {
     const [mines, setMines] = useState<MineInfo[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [refetchKey, setRefetchKey] = useState(0);
+
+    const refetch = useCallback(() => setRefetchKey((k) => k + 1), []);
 
     useEffect(() => {
         let cancelled = false;
@@ -45,6 +48,8 @@ export function useMines() {
             try {
                 setLoading(true);
                 setError(null);
+
+                console.log('[useMines] factory address:', CONTRACT_ADDRESSES.factory);
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const factoryContract = getContract<any>(
@@ -55,14 +60,18 @@ export function useMines() {
                 );
 
                 const countRes = await factoryContract.getMineCount();
+                console.log('[useMines] getMineCount raw:', countRes);
                 const count = Number(extractU256(countRes, 'count'));
+                console.log('[useMines] mine count:', count);
 
                 const results: MineInfo[] = [];
 
                 for (let i = 0; i < count; i++) {
                     const addrRes = await factoryContract.getMineAtIndex(BigInt(i));
+                    console.log(`[useMines] getMineAtIndex(${i}) raw:`, addrRes);
                     const mineAddress: string =
                         (addrRes?.properties?.mineAddress as { toString(): string } | undefined)?.toString?.() ?? '';
+                    console.log(`[useMines] mine[${i}] address:`, mineAddress);
 
                     if (!mineAddress) continue;
 
@@ -95,10 +104,12 @@ export function useMines() {
                     });
                 }
 
+                console.log('[useMines] final results:', results);
                 if (!cancelled) {
                     setMines(results);
                 }
             } catch (err) {
+                console.error('[useMines] error:', err);
                 if (!cancelled) {
                     setError(err instanceof Error ? err.message : 'Failed to fetch mines');
                 }
@@ -113,7 +124,7 @@ export function useMines() {
         return () => {
             cancelled = true;
         };
-    }, []);
+    }, [refetchKey]);
 
-    return { mines, loading, error };
+    return { mines, loading, error, refetch };
 }

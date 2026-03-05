@@ -39,7 +39,7 @@ function extractU256(res: unknown, field: string): bigint {
 export function WrapPage() {
     const { address: urlAddress } = useParams<{ address: string }>();
     const [selectedMine, setSelectedMine] = useState<string>(urlAddress ?? '');
-    const { mines, loading: minesLoading } = useMines();
+    const { mines, loading: minesLoading, refetch: refetchMines } = useMines();
     const { data: mine, refetch } = useMine(selectedMine || null);
     const { senderAddress, address: walletAddress, isConnected } = useWallet();
 
@@ -300,7 +300,10 @@ export function WrapPage() {
         </div>
 
         {showCreateModal && (
-            <CreateMineModal onClose={() => setShowCreateModal(false)} />
+            <CreateMineModal
+                onClose={() => setShowCreateModal(false)}
+                onMineCreated={() => { setShowCreateModal(false); refetchMines(); }}
+            />
         )}
         </>
     );

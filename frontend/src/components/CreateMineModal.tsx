@@ -3,9 +3,14 @@ import { TransactionFactory, OPNetLimitedProvider, BinaryWriter, Address } from 
 import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
-import { NETWORK } from '../config';
+import { NETWORK, CONTRACT_ADDRESSES } from '../config';
 
 const RPC_URL = 'https://testnet.opnet.org';
+
+async function computeSelector(sig: string): Promise<number> {
+    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(sig));
+    return new DataView(hash).getUint32(0, false);
+}
 
 async function loadBytecode(): Promise<Uint8Array> {
     const resp = await fetch('./Mine.wasm');
@@ -17,9 +22,10 @@ async function loadBytecode(): Promise<Uint8Array> {
 
 interface CreateMineModalProps {
     onClose: () => void;
+    onMineCreated?: () => void;
 }
 
-export function CreateMineModal({ onClose }: CreateMineModalProps) {
+export function CreateMineModal({ onClose, onMineCreated }: CreateMineModalProps) {
     const { address: walletAddress, isConnected } = useWallet();
     const toast = useToast();
 
@@ -152,12 +158,76 @@ export function CreateMineModal({ onClose }: CreateMineModalProps) {
             }
             console.log('Deploy tx:', deployResp.result);
 
-            // 8. Store results and show success
+            // 8. Store results and show deploy success
             const contractAddr = String(result.contractAddress);
             const contractPubKey = String(result.contractPubKey);
             setDeployedContractAddress(contractAddr);
             setDeployedContractPubKey(contractPubKey);
             toast.success(`Mine deployed: ${contractAddr}`);
+
+            // 9. Register Mine in Factory
+            toast.info('Registering Mine in Factory...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const factoryCode = await (provider as any).getCode(CONTRACT_ADDRESSES.factory);
+            const factoryRaw = factoryCode?.contractPublicKey;
+            const factoryPubkeyHex: string =
+                factoryRaw instanceof Uint8Array
+                    ? '0x' + Array.from(factoryRaw as Uint8Array).map((b: number) => b.toString(16).padStart(2, '0')).join('')
+                    : String(factoryRaw);
+
+            const registerSelector = await computeSelector('registerMine');
+            const regWriter = new BinaryWriter();
+            regWriter.writeSelector(registerSelector);
+            regWriter.writeAddress(Address.fromString(underlyingPubkey));
+            regWriter.writeAddress(Address.fromString(contractPubKey));
+            const regCalldata = new Uint8Array(regWriter.getBuffer());
+
+            const freshUtxos = await utxoProvider.fetchUTXOMultiAddr({
+                addresses: [walletAddress],
+                minAmount: 330n,
+                requestedAmount: 100_000_000n,
+                optimized: true,
+                usePendingUTXO: true,
+            });
+            if (!freshUtxos.length) throw new Error('No UTXOs for register transaction');
+
+            const freshChallenge = await provider.getChallenge();
+            const regFactory = new TransactionFactory();
+            const regResult = await regFactory.signInteraction({
+                to: CONTRACT_ADDRESSES.factory,
+                from: walletAddress,
+                contract: factoryPubkeyHex,
+                calldata: regCalldata,
+                challenge: freshChallenge,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                signer: null as any,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                mldsaSigner: null as any,
+                network: NETWORK,
+                utxos: freshUtxos,
+                feeRate: 50,
+                priorityFee: 0n,
+                gasSatFee: 10_000n,
+            });
+
+            if (!regResult.fundingTransaction || !regResult.interactionTransaction) {
+                throw new Error('Missing register transactions');
+            }
+
+            toast.info('Broadcasting register funding transaction...');
+            const regFundingResp = await utxoProvider.broadcastTransaction(regResult.fundingTransaction, false);
+            if (!regFundingResp?.success) {
+                throw new Error(`Register funding failed: ${regFundingResp?.error ?? 'unknown'}`);
+            }
+
+            toast.info('Broadcasting register transaction...');
+            const regInteractionResp = await utxoProvider.broadcastTransaction(regResult.interactionTransaction, false);
+            if (!regInteractionResp?.success) {
+                throw new Error(`Register interaction failed: ${regInteractionResp?.error ?? 'unknown'}`);
+            }
+
+            toast.success(`Mine registered: tx ${String(regInteractionResp.result)}`);
+            onMineCreated?.();
         } catch (err) {
             const msg = err instanceof Error ? err.message : 'Deploy failed';
             toast.error(msg);
