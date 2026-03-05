@@ -90,46 +90,6 @@ export type GetUnwrapFee = CallResult<
 >;
 
 /**
- * @description Represents the result of the getControllerFee function call.
- */
-export type GetControllerFee = CallResult<
-    {
-        controllerFee: bigint;
-    },
-    OPNetEvent<never>[]
->;
-
-/**
- * @description Represents the result of the getProtocolFee function call.
- */
-export type GetProtocolFee = CallResult<
-    {
-        protocolFee: bigint;
-    },
-    OPNetEvent<never>[]
->;
-
-/**
- * @description Represents the result of the getProtocolFeeAccrued function call.
- */
-export type GetProtocolFeeAccrued = CallResult<
-    {
-        protocolFeeAccrued: bigint;
-    },
-    OPNetEvent<never>[]
->;
-
-/**
- * @description Represents the result of the getControllerFeeAccrued function call.
- */
-export type GetControllerFeeAccrued = CallResult<
-    {
-        controllerFeeAccrued: bigint;
-    },
-    OPNetEvent<never>[]
->;
-
-/**
  * @description Represents the result of the getUnderlying function call.
  */
 export type GetUnderlying = CallResult<
@@ -170,9 +130,9 @@ export type SetUnwrapFee = CallResult<
 >;
 
 /**
- * @description Represents the result of the setControllerFee function call.
+ * @description Represents the result of the setAmmPool function call.
  */
-export type SetControllerFee = CallResult<
+export type SetAmmPool = CallResult<
     {
         success: boolean;
     },
@@ -180,9 +140,19 @@ export type SetControllerFee = CallResult<
 >;
 
 /**
- * @description Represents the result of the setProtocolFee function call.
+ * @description Represents the result of the getAmmPool function call.
  */
-export type SetProtocolFee = CallResult<
+export type GetAmmPool = CallResult<
+    {
+        pool: Address;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the setAmmBuyFee function call.
+ */
+export type SetAmmBuyFee = CallResult<
     {
         success: boolean;
     },
@@ -190,31 +160,41 @@ export type SetProtocolFee = CallResult<
 >;
 
 /**
- * @description Represents the result of the claimControllerFee function call.
+ * @description Represents the result of the setAmmSellFee function call.
  */
-export type ClaimControllerFee = CallResult<
+export type SetAmmSellFee = CallResult<
     {
-        accrued: bigint;
+        success: boolean;
     },
     OPNetEvent<never>[]
 >;
 
 /**
- * @description Represents the result of the claimProtocolFee function call.
+ * @description Represents the result of the getAmmBuyFee function call.
  */
-export type ClaimProtocolFee = CallResult<
+export type GetAmmBuyFee = CallResult<
     {
-        accrued: bigint;
+        ammBuyFee: bigint;
     },
     OPNetEvent<never>[]
 >;
 
 /**
- * @description Represents the result of the disburseProtocolFee function call.
+ * @description Represents the result of the getAmmSellFee function call.
  */
-export type DisburseProtocolFee = CallResult<
+export type GetAmmSellFee = CallResult<
     {
-        accrued: bigint;
+        ammSellFee: bigint;
+    },
+    OPNetEvent<never>[]
+>;
+
+/**
+ * @description Represents the result of the notifyAmmFee function call.
+ */
+export type NotifyAmmFee = CallResult<
+    {
+        amount: bigint;
     },
     OPNetEvent<never>[]
 >;
@@ -231,17 +211,15 @@ export interface IMine extends IOP_NETContract {
     getUnderlyingAmount(): Promise<GetUnderlyingAmount>;
     getWrapFee(): Promise<GetWrapFee>;
     getUnwrapFee(): Promise<GetUnwrapFee>;
-    getControllerFee(): Promise<GetControllerFee>;
-    getProtocolFee(): Promise<GetProtocolFee>;
-    getProtocolFeeAccrued(): Promise<GetProtocolFeeAccrued>;
-    getControllerFeeAccrued(): Promise<GetControllerFeeAccrued>;
     getUnderlying(): Promise<GetUnderlying>;
     getOwner(): Promise<GetOwner>;
     setWrapFee(): Promise<SetWrapFee>;
     setUnwrapFee(): Promise<SetUnwrapFee>;
-    setControllerFee(): Promise<SetControllerFee>;
-    setProtocolFee(): Promise<SetProtocolFee>;
-    claimControllerFee(): Promise<ClaimControllerFee>;
-    claimProtocolFee(): Promise<ClaimProtocolFee>;
-    disburseProtocolFee(): Promise<DisburseProtocolFee>;
+    setAmmPool(): Promise<SetAmmPool>;
+    getAmmPool(): Promise<GetAmmPool>;
+    setAmmBuyFee(): Promise<SetAmmBuyFee>;
+    setAmmSellFee(): Promise<SetAmmSellFee>;
+    getAmmBuyFee(): Promise<GetAmmBuyFee>;
+    getAmmSellFee(): Promise<GetAmmSellFee>;
+    notifyAmmFee(): Promise<NotifyAmmFee>;
 }

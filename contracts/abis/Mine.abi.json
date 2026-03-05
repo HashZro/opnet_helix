@@ -105,58 +105,6 @@
             ]
         },
         {
-            "name": "getControllerFee",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "name": "controllerFee",
-                    "type": "UINT256"
-                }
-            ]
-        },
-        {
-            "name": "getProtocolFee",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "name": "protocolFee",
-                    "type": "UINT256"
-                }
-            ]
-        },
-        {
-            "name": "getProtocolFeeAccrued",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "name": "protocolFeeAccrued",
-                    "type": "UINT256"
-                }
-            ]
-        },
-        {
-            "name": "getControllerFeeAccrued",
-            "type": "Function",
-            "payable": false,
-            "onlyOwner": false,
-            "inputs": [],
-            "outputs": [
-                {
-                    "name": "controllerFeeAccrued",
-                    "type": "UINT256"
-                }
-            ]
-        },
-        {
             "name": "getUnderlying",
             "type": "Function",
             "payable": false,
@@ -209,7 +157,7 @@
             ]
         },
         {
-            "name": "setControllerFee",
+            "name": "setAmmPool",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
@@ -222,7 +170,20 @@
             ]
         },
         {
-            "name": "setProtocolFee",
+            "name": "getAmmPool",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "pool",
+                    "type": "ADDRESS"
+                }
+            ]
+        },
+        {
+            "name": "setAmmBuyFee",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
@@ -235,40 +196,53 @@
             ]
         },
         {
-            "name": "claimControllerFee",
+            "name": "setAmmSellFee",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [],
             "outputs": [
                 {
-                    "name": "accrued",
+                    "name": "success",
+                    "type": "BOOL"
+                }
+            ]
+        },
+        {
+            "name": "getAmmBuyFee",
+            "type": "Function",
+            "payable": false,
+            "onlyOwner": false,
+            "inputs": [],
+            "outputs": [
+                {
+                    "name": "ammBuyFee",
                     "type": "UINT256"
                 }
             ]
         },
         {
-            "name": "claimProtocolFee",
+            "name": "getAmmSellFee",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [],
             "outputs": [
                 {
-                    "name": "accrued",
+                    "name": "ammSellFee",
                     "type": "UINT256"
                 }
             ]
         },
         {
-            "name": "disburseProtocolFee",
+            "name": "notifyAmmFee",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [],
             "outputs": [
                 {
-                    "name": "accrued",
+                    "name": "amount",
                     "type": "UINT256"
                 }
             ]

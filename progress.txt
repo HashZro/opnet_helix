@@ -872,3 +872,11 @@
   - Placed between AMM fee getters and Lifecycle section
   - @method() + @returns({ name: 'amount', type: ABIDataTypes.UINT256 }) decorators applied
   - Not compiled (per story instructions — S101 handles compilation)
+
+[2026-03-05] S101 — Updated Mine onDeployment() for AMM params, compiled Mine, ABIs auto-updated
+  - Added ammBuyFee and ammSellFee reads after unwrapFee in onDeployment() (8 total calldata values)
+  - Stored both with this.su(this.fieldKeySimple(this._ammBuyFee/SellFee), ...)
+  - npx asc compiled successfully (exit 0)
+  - Transform auto-generated Mine.abi.json, Mine.abi.ts, Mine.d.ts with correct method set
+  - Old fee-split methods (claimControllerFee, claimProtocolFee, disburseProtocolFee, setControllerFee, setProtocolFee, getControllerFee, getProtocolFee) are gone from ABIs
+  - All AMM methods present: setAmmPool, getAmmPool, setAmmBuyFee, setAmmSellFee, getAmmBuyFee, getAmmSellFee, notifyAmmFee

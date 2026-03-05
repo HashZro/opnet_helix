@@ -907,7 +907,7 @@
       "title": "Update Mine onDeployment() for AMM params, compile Mine, update ABIs",
       "description": "Edit contracts/src/mine/Mine.ts onDeployment(): after reading unwrapFee add: const ammBuyFee: u256 = _calldata.readU256(); const ammSellFee: u256 = _calldata.readU256(); then store both: this.su(this.fieldKeySimple(this._ammBuyFee), ammBuyFee); this.su(this.fieldKeySimple(this._ammSellFee), ammSellFee);. Final calldata order: underlying, decimals, name, symbol, wrapFee, unwrapFee, ammBuyFee, ammSellFee (8 values). Then compile the Mine target: cd contracts && npx asc src/mine/index.ts --config asconfig.json --target mine (check asconfig.json for exact target name). Then manually update contracts/abis/Mine.abi.json, Mine.abi.ts, Mine.d.ts to reflect the new method set (add AMM methods, remove old fee-split methods).",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "onDeployment() reads 8 calldata values. npx asc exits 0. Mine.abi.json contains: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, getWrapFee, getUnwrapFee, setWrapFee, setUnwrapFee, getOwner, getUnderlying, setAmmPool, getAmmPool, setAmmBuyFee, setAmmSellFee, getAmmBuyFee, getAmmSellFee, notifyAmmFee. Mine.abi.json does NOT contain: claimControllerFee, claimProtocolFee, disburseProtocolFee, setControllerFee, setProtocolFee, getControllerFee, getProtocolFee. Mine.d.ts interface updated to match.",
       "model": "sonnet"
     },
