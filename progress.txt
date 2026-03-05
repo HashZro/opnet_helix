@@ -1021,3 +1021,10 @@
     Fixed positioning, z-index:99999, auto-dismiss logic unchanged
     Removed all bg-green-*, bg-red-*, bg-blue-*, text-green-*, text-red-*, text-blue-*, rounded-*
   - npm run build exits 0
+
+[2026-03-05] S117 — WalletButton redesign (monochrome, instant hover invert)
+  - Replaced Tailwind gradient/gray classes with inline styles
+  - Added useState(false) hovered state, onMouseEnter/Leave toggles
+  - Both connected/disconnected buttons share same style object (1px black border, white<->black invert)
+  - Sometype Mono font, 0.75rem, padding 6px 16px, no CSS transition
+  - npm run build: exits 0, no TypeScript errors

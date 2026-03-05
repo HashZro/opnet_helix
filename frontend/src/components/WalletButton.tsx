@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../contexts/ToastContext';
 import { truncateAddress } from '../lib/helpers';
@@ -7,6 +7,7 @@ export function WalletButton() {
     const { address, isConnected, connect, disconnect } = useWallet();
     const toast = useToast();
     const prevConnectedRef = useRef(false);
+    const [hovered, setHovered] = useState(false);
 
     useEffect(() => {
         if (isConnected && !prevConnectedRef.current) {
@@ -17,11 +18,23 @@ export function WalletButton() {
         prevConnectedRef.current = isConnected;
     }, [isConnected]); // eslint-disable-line react-hooks/exhaustive-deps
 
+    const buttonStyle = {
+        border: '1px solid #000',
+        background: hovered ? '#000' : '#fff',
+        color: hovered ? '#fff' : '#000',
+        fontFamily: "'Sometype Mono', monospace",
+        fontSize: '0.75rem',
+        padding: '6px 16px',
+        cursor: 'pointer',
+    };
+
     if (isConnected && address) {
         return (
             <button
                 onClick={disconnect}
-                className="px-4 py-2.5 min-h-[44px] rounded-lg bg-gray-800 border border-gray-700 text-gray-200 text-sm font-medium hover:bg-gray-700 hover:border-gray-600 transition-colors"
+                style={buttonStyle}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
             >
                 {truncateAddress(address)}
             </button>
@@ -31,7 +44,9 @@ export function WalletButton() {
     return (
         <button
             onClick={connect}
-            className="px-4 py-2.5 min-h-[44px] rounded-lg bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-semibold hover:from-purple-500 hover:to-blue-500 transition-all shadow-lg shadow-purple-900/30"
+            style={buttonStyle}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
         >
             Connect Wallet
         </button>

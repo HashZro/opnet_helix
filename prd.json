@@ -1051,7 +1051,7 @@
       "title": "WalletButton redesign — outlined monochrome, instant hover invert",
       "description": "Rewrite frontend/src/components/WalletButton.tsx. Read file first. Add: const [hovered, setHovered] = useState(false). Both connected and disconnected button style: border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', fontFamily:'Sometype Mono', fontSize:'0.75rem', padding:'6px 16px', cursor:'pointer'. Add onMouseEnter={() => setHovered(true)} and onMouseLeave={() => setHovered(false)}. Disconnected label: 'Connect Wallet'. Connected label: truncated address (use existing truncateAddress helper or addr.slice(0,8)+'...'+addr.slice(-6)). Keep all existing onClick connect/disconnect logic unchanged. Remove className props containing bg-purple-*, bg-blue-*, bg-indigo-*, hover:bg-*, text-purple-*, text-blue-*, text-white, rounded-*, border-purple-*, border-blue-*. Do NOT add any CSS transition property. Run: cd frontend && npm run build.",
       "priority": 30,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. WalletButton: 1px black border, white bg, black text in both states. Hover instantly inverts to black bg white text (no animation delay). Sometype Mono font. No purple or blue colors. Connect/disconnect still functions.",
       "model": "sonnet"
     }
