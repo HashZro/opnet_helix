@@ -835,3 +835,11 @@
   - Removed ctrlKey/protoKey accumulator update lines from wrap()
   - _underlyingHeld incremented by full amount (fee included) — fee permanently grows pool ratio
   - unwrap() still has old fee accumulator code (S96 covers that); onDeployment() still reads controllerFee/protocolFee (S97)
+
+[2026-03-05] S96 — Simplified unwrap() in Mine.ts — fee stays in pool
+  - Removed: ctrlFeeRate, controllerFeeAmount, protoFeeRate, protocolFeeAmount calculations
+  - Removed: ctrlKey/protoKey accumulator updates (this._controllerFeeAccrued, _protocolFeeAccrued)
+  - Kept: feeAmount = underlyingAmount * unwrapFeeRate / FEE_DENOMINATOR
+  - Kept: netUnderlying = underlyingAmount - feeAmount (feeAmount stays locked in pool)
+  - _underlyingHeld decremented by netUnderlying only; feeAmount grows pool ratio permanently
+  - onDeployment() still reads controllerFee/protocolFee calldata args (S97 covers that)

@@ -170,7 +170,7 @@ export class Mine extends OP20 {
         // CHECKS
         if (xAmount == ZERO) throw new Revert('zero amount');
 
-        // EFFECTS — convert xTokens to underlying, calculate fees, burn xTokens
+        // EFFECTS — convert xTokens to underlying, calculate fee, burn xTokens
         const underlyingAmount: u256 = this._getUnderlyingAmount(xAmount);
 
         const unwrapFeeRate: u256 = this.lu(this.fieldKeySimple(this._unwrapFee));
@@ -179,30 +179,11 @@ export class Mine extends OP20 {
             FEE_DENOMINATOR,
         );
 
-        // Controller/protocol portions of fee
-        const ctrlFeeRate: u256 = this.lu(this.fieldKeySimple(this._controllerFee));
-        const controllerFeeAmount: u256 = SafeMath.div(
-            SafeMath.mul(feeAmount, ctrlFeeRate),
-            FEE_DENOMINATOR,
-        );
-
-        const protoFeeRate: u256 = this.lu(this.fieldKeySimple(this._protocolFee));
-        const protocolFeeAmount: u256 = SafeMath.div(
-            SafeMath.mul(feeAmount, protoFeeRate),
-            FEE_DENOMINATOR,
-        );
+        // Net underlying to send (feeAmount stays in pool, growing the ratio)
+        const netUnderlying: u256 = SafeMath.sub(underlyingAmount, feeAmount);
 
         // Burn xTokens from sender
         this._burn(Blockchain.tx.sender, xAmount);
-
-        // Update fee accumulators
-        const ctrlKey: Uint8Array = this.fieldKeySimple(this._controllerFeeAccrued);
-        const protoKey: Uint8Array = this.fieldKeySimple(this._protocolFeeAccrued);
-        this.su(ctrlKey, SafeMath.add(this.lu(ctrlKey), controllerFeeAmount));
-        this.su(protoKey, SafeMath.add(this.lu(protoKey), protocolFeeAmount));
-
-        // Net underlying to send
-        const netUnderlying: u256 = SafeMath.sub(underlyingAmount, feeAmount);
 
         // Decrement self-tracked balance
         const heldKey: Uint8Array = this.fieldKeySimple(this._underlyingHeld);

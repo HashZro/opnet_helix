@@ -862,7 +862,7 @@
       "title": "Simplify unwrap() in Mine.ts \u2014 fee stays in pool",
       "description": "Edit contracts/src/mine/Mine.ts. Rewrite unwrap() as follows: (1) keep: underlyingAmount = _getUnderlyingAmount(xAmount). (2) keep: feeAmount = SafeMath.div(SafeMath.mul(underlyingAmount, unwrapFeeRate), FEE_DENOMINATOR). (3) keep: netUnderlying = SafeMath.sub(underlyingAmount, feeAmount). (4) keep: _burn sender xAmount. (5) REMOVE: all controllerFeeAmount, protocolFeeAmount calculations and ctrlKey/protoKey accumulator updates. (6) keep: _underlyingHeld decremented by netUnderlying ONLY (feeAmount remains in pool permanently). (7) keep: TransferHelper.transfer netUnderlying to sender. Do NOT compile yet.",
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "acceptance": "unwrap() has no references to controllerFee, protocolFee, ctrlKey, protoKey, controllerFeeAmount, or protocolFeeAmount. _underlyingHeld is decremented only by netUnderlying. Sender receives underlyingAmount*(1 - unwrapFee/1000). feeAmount stays locked in contract forever, growing the pool ratio.",
       "model": "sonnet"
     },
