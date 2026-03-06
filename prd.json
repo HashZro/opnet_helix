@@ -1240,7 +1240,7 @@
       "title": "Make MotoSwap pool creation mandatory in CreateGenomePage.tsx",
       "description": "In frontend/src/pages/CreateGenomePage.tsx, after successful Factory registerGenome call (step 2), add mandatory step 3: create MotoSwap pool. Import MotoSwapFactoryAbi, IMotoswapFactoryContract from 'opnet'. Import Address from '@btc-vision/transaction'. Use CONTRACT_ADDRESSES.motoswapFactory. Call: const motoFactory = getContract<IMotoswapFactoryContract>(Address.fromString(CONTRACT_ADDRESSES.motoswapFactory), MotoSwapFactoryAbi as any, provider, NETWORK, senderAddress); const poolSim = await motoFactory.createPool(Address.fromString(deployedGenomePubkey), Address.fromString(underlyingPubkey)); await poolSim.sendTransaction({...omit signer/mldsaSigner...}). Show 'Creating liquidity pool...' in progress. Show pool address on success. If step fails, show error but do not block (genome is already registered).",
       "priority": 138,
-      "passes": false,
+      "passes": true,
       "acceptance": "CreateGenomePage shows step 3 'Creating Pool' after registration. On success shows pool address. MotoSwap factory createPool is called with gToken and underlying pubkeys. npm run build exits 0.",
       "model": "sonnet"
     },

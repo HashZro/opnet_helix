@@ -1205,3 +1205,14 @@
   - useEffect dependency array: mineAddress->genomeAddress
   - Function export name useMine unchanged for backward compatibility
   - npx tsc --noEmit exits 0
+
+[2026-03-05] S138 — Make MotoSwap pool creation mandatory in CreateGenomePage.tsx
+  - Added `type IMotoswapFactoryContract` import from 'opnet' (inline type import for verbatimModuleSyntax)
+  - Added poolCreated (bool) and createdPoolAddress (string|null) state variables
+  - In handleDeploy(), after setRegistered(true): step 3 calls motoFactory.createPool(genomePubkey, underlyingPubkey)
+  - getContract<IMotoswapFactoryContract> with senderAddress as 5th param (write op)
+  - sendTransaction omits signer/mldsaSigner (OPWallet signs via extension)
+  - Pool creation failure shows error toast but does NOT throw — genome remains registered
+  - createdPoolAddress set from extractAddressStr(poolResult); console.log of result for debugging
+  - Success UI: shows '✓ MotoSwap pool created: <address>' below the Factory registration confirmation
+  - npm run build exits 0 (82 modules, no TypeScript errors)

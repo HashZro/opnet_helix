@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { TransactionFactory, OPNetLimitedProvider, BinaryWriter, Address } from '@btc-vision/transaction';
-import { getContract, MotoSwapFactoryAbi } from 'opnet';
+import { getContract, MotoSwapFactoryAbi, type IMotoswapFactoryContract } from 'opnet';
 import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
@@ -110,6 +110,10 @@ export function CreateGenomePage() {
     // resolved after deployment
     const [deployedPubKey, setDeployedPubKey] = useState<string | null>(null);
     const [resolvedUnderlyingPubkey, setResolvedUnderlyingPubkey] = useState<string | null>(null);
+
+    // pool creation (step 3)
+    const [poolCreated, setPoolCreated] = useState(false);
+    const [createdPoolAddress, setCreatedPoolAddress] = useState<string | null>(null);
 
     // pool existence check
     const [poolCheckLoading, setPoolCheckLoading] = useState(false);
@@ -403,6 +407,42 @@ export function CreateGenomePage() {
 
             setRegistered(true);
             toast.success('Genome registered in Factory!');
+
+            // Step 3: Create MotoSwap pool
+            toast.info('Creating liquidity pool on MotoSwap...');
+            try {
+                const motoFactory = getContract<IMotoswapFactoryContract>(
+                    Address.fromString(CONTRACT_ADDRESSES.motoswapFactory),
+                    MotoSwapFactoryAbi as any,
+                    provider,
+                    NETWORK,
+                    senderAddress!,
+                );
+                const poolSim = await motoFactory.createPool(
+                    Address.fromString(contractPubKey),
+                    Address.fromString(underlyingPubkey),
+                );
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const poolSimAny = poolSim as any;
+                if ('error' in poolSimAny) throw new Error(String(poolSimAny.error));
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const poolResult = await poolSimAny.sendTransaction({
+                    refundTo: walletAddress,
+                    maximumAllowedSatToSpend: BigInt(100_000),
+                    feeRate: 10,
+                    network: NETWORK,
+                    minGas: BigInt(100_000),
+                });
+                console.log('[CreateGenome] createPool result:', poolResult);
+                const poolAddr = extractAddressStr(poolResult);
+                setCreatedPoolAddress(poolAddr || null);
+                setPoolCreated(true);
+                toast.success('Liquidity pool created!');
+            } catch (poolErr) {
+                console.error('[CreateGenome] createPool error:', poolErr);
+                toast.error(`Pool creation failed: ${poolErr instanceof Error ? poolErr.message : String(poolErr)} (genome is still registered)`);
+                // Do not block — genome is already registered
+            }
         } catch (err) {
             toast.error(err instanceof Error ? err.message : String(err));
         } finally {
@@ -446,6 +486,11 @@ export function CreateGenomePage() {
                         {registered && (
                             <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.75rem', color: '#888' }}>
                                 ✓ Registered in Factory — it will appear on Explore shortly.
+                            </div>
+                        )}
+                        {poolCreated && (
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.75rem', color: '#555', marginTop: '6px' }}>
+                                ✓ MotoSwap pool created{createdPoolAddress ? `: ${createdPoolAddress}` : ''}.
                             </div>
                         )}
                     </div>
