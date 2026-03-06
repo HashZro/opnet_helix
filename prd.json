@@ -1294,7 +1294,7 @@
       "title": "Add useGenomePoolInfo hook to fetch pool status",
       "description": "Create frontend/src/hooks/useGenomePoolInfo.ts. Hook signature: useGenomePoolInfo(genomeAddress: string | null, genomePubkey: string, underlyingPubkey: string, senderAddress: Address | null). Implementation: (1) Get pool address via MotoSwapFactory.getPool(genomePubkey, underlyingPubkey) \u2014 use provider (no sender needed for reads). (2) If pool address is non-zero, get reserves via MotoswapPoolAbi getReserves() call on pool address. (3) Get user LP balance via OP_20_ABI balanceOf(senderAddress) on pool address. Returns: { poolAddress: string, reserve0: bigint, reserve1: bigint, lpBalance: bigint, loading: boolean, error: string | null }. Import MotoSwapFactoryAbi, MotoswapPoolAbi from 'opnet'. Import CONTRACT_ADDRESSES from config.",
       "priority": 144,
-      "passes": false,
+      "passes": true,
       "acceptance": "frontend/src/hooks/useGenomePoolInfo.ts exists and exports useGenomePoolInfo. Hook returns poolAddress, reserve0, reserve1, lpBalance. npx tsc --noEmit exits 0.",
       "model": "sonnet"
     },

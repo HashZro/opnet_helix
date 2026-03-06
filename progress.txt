@@ -1257,3 +1257,16 @@
   - Pool info placeholder: 'Loading pool...' section below stats (bordered top separator)
   - Removed MineCard import — no longer used in this file
   - npm run build exits 0 (82 modules, no TypeScript errors)
+
+[2026-03-05] S144 — Added useGenomePoolInfo hook to fetch pool status
+  - Created frontend/src/hooks/useGenomePoolInfo.ts
+  - Hook signature: useGenomePoolInfo(genomeAddress, genomePubkey, underlyingPubkey, senderAddress)
+  - Step 1: calls MotoSwapFactoryAbi.getPool(underlyingAddr, genomeAddr) via ADDRESS.fromString(pubkey) args
+  - Step 2: if pool non-zero, calls MotoswapPoolAbi.getReserves() on pool address (reserve0, reserve1)
+  - Step 3: if senderAddress present, calls OP_20_ABI.balanceOf(senderAddress) on pool address for LP balance
+  - extractPoolAddress helper reads properties.pool then decoded[0]
+  - isZeroAddress detects empty/0x0+ pool (no pool exists)
+  - Uses senderAddress.toString() as dep key to avoid infinite re-renders from object reference churn
+  - Both MotoSwapFactoryAbi and MotoswapPoolAbi are exported from 'opnet' main barrel
+  - getPool args: Address.fromString(pubkeyHex) for both tokens (matches MineDetailPage pattern)
+  - npx tsc --noEmit exits 0
