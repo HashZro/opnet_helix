@@ -114,30 +114,30 @@ export const MINE_ABI = [
 // GENOME_ABI — alias for MINE_ABI (gradual migration)
 export const GENOME_ABI = MINE_ABI;
 
-// Factory ABI — mine registry
+// Factory ABI — genome registry
 export const FACTORY_ABI = [
     {
-        name: 'registerMine',
+        name: 'registerGenome',
         inputs: [],
         outputs: [{ name: 'count', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getMineAddress',
+        name: 'getGenomeAddress',
         inputs: [],
-        outputs: [{ name: 'mineAddress', type: ABIDataTypes.ADDRESS }],
+        outputs: [{ name: 'genomeAddress', type: ABIDataTypes.ADDRESS }],
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getMineCount',
+        name: 'getGenomeCount',
         inputs: [],
         outputs: [{ name: 'count', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getMineAtIndex',
+        name: 'getGenomeAtIndex',
         inputs: [],
-        outputs: [{ name: 'mineAddress', type: ABIDataTypes.ADDRESS }],
+        outputs: [{ name: 'genomeAddress', type: ABIDataTypes.ADDRESS }],
         type: BitcoinAbiTypes.Function,
     },
     ...OP_NET_ABI,

@@ -1204,7 +1204,7 @@
       "title": "Update FACTORY_ABI in contracts.ts to genome method names",
       "description": "In frontend/src/lib/contracts.ts, update FACTORY_ABI method names: getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex, getMineAddress->getGenomeAddress, registerMine->registerGenome. These must match the newly compiled Factory.wasm method selectors exactly. Also update any comments referencing 'mine' in contracts.ts.",
       "priority": 134,
-      "passes": false,
+      "passes": true,
       "acceptance": "FACTORY_ABI has getGenomeCount, getGenomeAtIndex, getGenomeAddress, registerGenome. No getMineCount/getMineAtIndex/getMineAddress/registerMine remain in FACTORY_ABI. npx tsc --noEmit exits 0.",
       "model": "sonnet"
     },

@@ -1173,3 +1173,9 @@
   - Added injectRewards entry to MINE_ABI: inputs:[], outputs:[{name:'amount', type:ABIDataTypes.UINT256}]
   - Added export const GENOME_ABI = MINE_ABI alias below MINE_ABI
   - cd frontend && npx tsc --noEmit exits 0
+
+[2026-03-05] S134 — Updated FACTORY_ABI in contracts.ts to genome method names
+  - Renamed FACTORY_ABI methods: registerMine->registerGenome, getMineAddress->getGenomeAddress, getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex
+  - Updated output field names: mineAddress->genomeAddress in getGenomeAddress and getGenomeAtIndex
+  - Updated comment: 'Factory ABI — mine registry' -> 'Factory ABI — genome registry'
+  - cd frontend && npx tsc --noEmit exits 0
