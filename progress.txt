@@ -1362,3 +1362,17 @@
 - When no pool: shows 'No pool exists' message + 'Create Pool' button (connected only) that calls motoFactory.createPool(gTokenAddr, underlyingAddr)
 - Removed unused `useEffect` import; `MotoSwapFactoryAbi` and `CONTRACT_ADDRESSES` still used in handleCreatePool
 - Build: npm run build exits 0 with no TS errors
+
+[2026-03-05] S153 — Add gToken badge to MineCard
+  - Added conditional 'gToken' badge span after symbol text in MineCard header row
+  - Badge only renders when symbol.startsWith('g')
+  - Style: border:'1px solid currentColor', padding:'1px 4px', fontSize:'0.6rem', fontFamily:'Sometype Mono'
+  - Color matches card hover state: #aaa on black, #888 on white (inverts with card)
+  - npm run build exits 0 (83 modules, no TypeScript errors)
+
+[2026-03-05] S154 — Navbar cleanup: verified My Genomes tab and no stale imports
+  - Verified Navbar.tsx has no stale imports: useState, Link, useLocation, WalletButton, useWallet, useBalances are all used
+  - My Genomes NavTab renders conditionally on isConnected (both desktop and mobile menu)
+  - No useMines import, no myGenomeCount variable — Navbar is clean
+  - npm run build exits 0 (83 modules, no TypeScript errors)
+  - Acceptance criteria met without any code changes needed

@@ -1384,7 +1384,7 @@
       "title": "Navbar cleanup \u2014 verify My Genomes tab and remove stale code",
       "description": "In frontend/src/components/Navbar.tsx: verify the My Genomes NavTab links to /my-genomes and shows correctly when connected. Remove any stale imports or variables (there should be no useMines import, no myGenomeCount). Verify useWallet returns isConnected correctly. Run npm run build and fix any TypeScript errors.",
       "priority": 154,
-      "passes": false,
+      "passes": true,
       "acceptance": "Navbar.tsx has no stale imports. My Genomes tab shows for connected users. npm run build exits 0.",
       "model": "sonnet"
     },
