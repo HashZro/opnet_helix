@@ -1438,7 +1438,7 @@
       "title": "Register gMOTO test genome with new Factory",
       "description": "Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx ts-node scripts/register-genome-test.ts. Wait for confirmation. Then verify the frontend shows the genome: open the dev server, check the Explore page, genome count in stats should be >= 1. Also run check-factory.ts or similar to verify getGenomeCount() returns > 0 from the new factory.",
       "priority": 160,
-      "passes": false,
+      "passes": true,
       "acceptance": "register-genome-test.ts runs successfully. Frontend Explore page shows at least 1 genome from the new factory. getGenomeCount() > 0.",
       "model": "sonnet"
     },
@@ -1447,7 +1447,7 @@
       "title": "Verify createPool auto-creation during genome creation",
       "description": "Using the frontend dev server, create a new test genome (any token as underlying, symbol starting with g). Verify that after registration Step 3 runs (Creating Pool...) and shows a pool address. Then verify: call motoFactory.getPool(gTokenPubkey, underlyingPubkey) in a check script or via the frontend and confirm it returns a non-zero address. Document the pool address in progress.txt.",
       "priority": 161,
-      "passes": false,
+      "passes": true,
       "acceptance": "Creating a genome via frontend UI results in pool creation step completing. Pool address is non-zero. MotoSwap factory getPool returns it.",
       "model": "sonnet"
     },

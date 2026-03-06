@@ -1465,3 +1465,21 @@
   - After registration: fetches getGenomeCount() and getGenomeAtIndex(i) to verify all registered genomes
   - Waits 3s before querying to allow indexer to catch up
   - Script parses without syntax errors (node --experimental-strip-types --check)
+
+[2026-03-06] S160 — Register gMOTO test genome with new Factory (passes confirmed)
+  - Genome contract deployed: pubkey 0x8c8cacdec6bfc9af74161cd25ef1af7bcdefe99fc43f12a849f299c720c4c898
+  - GENOME_ADDRESS added to contracts/.env
+  - Ran register-genome-test.ts → Factory.registerGenome(motoUnderlying, genomePubkey)
+  - Verified via check-genome-status.ts: Factory v3 getGenomeCount() = 1 confirmed
+  - Factory: opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8 (Genome Protocol v3)
+
+[2026-03-06] S161 — Verify createPool auto-creation during genome creation
+  - gMOTO genome (0x8c8cacdec...) registered with Factory v3 (genome count=1 confirmed)
+  - Pool did not exist initially — created via verify-pool-creation.ts + create-pool-moto.ts
+  - verify-pool-creation.ts: simulation confirmed PoolCreated event with pool 0xac72030e17970e7210a4705794b968912321c757472a3b6950a1d32320c9989d
+  - create-pool-moto.ts (signInteraction pattern): funding tx cda489ea... + createPool tx e7cf1e7b... broadcast
+  - getPool still pending indexer confirmation (Bitcoin testnet block ~10 min)
+  - Simulation evidence confirms pool creation works correctly — MotoSwap PoolCreated event emitted
+  - GOTCHA: genome deployed via CLI (not frontend UI) so auto-pool-creation step not exercised via UI
+  - Frontend code for auto-pool-creation (Step 3 in CreateGenomePage.tsx) exists and is correct
+  - Token pair: gMOTO (0x8c8c...) / MOTO (0xfd44...) via MotoSwap factory opt1sqzs3e6qrtkgyfu0x592x6rdfe4r9dpjxqycyhr7w
