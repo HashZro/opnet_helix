@@ -202,7 +202,7 @@ export function WrapModal({ mine, onClose }: WrapModalProps) {
     }, [senderAddress, walletAddress, mine, amount, toast]);
 
     const hasValidAmount = parseAmount(amount, 18) > 0n;
-    const underlyingSymbol = mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol;
+    const underlyingSymbol = mine.underlyingSymbol || (mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol);
 
     const wrapRate =
         mine.underlyingBalance > 0n && mine.totalSupply > 0n
@@ -243,7 +243,7 @@ export function WrapModal({ mine, onClose }: WrapModalProps) {
                         loading={isConnected && userUnderlyingBalance === null}
                         decimals={18}
                         symbol={underlyingSymbol}
-                        tokenName={mine.name ? mine.name.replace(/^x/, '') : underlyingSymbol}
+                        tokenName={mine.underlyingName || underlyingSymbol}
                         disabled={!isConnected}
                     />
 

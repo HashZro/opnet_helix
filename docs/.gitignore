@@ -1,9 +1,3 @@
 node_modules/
-build/
-.env
-.env.local
-.env.*.local
-dist/
 .vitepress/dist/
 .vitepress/cache/
-*.wasm

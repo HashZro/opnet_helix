@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { TransactionFactory, OPNetLimitedProvider, BinaryWriter, Address } from '@btc-vision/transaction';
 import { getContract, MotoSwapFactoryAbi, type IMotoswapFactoryContract } from 'opnet';
@@ -6,10 +6,7 @@ import { useWallet } from '../hooks/useWallet';
 import { useToast } from '../contexts/ToastContext';
 import { provider } from '../lib/provider';
 import { NETWORK, CONTRACT_ADDRESSES, RPC_URL } from '../config';
-import { FACTORY_ABI, MINE_ABI, OP_20_ABI, MOTOSWAP_ROUTER_ABI } from '../lib/contracts';
-import { DepositInput } from '../components/DepositInput';
-import { TransactionButton } from '../components/TransactionButton';
-import { parseAmount } from '../lib/helpers';
+import { FACTORY_ABI, MINE_ABI, OP_20_ABI } from '../lib/contracts';
 
 async function computeSelector(sig: string): Promise<number> {
     const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(sig));
@@ -82,6 +79,15 @@ function extractAddressStr(res: unknown): string {
     return '';
 }
 
+function extractStr(res: unknown, field: string): string {
+    const r = res as Record<string, unknown> | null;
+    const val = (r?.properties as Record<string, unknown> | undefined)?.[field];
+    if (val !== null && val !== undefined) return String(val);
+    const decoded = (r?.decoded as unknown[] | undefined)?.[0];
+    if (decoded !== null && decoded !== undefined) return String(decoded);
+    return '';
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function buildMineAtIndexCalldata(factoryContract: any, index: number): string {
     const selectorBuf: Uint8Array = factoryContract.encodeCalldata('getMineAtIndex', []);
@@ -99,9 +105,8 @@ export function CreateGenomePage() {
     const toast = useToast();
 
     const [underlyingAddress, setUnderlyingAddress] = useState('');
-    const [xTokenName, setXTokenName] = useState('');
-    const [xTokenSymbol, setXTokenSymbol] = useState('');
-    const [symbolError, setSymbolError] = useState('');
+    const [underlyingInfo, setUnderlyingInfo] = useState<{ name: string; symbol: string } | null>(null);
+    const [underlyingFetching, setUnderlyingFetching] = useState(false);
     const [wrapFee, setWrapFee] = useState(50);
     const [unwrapFee, setUnwrapFee] = useState(50);
     const [isBusy, setIsBusy] = useState(false);
@@ -109,8 +114,6 @@ export function CreateGenomePage() {
     const [registered, setRegistered] = useState(false);
 
     // resolved after deployment
-    const [deployedPubKey, setDeployedPubKey] = useState<string | null>(null);
-    const [resolvedUnderlyingPubkey, setResolvedUnderlyingPubkey] = useState<string | null>(null);
 
     // pool creation (step 3)
     const [poolCreated, setPoolCreated] = useState(false);
@@ -120,13 +123,9 @@ export function CreateGenomePage() {
     const [poolCheckLoading, setPoolCheckLoading] = useState(false);
     const [poolExistsForUnderlying, setPoolExistsForUnderlying] = useState(false);
 
-    // initial liquidity seeding
-    const [liqXAmount, setLiqXAmount] = useState('');
-    const [liqUnderlyingAmount, setLiqUnderlyingAmount] = useState('');
-    const [liqBusy, setLiqBusy] = useState(false);
-    const [liqDone, setLiqDone] = useState(false);
+    const derivedName = underlyingInfo ? 'g' + underlyingInfo.symbol.toUpperCase() : '';
+    const derivedSymbol = underlyingInfo ? 'g' + underlyingInfo.symbol.toUpperCase() : '';
 
-    const underlyingSymbol = xTokenSymbol.startsWith('g') ? xTokenSymbol.slice(1) : (xTokenSymbol || 'TOKEN');
 
     // -----------------------------------------------------------------------
     // Pool existence check — fires when underlying address changes
@@ -210,85 +209,39 @@ export function CreateGenomePage() {
     }, [underlyingAddress]);
 
     // -----------------------------------------------------------------------
-    // Add initial liquidity after deployment
+    // Fetch underlying token name + symbol when address changes
     // -----------------------------------------------------------------------
-    const handleAddLiquidity = useCallback(async () => {
-        if (!senderAddress || !walletAddress) throw new Error('Connect wallet first');
-        if (!deployedAddress || !deployedPubKey || !resolvedUnderlyingPubkey) throw new Error('Deploy first');
-        const rawX = parseAmount(liqXAmount, 18);
-        const rawUnderlying = parseAmount(liqUnderlyingAmount, 18);
-        if (rawX === 0n) throw new Error('Enter a gToken amount greater than zero');
-        if (rawUnderlying === 0n) throw new Error('Enter an underlying amount greater than zero');
-
-        const routerAddress = Address.fromString(CONTRACT_ADDRESSES.motoswapRouter);
-        const tokenA = Address.fromString(resolvedUnderlyingPubkey); // underlying
-        const tokenB = Address.fromString(deployedPubKey);            // xToken
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const tokenAContract = getContract<any>(underlyingAddress.trim(), OP_20_ABI as any, provider, NETWORK, senderAddress);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const tokenBContract = getContract<any>(deployedAddress, OP_20_ABI as any, provider, NETWORK, senderAddress);
-
-        const UINT256_MAX = (1n << 256n) - 1n;
-
-        // Allowance checks
-        const [aAllowRes, bAllowRes] = await Promise.all([
-            tokenAContract.allowance(senderAddress, routerAddress),
-            tokenBContract.allowance(senderAddress, routerAddress),
-        ]);
-        const aAllowance = extractFirstBigInt(aAllowRes);
-        const bAllowance = extractFirstBigInt(bAllowRes);
-
-        if (aAllowance < rawUnderlying) {
-            const sim = await tokenAContract.increaseAllowance(routerAddress, UINT256_MAX);
-            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
-            toast.info('Approving underlying token...');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (sim as any).sendTransaction({ refundTo: walletAddress, maximumAllowedSatToSpend: BigInt(100_000), feeRate: 10, network: NETWORK, minGas: BigInt(100_000) });
-            toast.success('Underlying approved');
-        }
-        if (bAllowance < rawX) {
-            const sim = await tokenBContract.increaseAllowance(routerAddress, UINT256_MAX);
-            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
-            toast.info('Approving gToken...');
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (sim as any).sendTransaction({ refundTo: walletAddress, maximumAllowedSatToSpend: BigInt(100_000), feeRate: 10, network: NETWORK, minGas: BigInt(100_000) });
-            toast.success('gToken approved');
-        }
-
-        // Build access list from simulated approvals
-        const [aSimForList, bSimForList] = await Promise.all([
-            tokenAContract.increaseAllowance(routerAddress, UINT256_MAX),
-            tokenBContract.increaseAllowance(routerAddress, UINT256_MAX),
-        ]);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mergedAccessList = { ...(aSimForList as any)?.accessList ?? {}, ...(bSimForList as any)?.accessList ?? {} };
-
-        const blockHeight = await provider.getBlockNumber();
-        const deadline = blockHeight + 100n;
-        const aMin = (rawUnderlying * 60n) / 100n;
-        const bMin = (rawX * 60n) / 100n;
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const routerContract = getContract<any>(routerAddress, MOTOSWAP_ROUTER_ABI as any, provider, NETWORK, senderAddress);
-        routerContract.setAccessList(mergedAccessList);
-
-        const sim = await routerContract.addLiquidity(tokenA, tokenB, rawUnderlying, rawX, aMin, bMin, senderAddress, deadline);
-        if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
-        toast.info('Confirm add liquidity in OPWallet...');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (sim as any).sendTransaction({ refundTo: walletAddress, maximumAllowedSatToSpend: BigInt(100_000), feeRate: 10, network: NETWORK, minGas: BigInt(100_000) });
-
-        toast.success('Initial liquidity added! Pool is live on MotoSwap.');
-        setLiqDone(true);
-    }, [senderAddress, walletAddress, deployedAddress, deployedPubKey, resolvedUnderlyingPubkey, underlyingAddress, liqXAmount, liqUnderlyingAmount, toast]);
+    useEffect(() => {
+        const addr = underlyingAddress.trim();
+        if (!addr || addr.length < 10) { setUnderlyingInfo(null); setUnderlyingFetching(false); return; }
+        let cancelled = false;
+        setUnderlyingFetching(true);
+        setUnderlyingInfo(null);
+        const run = async () => {
+            try {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const uc = getContract<any>(addr, OP_20_ABI as any, provider, NETWORK);
+                const [nameRes, symbolRes] = await Promise.all([uc.name(), uc.symbol()]);
+                if (cancelled) return;
+                const name = extractStr(nameRes, 'name');
+                const symbol = extractStr(symbolRes, 'symbol');
+                if (!cancelled) setUnderlyingInfo(name || symbol ? { name, symbol } : null);
+            } catch {
+                if (!cancelled) setUnderlyingInfo(null);
+            } finally {
+                if (!cancelled) setUnderlyingFetching(false);
+            }
+        };
+        void run();
+        return () => { cancelled = true; };
+    }, [underlyingAddress]);
 
     const disabled = isBusy || !isConnected || poolExistsForUnderlying;
 
     const handleDeploy = async () => {
         if (!isConnected || !walletAddress) { toast.error('Connect wallet first'); return; }
         if (!underlyingAddress.trim()) { toast.error('Enter underlying token address'); return; }
-        if (!xTokenName.trim() || !xTokenSymbol.trim()) { toast.error('Enter gToken name and symbol'); return; }
+        if (!derivedName || !derivedSymbol) { toast.error('Underlying token info not loaded yet'); return; }
 
         setIsBusy(true);
         try {
@@ -305,8 +258,8 @@ export function CreateGenomePage() {
             const writer = new BinaryWriter();
             writer.writeAddress(Address.fromString(underlyingPubkey));
             writer.writeU8(18);
-            writer.writeStringWithLength(xTokenName.trim());
-            writer.writeStringWithLength(xTokenSymbol.trim());
+            writer.writeStringWithLength(derivedName);
+            writer.writeStringWithLength(derivedSymbol);
             writer.writeU256(BigInt(wrapFee));
             writer.writeU256(BigInt(unwrapFee));
             writer.writeU256(BigInt(wrapFee));
@@ -353,8 +306,6 @@ export function CreateGenomePage() {
             const contractAddr = String(result.contractAddress);
             const contractPubKey = String(result.contractPubKey);
             setDeployedAddress(contractAddr);
-            setDeployedPubKey(contractPubKey);
-            setResolvedUnderlyingPubkey(underlyingPubkey);
             toast.success(`Genome deployed: ${contractAddr}`);
 
             // Register in Factory
@@ -496,45 +447,6 @@ export function CreateGenomePage() {
                         )}
                     </div>
 
-                    {/* Initial liquidity seeding */}
-                    {registered && !liqDone && (
-                        <>
-                            {divider}
-                            <div style={SECTION_LABEL}>Seed Initial Pool on MotoSwap</div>
-                            <p style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: '#888', marginBottom: '16px' }}>
-                                Add the first liquidity to create the {xTokenSymbol}/{underlyingSymbol} trading pair.
-                                Make sure you have {xTokenSymbol} tokens — wrap some {underlyingSymbol} first if needed.
-                            </p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                                <DepositInput
-                                    value={liqXAmount}
-                                    onChange={setLiqXAmount}
-                                    decimals={18}
-                                    symbol={xTokenSymbol || 'gTOKEN'}
-                                    tokenName={xTokenName || 'gToken'}
-                                    disabled={liqBusy}
-                                />
-                                <DepositInput
-                                    value={liqUnderlyingAmount}
-                                    onChange={setLiqUnderlyingAmount}
-                                    decimals={18}
-                                    symbol={underlyingSymbol}
-                                    tokenName={underlyingSymbol}
-                                    disabled={liqBusy}
-                                />
-                                <TransactionButton
-                                    label={`Seed ${xTokenSymbol}/${underlyingSymbol} Pool`}
-                                    onClick={async () => { setLiqBusy(true); try { await handleAddLiquidity(); } finally { setLiqBusy(false); } }}
-                                    disabled={parseAmount(liqXAmount, 18) === 0n || parseAmount(liqUnderlyingAmount, 18) === 0n}
-                                />
-                            </div>
-                        </>
-                    )}
-                    {liqDone && (
-                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.75rem', color: '#555', marginTop: '12px' }}>
-                            ✓ Pool seeded — live on MotoSwap.
-                        </div>
-                    )}
 
                     {divider}
                 </>
@@ -544,7 +456,7 @@ export function CreateGenomePage() {
             {!deployedAddress && (
                 <>
                     <div style={SECTION_LABEL}>Underlying Token</div>
-                    <div style={{ marginBottom: poolExistsForUnderlying ? '12px' : '20px' }}>
+                    <div style={{ marginBottom: '12px' }}>
                         <label style={labelStyle}>Contract address (opt1sq...)</label>
                         <input
                             type="text"
@@ -555,6 +467,32 @@ export function CreateGenomePage() {
                             disabled={isBusy || !isConnected}
                         />
                     </div>
+
+                    {/* Underlying token preview */}
+                    {underlyingFetching && underlyingAddress.trim().length > 10 && (
+                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: '#888', marginBottom: '16px' }}>
+                            Fetching token info...
+                        </div>
+                    )}
+                    {underlyingInfo && !underlyingFetching && (
+                        <div style={{ border: '1px solid #000', padding: '14px 16px', marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                            <div>
+                                <div style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1rem', color: '#000' }}>{underlyingInfo.name}</div>
+                                <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.75rem', color: '#888', marginTop: '2px' }}>{underlyingInfo.symbol}</div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.65rem', color: '#888', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '2px' }}>gToken will be</div>
+                                <div style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1rem', color: '#000' }}>{derivedName}</div>
+                                <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.75rem', color: '#888' }}>{derivedSymbol}</div>
+                            </div>
+                        </div>
+                    )}
+                    {!underlyingInfo && !underlyingFetching && underlyingAddress.trim().length > 10 && (
+                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: '#888', marginBottom: '16px' }}>
+                            Could not resolve token — check the address.
+                        </div>
+                    )}
+
                     {poolCheckLoading && underlyingAddress.trim().length > 10 && (
                         <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: '#888', marginBottom: '16px' }}>
                             Checking for existing pool...
@@ -565,57 +503,6 @@ export function CreateGenomePage() {
                             [!] A Genome with an active MotoSwap pool already exists for this token. Choose a different underlying.
                         </div>
                     )}
-
-                    {divider}
-
-                    <div style={SECTION_LABEL}>gToken Config</div>
-                    <div style={{ marginBottom: '16px' }}>
-                        <label style={labelStyle}>Name</label>
-                        <input
-                            type="text"
-                            value={xTokenName}
-                            onChange={(e) => setXTokenName(e.target.value)}
-                            placeholder="xFoo"
-                            style={disabled ? disabledInput : inputStyle}
-                            disabled={disabled}
-                        />
-                    </div>
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={labelStyle}>Symbol</label>
-                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: '#888', marginBottom: '6px' }}>
-                            * gToken symbols must begin with g (e.g. gMOTO, gPILL)
-                        </div>
-                        <input
-                            type="text"
-                            value={xTokenSymbol}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                setXTokenSymbol(val);
-                                setSymbolError(val.length > 0 && !val.startsWith('g') ? 'Must start with g (e.g. gMOTO)' : '');
-                            }}
-                            onBlur={(e) => {
-                                const val = e.target.value;
-                                if (val.length > 0 && !val.startsWith('g')) {
-                                    const fixed = 'g' + val;
-                                    setXTokenSymbol(fixed);
-                                    setSymbolError('');
-                                }
-                            }}
-                            placeholder="gFOO"
-                            style={disabled ? disabledInput : inputStyle}
-                            disabled={disabled}
-                        />
-                        {symbolError && (
-                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: 'red', marginTop: '4px' }}>
-                                {symbolError}
-                            </div>
-                        )}
-                        {xTokenSymbol.startsWith('g') && xTokenSymbol.length > 0 && (
-                            <div style={{ border: '1px solid #000', padding: '8px 12px', fontFamily: 'Sometype Mono', fontSize: '0.8rem', marginTop: '8px' }}>
-                                Preview: {xTokenSymbol}
-                            </div>
-                        )}
-                    </div>
 
                     {divider}
 
@@ -650,7 +537,7 @@ export function CreateGenomePage() {
                         {wrapFee / 10}% wrap · {unwrapFee / 10}% unwrap · max 200 bps (20%)
                     </div>
 
-                    <DeployButton onClick={handleDeploy} busy={isBusy} disabled={!isConnected || !xTokenSymbol || !xTokenSymbol.startsWith('g')} />
+                    <DeployButton onClick={handleDeploy} busy={isBusy} disabled={!isConnected || !underlyingInfo || poolExistsForUnderlying} />
                 </>
             )}
 

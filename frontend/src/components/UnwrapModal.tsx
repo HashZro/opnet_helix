@@ -151,7 +151,7 @@ export function UnwrapModal({ mine, onClose, onOpenWrap }: UnwrapModalProps) {
         }
     }, [senderAddress, walletAddress, mine, amount, toast, onClose]);
 
-    const underlyingSymbol = mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol;
+    const underlyingSymbol = mine.underlyingSymbol || (mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol);
 
     const unwrapRate =
         mine.underlyingBalance > 0n && mine.totalSupply > 0n

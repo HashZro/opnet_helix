@@ -1,4 +1,4 @@
-// Factory v3 — Genome Protocol deployed 2026-03-05
+// Factory v5 — Genome Protocol redeployed 2026-03-06
 import { networks } from '@btc-vision/bitcoin';
 
 export const GENOME_CONTRACT_VERSION = 2;
@@ -10,9 +10,9 @@ export const NETWORK = networks.testnet;
 export const RPC_URL = 'https://testnet.opnet.org';
 
 export const CONTRACT_ADDRESSES = {
-    // Factory v3 — Genome Protocol, deployed 2026-03-05
-    factory: 'opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8',
-    factoryPubkey: '0x37df83dfbcca6447316f9e43a10009f81fc37171a9ad7d40d98a090b6806f67b',
+    // Factory v5 — Genome Protocol, redeployed 2026-03-06
+    factory: 'opt1sqr560qfrd9czkhtagkslclxaej2qxnryjvzjlws8',
+    factoryPubkey: '0x33d3202c0f340a7f3b743af576be7680e4dc742500c203f933e34fcd1d42f738',
     motoToken: 'opt1sqzkx6wm5acawl9m6nay2mjsm6wagv7gazcgtczds',
     motoTokenPubkey: '0xfd4473840751d58d9f8b73bdd57d6c5260453d5518bd7cd02d0a4cf3df9bf4dd',
     pillToken: 'opt1sqp5gx9k0nrqph3sy3aeyzt673dz7ygtqxcfdqfle',

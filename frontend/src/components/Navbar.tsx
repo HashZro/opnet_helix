@@ -3,6 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { WalletButton } from './WalletButton';
 import { useWallet } from '../hooks/useWallet';
 import { useBalances } from '../contexts/BalancesContext';
+import { CONTRACT_ADDRESSES } from '../config';
+
+const OPSCAN_FACTORY_URL = `https://opscan.org/contracts/${CONTRACT_ADDRESSES.factoryPubkey}?network=op_testnet`;
 
 function NavTab({ to, children }: { to: string; children: React.ReactNode }) {
     const location = useLocation();
@@ -49,6 +52,31 @@ export function Navbar() {
                                 My Genomes
                             </NavTab>
                         )}
+                        <a
+                            href={OPSCAN_FACTORY_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                fontFamily: 'Sometype Mono, monospace',
+                                fontSize: '0.75rem',
+                                color: '#888',
+                                textDecoration: 'none',
+                                padding: '4px 0',
+                                borderBottom: '1px solid transparent',
+                                letterSpacing: '0.04em',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '3px',
+                                transition: 'color 0.1s',
+                            }}
+                            onMouseEnter={e => (e.currentTarget.style.color = '#000')}
+                            onMouseLeave={e => (e.currentTarget.style.color = '#888')}
+                        >
+                            OPScan
+                            <svg width="9" height="9" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '2px' }}>
+                                <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                        </a>
                     </div>
                     {isConnected && (
                         <span style={{ border: '1px solid #000', background: '#fff', color: '#000', fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', padding: '6px 16px' }}>
@@ -87,6 +115,17 @@ export function Navbar() {
                             My Genomes
                         </NavTab>
                     )}
+                    <a
+                        href={OPSCAN_FACTORY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', color: '#888', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '3px' }}
+                    >
+                        OPScan
+                        <svg width="9" height="9" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ marginBottom: '2px' }}>
+                            <path d="M1 9L9 1M9 1H3M9 1V7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </a>
                     {isConnected && (
                         <span style={{ border: '1px solid #000', background: '#fff', color: '#000', fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', padding: '6px 16px', alignSelf: 'flex-start' }}>
                             {btcBalance ?? '...'} BTC

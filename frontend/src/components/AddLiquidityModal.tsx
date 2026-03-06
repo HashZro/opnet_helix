@@ -43,13 +43,17 @@ export function AddLiquidityModal({ mine, onClose }: AddLiquidityModalProps) {
     const toast = useToast();
     const { motoRaw, pillRaw } = useBalances();
 
-    const [xAmount, setXAmount] = useState('');
-    const [underlyingAmount, setUnderlyingAmount] = useState('');
+    const [amount, setAmount] = useState('');
     const [xBalance, setXBalance] = useState<bigint | null>(null);
     const [underlyingBalance, setUnderlyingBalance] = useState<bigint | null>(null);
     const [poolExists, setPoolExists] = useState<boolean | null>(null);
 
-    const underlyingSymbol = mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol;
+    const underlyingSymbol = mine.underlyingSymbol || (mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol);
+    // Single slider capped at whichever token the user has less of
+    const maxAmount: bigint | undefined =
+        xBalance !== null && underlyingBalance !== null
+            ? (xBalance < underlyingBalance ? xBalance : underlyingBalance)
+            : xBalance ?? underlyingBalance ?? undefined;
 
     // Fetch xToken balance
     useEffect(() => {
@@ -128,10 +132,9 @@ export function AddLiquidityModal({ mine, onClose }: AddLiquidityModalProps) {
 
     const handleAddLiquidity = useCallback(async () => {
         if (!senderAddress || !walletAddress) throw new Error('Connect wallet first');
-        const rawX = parseAmount(xAmount, 18);
-        const rawUnderlying = parseAmount(underlyingAmount, 18);
-        if (rawX === 0n) throw new Error('Enter an xToken amount greater than zero');
-        if (rawUnderlying === 0n) throw new Error('Enter an underlying token amount greater than zero');
+        const rawX = parseAmount(amount, 18);
+        const rawUnderlying = parseAmount(amount, 18);
+        if (rawX === 0n) throw new Error('Enter an amount greater than zero');
         if (!mine.pubkey) throw new Error('Mine pubkey not loaded — try refreshing');
         if (!mine.underlyingAddress) throw new Error('Mine underlying not loaded');
 
@@ -324,12 +327,11 @@ export function AddLiquidityModal({ mine, onClose }: AddLiquidityModalProps) {
         console.log('[AddLiquidity] sendTransaction result:', txResult);
 
         toast.success(`Liquidity added to ${mine.symbol}/${underlyingSymbol} pool!`);
-        setXAmount('');
-        setUnderlyingAmount('');
+        setAmount('');
         onClose();
-    }, [senderAddress, walletAddress, mine, xAmount, underlyingAmount, underlyingSymbol, toast, onClose]);
+    }, [senderAddress, walletAddress, mine, amount, underlyingSymbol, toast, onClose]);
 
-    const hasValidAmounts = parseAmount(xAmount, 18) > 0n && parseAmount(underlyingAmount, 18) > 0n;
+    const hasValidAmounts = parseAmount(amount, 18) > 0n;
 
     return (
         <div
@@ -368,26 +370,26 @@ export function AddLiquidityModal({ mine, onClose }: AddLiquidityModalProps) {
                     </div>
                 )}
 
+                {/* 1:1 disclaimer */}
+                <div style={{ border: '1px solid #e0c060', background: '#fffbe6', padding: '10px 14px', marginBottom: '4px', fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', color: '#7a6000' }}>
+                    ⚠ This pool requires a 1:1 ratio. Equal amounts of both tokens will be deposited.
+                </div>
+
+                {/* Per-token balances */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', color: '#888', marginBottom: '4px' }}>
+                    <span>{mine.symbol} balance: {xBalance !== null ? xBalance.toString() === '0' ? '0' : (Number(xBalance) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 4 }) : '…'}</span>
+                    <span>{underlyingSymbol} balance: {underlyingBalance !== null ? underlyingBalance.toString() === '0' ? '0' : (Number(underlyingBalance) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 4 }) : '…'}</span>
+                </div>
+
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <DepositInput
-                        value={xAmount}
-                        onChange={setXAmount}
-                        max={xBalance ?? undefined}
-                        loading={isConnected && xBalance === null}
+                        value={amount}
+                        onChange={setAmount}
+                        max={maxAmount}
+                        loading={isConnected && (xBalance === null || underlyingBalance === null)}
                         decimals={18}
-                        symbol={mine.symbol}
-                        tokenName={mine.name}
-                        disabled={!isConnected}
-                    />
-
-                    <DepositInput
-                        value={underlyingAmount}
-                        onChange={setUnderlyingAmount}
-                        max={underlyingBalance ?? undefined}
-                        loading={isConnected && underlyingBalance === null}
-                        decimals={18}
-                        symbol={underlyingSymbol}
-                        tokenName={mine.underlyingName || underlyingSymbol}
+                        symbol={`${mine.symbol} + ${underlyingSymbol}`}
+                        tokenName={`${mine.name} / ${mine.underlyingName || underlyingSymbol}`}
                         disabled={!isConnected}
                     />
 
@@ -397,12 +399,16 @@ export function AddLiquidityModal({ mine, onClose }: AddLiquidityModalProps) {
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                                 <span style={{ color: '#888', fontSize: '0.85rem' }}>Depositing</span>
                                 <span style={{ color: '#000', fontSize: '0.85rem' }}>
-                                    {xAmount} {mine.symbol} + {underlyingAmount} {underlyingSymbol}
+                                    {amount} {mine.symbol} + {amount} {underlyingSymbol}
                                 </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                <span style={{ color: '#888', fontSize: '0.85rem' }}>Ratio</span>
+                                <span style={{ color: '#000', fontSize: '0.85rem' }}>1:1</span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <span style={{ color: '#888', fontSize: '0.85rem' }}>Slippage</span>
-                                <span style={{ color: '#000', fontSize: '0.85rem' }}>1%</span>
+                                <span style={{ color: '#000', fontSize: '0.85rem' }}>40%</span>
                             </div>
                         </div>
                     )}

@@ -1,0 +1,306 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;700;800&family=Sometype+Mono:wght@400;500;700&display=swap');
+
+/* ─── Variables ──────────────────────────────────────────── */
+:root {
+    --vp-font-family-base: 'Sometype Mono', monospace;
+    --vp-font-family-mono: 'Sometype Mono', monospace;
+
+    --vp-c-brand-1: #000;
+    --vp-c-brand-2: #000;
+    --vp-c-brand-3: #333;
+    --vp-c-brand-soft: rgba(0, 0, 0, 0.06);
+
+    --vp-c-bg: #fff;
+    --vp-c-bg-alt: #f8f8f8;
+    --vp-c-bg-elv: #fff;
+    --vp-c-bg-soft: #f8f8f8;
+
+    --vp-c-text-1: #000;
+    --vp-c-text-2: #555;
+    --vp-c-text-3: #888;
+
+    --vp-c-divider: #ddd;
+    --vp-c-border: #000;
+
+    --vp-nav-height: 48px;
+    --vp-nav-bg-color: #fff;
+    --vp-sidebar-bg-color: #fff;
+
+    --vp-code-block-bg: #f8f8f8;
+    --vp-code-color: #000;
+    --vp-code-bg: #f0f0f0;
+
+    --vp-c-tip-1: #000;
+    --vp-c-tip-2: #333;
+    --vp-c-tip-soft: #f8f8f8;
+    --vp-c-warning-1: #7a5800;
+    --vp-c-warning-2: #8a6800;
+    --vp-c-warning-soft: #fffbea;
+    --vp-c-danger-1: #b00000;
+    --vp-c-danger-2: #cc0000;
+    --vp-c-danger-soft: #fff5f5;
+}
+
+/* ─── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after {
+    border-radius: 0 !important;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Sometype Mono', monospace !important;
+    background: #fff !important;
+    color: #000 !important;
+}
+
+/* ─── Headings ───────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Mulish', sans-serif !important;
+    font-weight: 800 !important;
+    color: #000 !important;
+}
+
+/* ─── Links ──────────────────────────────────────────────── */
+a { color: #000 !important; }
+a:hover { text-decoration: underline !important; }
+
+/* ─── Nav ────────────────────────────────────────────────── */
+.VPNav,
+.VPNavBar {
+    background: #fff !important;
+    border-bottom: 1px solid #000 !important;
+}
+
+.VPNavBar .divider { display: none !important; }
+
+.VPNavBarTitle .title {
+    font-family: 'Mulish', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 1.05rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #000 !important;
+    border: none !important;
+}
+
+.VPNavBarMenu .VPNavBarMenuLink {
+    font-family: 'Sometype Mono', monospace !important;
+    font-size: 0.75rem !important;
+    color: #888 !important;
+    letter-spacing: 0.04em !important;
+}
+
+.VPNavBarMenu .VPNavBarMenuLink:hover,
+.VPNavBarMenu .VPNavBarMenuLink.active {
+    color: #000 !important;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────── */
+.VPSidebar {
+    background: #fff !important;
+    border-right: 1px solid #000 !important;
+}
+
+/* Section group labels */
+.VPSidebarItem.level-0 > .item > .text {
+    font-family: 'Mulish', sans-serif !important;
+    font-size: 0.68rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #000 !important;
+}
+
+/* Item links */
+.VPSidebarItem .link {
+    text-decoration: none !important;
+}
+
+.VPSidebarItem .text {
+    font-family: 'Sometype Mono', monospace !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.03em !important;
+    color: #888 !important;
+}
+
+.VPSidebarItem .link:hover .text {
+    color: #000 !important;
+}
+
+.VPSidebarItem.is-active > .item > .link .text {
+    color: #000 !important;
+    font-weight: 700 !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px !important;
+}
+
+/* ─── Content ────────────────────────────────────────────── */
+.VPDoc { background: #fff !important; }
+
+.VPDoc h2 {
+    border-top: 1px solid #000 !important;
+    padding-top: 24px !important;
+    margin-top: 40px !important;
+}
+
+/* ─── Code ───────────────────────────────────────────────── */
+div[class*='language-'] {
+    border: 1px solid #000 !important;
+    background: #f8f8f8 !important;
+}
+
+pre {
+    background: #f8f8f8 !important;
+}
+
+code {
+    font-family: 'Sometype Mono', monospace !important;
+    font-size: 0.85em !important;
+    background: #f0f0f0 !important;
+    color: #000 !important;
+    padding: 2px 5px !important;
+}
+
+pre code {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* ─── Callout blocks ─────────────────────────────────────── */
+.custom-block {
+    border: none !important;
+    border-left: 3px solid #000 !important;
+    background: #f8f8f8 !important;
+    padding: 12px 16px !important;
+}
+
+.custom-block.tip {
+    border-left-color: #000 !important;
+    background: #f8f8f8 !important;
+}
+
+.custom-block.warning {
+    border-left-color: #8a6800 !important;
+    background: #fffbea !important;
+}
+
+.custom-block.danger {
+    border-left-color: #cc0000 !important;
+    background: #fff5f5 !important;
+}
+
+.custom-block-title {
+    font-family: 'Sometype Mono', monospace !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+}
+
+/* ─── Tables ─────────────────────────────────────────────── */
+.vp-doc table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    font-size: 0.85rem !important;
+}
+
+.vp-doc th,
+.vp-doc td {
+    border: 1px solid #000 !important;
+    padding: 8px 12px !important;
+}
+
+.vp-doc th {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    background: #f8f8f8 !important;
+    color: #000 !important;
+}
+
+/* ─── Hero ───────────────────────────────────────────────── */
+.VPHero { background: #fff !important; }
+
+/* Kill VitePress gradient clip on hero name */
+.VPHero .name,
+.VPHero .name .clip,
+.VPHero .text,
+.VPHero .text .clip {
+    font-family: 'Mulish', sans-serif !important;
+    font-weight: 800 !important;
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: #000 !important;
+    background-clip: unset !important;
+    color: #000 !important;
+}
+
+.VPHero .tagline {
+    font-family: 'Sometype Mono', monospace !important;
+    font-size: 0.88rem !important;
+    color: #555 !important;
+    line-height: 1.7 !important;
+}
+
+/* ─── Hero buttons ───────────────────────────────────────── */
+.VPButton {
+    font-family: 'Sometype Mono', monospace !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    border: 1px solid #000 !important;
+    transition: background 0.1s, color 0.1s !important;
+}
+
+.VPButton.brand {
+    background: #000 !important;
+    color: #fff !important;
+}
+
+.VPButton.brand:hover { background: #333 !important; }
+
+.VPButton.alt {
+    background: #fff !important;
+    color: #000 !important;
+}
+
+.VPButton.alt:hover { background: #f0f0f0 !important; }
+
+/* ─── Feature cards ──────────────────────────────────────── */
+.VPFeature {
+    border: 1px solid #000 !important;
+    background: #fff !important;
+    padding: 20px !important;
+    box-shadow: none !important;
+    transition: background 0.1s !important;
+}
+
+.VPFeature:hover { background: #f8f8f8 !important; }
+
+.VPFeature .title {
+    font-family: 'Mulish', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 0.95rem !important;
+    color: #000 !important;
+}
+
+.VPFeature .details {
+    font-size: 0.78rem !important;
+    color: #555 !important;
+    line-height: 1.6 !important;
+}
+
+/* ─── Footer ─────────────────────────────────────────────── */
+.VPFooter {
+    border-top: 1px solid #000 !important;
+    background: #fff !important;
+    font-size: 0.72rem !important;
+    color: #888 !important;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: #fff; }
+::-webkit-scrollbar-thumb { background: #ccc; }
+::-webkit-scrollbar-thumb:hover { background: #888; }

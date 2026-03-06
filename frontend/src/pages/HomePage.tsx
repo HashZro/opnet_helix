@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMines } from '../hooks/useMines';
+import { BitcoinTxBanner } from '../components/BitcoinTxBanner';
 import type { MineInfo } from '../hooks/useMines';
 import { MineCard } from '../components/MineCard';
 import { HIDDEN_GENOME_PUBKEYS } from '../config';
@@ -163,6 +164,7 @@ export function HomePage() {
 
     return (
         <div style={{ padding: '48px 0' }}>
+            <BitcoinTxBanner />
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', marginBottom: '16px' }}>
                 <div>
                     <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontFamily: 'Mulish', fontWeight: 700, fontSize: '1.5rem', color: '#000', lineHeight: 1.1 }}>

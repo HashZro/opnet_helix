@@ -1,147 +1,144 @@
-# Helix — Genome Protocol on OPNet Bitcoin L1
+# HELIX — Genome Protocol on OPNet
 
-> gToken yield-wrapping protocol on Bitcoin L1 via OPNet smart contracts.
+Yield-bearing token wrappers on Bitcoin L1. Wrap any OP-20 token into a gToken that accrues value passively as fees compound into the redemption ratio.
 
-Wrap any OP-20 token into a gToken (genome token) that appreciates over time as wrap/unwrap fees compound into the pool ratio. Genome owners can also inject LP rewards directly into their genome to boost the gToken/underlying ratio.
+Built for the **OPNet Vibecoding Challenge** — #opnetvibecode
 
-Built for the **OPNet Vibecoding Challenge** — #opnetvibecode @opnetbtc
+---
 
-## What It Does
+## How It Works
 
-- **Wrap** any registered OP-20 token into a gToken (e.g. gMOTO). The gToken/underlying ratio grows as fees compound — holders earn yield by simply holding.
-- **Unwrap** gTokens back to the underlying token (minus a small fee that stays in the pool).
-- **Create a Genome** — deploy a new Genome contract from the browser, auto-register with the Factory, and auto-create a MotoSwap liquidity pool.
-- **Inject Rewards** — genome owners can inject underlying tokens directly into their genome, instantly boosting the gToken ratio for all holders.
-- **Claim LP Fees** — genome owners remove liquidity from MotoSwap, receive the underlying fee tokens, and inject them into the genome in a single 3-step flow.
+A **Genome** is a smart contract that wraps one OP-20 token and issues a gToken (e.g. MOTO → gMOTO). The ratio between gTokens and the underlying token starts at 1:1 and only ever increases — from wrap fees, unwrap fees, and owner reward injections.
+
+```
+ratio = underlyingBalance / gTokenSupply
+```
+
+Holding gTokens while the ratio grows is how you earn yield. No staking, no lockups.
+
+---
+
+## Screenshots
+
+**Wrapping tokens** — deposit MOTO, receive gMOTO at the current ratio
+
+![Wrap](docs/screenshots/helix-wrapping.png)
+
+**Creating a Genome** — paste any OP-20 address, set fees, deploy in two transactions
+
+![Create](docs/screenshots/helix-create-mine.png)
+
+**My Genomes** — manage your deployed genomes, add liquidity, inject rewards
+
+![My Genomes](docs/screenshots/helix-my-genomes.png)
+
+**Setting fees** — adjust wrap/unwrap fee (0–20%) at any time
+
+![Fees](docs/screenshots/helix-setting-fees.png)
+
+---
+
+## Core Actions
+
+| Action | Who | What it does |
+|---|---|---|
+| Wrap | Anyone | Deposit underlying → receive gTokens (fee deducted, ratio grows) |
+| Unwrap | Anyone | Burn gTokens → receive underlying (fee deducted, ratio grows) |
+| Create Genome | Creator | Deploy genome contract + register in Factory + create MotoSwap pool |
+| Add Liquidity | Creator | Deposit equal amounts of gToken + underlying into MotoSwap pool |
+| Inject Rewards | Creator | Deposit underlying into genome to instantly boost ratio for all holders |
+| Set Fees | Creator | Update wrap/unwrap fee rate (0–200 bps, 0–20%) |
+
+> Wrapping is locked until the genome has an active MotoSwap liquidity pool with reserves on both sides.
+
+---
 
 ## Architecture
 
 ```
-Factory (OP_NET)          Genome (OP_20)
-  Genome registry    ──►    IS the gToken
-  registerGenome()          wrap / unwrap
-  getGenomeAddress()        injectRewards()
-                            notifyAmmFee()
-                            Fee → ratio growth
+Factory (OP_NET)
+  └── registry: underlying → genome address
+        │
+        ▼
+  Genome (OP_20)  ←── IS the gToken
+    wrap()         deposit underlying, mint gTokens
+    unwrap()       burn gTokens, return underlying
+    injectRewards()  owner boosts ratio directly
+    setWrapFee()   / setUnwrapFee()
 
-MotoSwap Pool  ──LP Fees──► injectRewards ──► gToken ratio increase
+MotoSwap AMM pool: gToken ↔ underlying (secondary market)
 ```
 
-Two core AssemblyScript smart contracts compiled to WebAssembly and deployed on Bitcoin L1 via OPNet:
-
-| Contract | Type | Description |
-|----------|------|-------------|
-| `Factory` | OP_NET | Genome registry — maps underlying token → Genome address |
-| `Genome` | OP_20 | gToken wrapper — handles wrap/unwrap/injectRewards/fee logic |
-
-## gToken Standard
-
-All genome tokens follow the **gToken naming standard**:
-- Symbol must start with lowercase `g` (e.g. `gMOTO`, `gPILL`, `gMINER`)
-- The prefix signals a yield-bearing genome wrapper
-- Enforced in the UI: auto-prepend on blur, deploy disabled without `g` prefix
-
-## Fee Algorithm
-
-```
-if totalSupply == 0:
-    gAmount = amount              // 1:1 on first wrap
-else:
-    feeAmount = amount * wrapFee / 1000
-    netAmount = amount - feeAmount
-    gAmount = totalSupply * netAmount / underlyingBalance
-    // feeAmount stays locked in pool → ratio grows for all holders
-```
-
-## injectRewards
-
-Genome owners can call `injectRewards(amount)` to deposit underlying tokens directly into the genome pool. This increases `underlyingBalance` without minting new gTokens, instantly boosting the ratio for all existing holders.
-
-## LP Claim Flow (My Genomes page)
-
-For genome owners who have added liquidity to MotoSwap:
-
-1. Approve LP tokens to MotoSwap router
-2. `removeLiquidity(gToken, underlying, lpBalance, ...)` — receive underlying tokens back
-3. Approve underlying to genome contract
-4. `injectRewards(underlyingAmount)` — inject received underlying into genome
-
-Result: LP fees are recycled into the genome ratio rather than sitting idle.
-
-## Tech Stack
-
-- **Smart Contracts**: AssemblyScript → WASM, deployed on OPNet (Bitcoin L1)
-- **Frontend**: React + TypeScript + Vite, industrial monochrome design (Mulish + Sometype Mono)
-- **Wallet**: OPWallet via `@btc-vision/walletconnect`
-- **Chain interaction**: `opnet` package, `JSONRpcProvider`
-- **DEX**: MotoSwap (OP-20 AMM) for gToken liquidity pools
-- **Network**: OPNet Testnet (`https://testnet.opnet.org`)
+---
 
 ## Project Structure
 
 ```
-├── contracts/          # AssemblyScript smart contracts
+helix/
+├── contracts/          AssemblyScript smart contracts (compiled to WASM)
 │   ├── src/
-│   │   ├── genome/         Genome.ts (gToken wrapper)
-│   │   ├── factory/        Factory.ts (genome registry)
-│   │   └── miner-token/    MinerToken.ts (test token)
-│   ├── abis/           # Generated ABI files
-│   ├── build/          # Compiled WASM files
-│   └── scripts/        # Deploy + registration scripts
-└── frontend/           # React frontend
-    └── src/
-        ├── pages/      HomePage, MineDetailPage, WrapPage, UnwrapPage, CreateGenomePage, MyGenomesPage
-        ├── hooks/      useWallet, useMines, useMine, useGenomePoolInfo
-        └── lib/        provider, contracts, wallet, helpers
+│   │   ├── genome/     Genome.ts  — gToken wrapper contract (OP_20)
+│   │   └── factory/    Factory.ts — genome registry (OP_NET)
+│   ├── abis/           Generated ABI JSON files
+│   └── scripts/        Deploy and registration scripts
+├── frontend/           React + TypeScript + Vite dapp
+│   └── src/
+│       ├── pages/      Explore, MineDetail, Create, MyGenomes
+│       ├── components/ Cards, modals, wallet button
+│       └── hooks/      useWallet, useMines, useGenomePoolInfo
+└── docs/               VitePress documentation site
 ```
 
-## Deployed Contracts (Testnet)
-
-| Contract | Address |
-|----------|---------|
-| Factory v3 | `opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8` |
-| gMOTO Genome (test) | `opt1sqr4mgm9fsuyszwt8jm0ry57m8juyzxs70yngde4w` |
+---
 
 ## Running Locally
 
-### Frontend
-
+**Frontend**
 ```bash
 cd frontend
 npm install
 npm run dev
+# → http://localhost:5173
 ```
 
-Open `http://localhost:5173` and connect OPWallet (testnet mode).
+**Docs**
+```bash
+cd docs
+npm install
+npm run docs:dev
+# → http://localhost:5174
+```
 
-### Contracts (build only)
-
+**Contracts** (build only — requires AssemblyScript)
 ```bash
 cd contracts
 npm install
-npm run build:genome   # Genome.wasm
-npm run build:factory  # Factory.wasm
-npm run build:miner    # MinerToken.wasm
+npm run build:genome
+npm run build:factory
 ```
 
-## Key User Flows
+Copy `contracts/.env.example` to `contracts/.env` and fill in your deployer keys before running any scripts.
 
-1. **Wrap** — Go to Wrap page, select a genome, enter underlying token amount, approve allowance, wrap to receive gTokens.
-2. **Unwrap** — Go to Unwrap page, enter gToken amount to burn and receive underlying back (minus fee).
-3. **Create Genome** — Go to Create Genome page, enter underlying token address and gToken name/symbol, deploy genome, auto-register with Factory, auto-create MotoSwap pool.
-4. **Inject Rewards** — On My Genomes page, enter amount and click Inject Rewards to boost your genome's ratio.
-5. **Claim LP Fees** — On My Genomes page, if you have LP balance > 0, click "Claim LP Fees → Genome" to run the 3-step claim flow.
+---
 
-## OPNet Key Concepts Used
+## Deployed Contracts (OPNet Testnet)
 
-- `SafeMath` for all u256 arithmetic — no overflow risk
-- Bounded `for` loops only — no while loops
-- Unique storage pointers via `Blockchain.nextPointer`
-- `onDeployment()` for one-time initialization (constructor runs every call)
-- SHA256 method selectors (not Keccak256)
-- CEI pattern: Checks → Effects → Interactions
-- Identity key resolution via `provider.getPublicKeyInfo()`
-- Cross-contract calls via `Blockchain.call(target, calldata)`
+| Contract | Address |
+|---|---|
+| Factory v5 | `opt1sqr560qfrd9czkhtagkslclxaej2qxnryjvzjlws8` |
+| MOTO Token | `opt1sqzkx6wm5acawl9m6nay2mjsm6wagv7gazcgtczds` |
+
+---
+
+## Tech Stack
+
+- **Smart contracts** — AssemblyScript → WebAssembly, OPNet Bitcoin L1
+- **Frontend** — React, TypeScript, Vite
+- **Wallet** — OPWallet via `@btc-vision/walletconnect`
+- **DEX** — MotoSwap (OP-20 AMM) for gToken liquidity pools
+- **Docs** — VitePress
+
+---
 
 ## License
 
