@@ -1,5 +1,7 @@
 # Setting Fees
 
+![Setting wrap and unwrap fees](../screenshots/helix-setting-fees.png)
+
 ## Overview
 
 As the Genome owner, you can update the wrap fee and unwrap fee at any time from the "My Genomes" page. Changes take effect immediately for all future transactions.

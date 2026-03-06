@@ -1,5 +1,7 @@
 # Wrapping Tokens
 
+![Wrapping tokens into gTokens](../screenshots/helix-wrapping.png)
+
 Wrapping deposits your underlying OP-20 tokens into a Genome contract and gives you gTokens in return. The gTokens accumulate yield over time as the redemption ratio increases.
 
 ## Steps

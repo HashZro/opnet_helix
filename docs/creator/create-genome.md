@@ -1,5 +1,7 @@
 # Creating a Genome
 
+![Create Genome page](../screenshots/helix-create-mine.png)
+
 ## Steps
 
 1. **Go to `/create`** — Click the "Create" tab in the navigation bar. This opens the Create Genome page.
