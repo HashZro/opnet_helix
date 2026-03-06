@@ -1396,3 +1396,56 @@
   - Added Address.fromString single-arg vs two-arg distinction (single for contract pubkeys, two for wallet identity)
   - Added signInteraction rule: omit signer/mldsaSigner entirely on frontend (OPWallet rejects null values)
   - prd.json S156 set to passes: true
+
+## Phase 8 — Contract Refactor (S93-S107)
+  - Simplified Mine.ts: removed fee-split model (controller/protocol fees), WrapResult reduced to 2 fields (xAmount, feeAmount)
+  - Fees now permanently grow the pool ratio rather than accumulating in separate buckets
+  - Added AMM whitelist storage (_ammPool, _ammBuyFee, _ammSellFee), setters/getters, and notifyAmmFee method
+  - Renamed Mine→Genome: created contracts/src/genome/Genome.ts (extends OP20), genome/index.ts
+  - Updated asconfig.json target: 'mine'→'genome', outFile=build/Genome.wasm
+  - Compiled Genome.wasm (39561 bytes) and Factory.wasm (19555 bytes) with new method names
+  - New Factory (v3 — Genome Protocol) deployed to testnet:
+    - Address: opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8
+    - Pubkey:  0x37df83dfbcca6447316f9e43a10009f81fc37171a9ad7d40d98a090b6806f67b
+  - Factory method selectors renamed: registerGenome(), getGenomeCount(), getGenomeAtIndex(), getGenomeAddress()
+  - Updated config.ts: new factory address, removed stale Mine/Staking addresses
+  - Removed Staking contract entirely (files, ABIs, scripts, build config)
+  - Removed faucet (mine() method from MinerToken, FaucetPage, WrapPage faucet button)
+  - Added injectRewards() to Genome.ts: requireOwner, zero check, SafeMath add to _underlyingHeld, TransferHelper.transferFrom
+  - All deploy scripts updated for new Mine/Genome constructor (6 calldata params, ammBuyFee/ammSellFee replacing old fees)
+
+## Phase 9 — Frontend Hooks (S133-S137)
+  - Updated contracts.ts MINE_ABI: added injectRewards entry; added GENOME_ABI alias
+  - Updated FACTORY_ABI: all method names genome-prefixed (registerGenome, getGenomeAddress, getGenomeCount, getGenomeAtIndex)
+  - Updated useMines.ts: getMineCount→getGenomeCount, getMineAtIndex→getGenomeAtIndex, all internal vars renamed
+  - Updated useMine.ts: internal vars renamed (mineCode→genomeCode, mineContract→genomeContract etc.)
+  - Updated CreateGenomePage.tsx: computeSelector('registerMine()')→computeSelector('registerGenome()'), WASM path './Genome.wasm'
+  - Genome.wasm copied to frontend/public/Genome.wasm
+
+## Phase 10 — gToken Enforcement (S139-S142)
+  - Symbol field onChange: shows error if value doesn't start with 'g'
+  - Symbol field onBlur: auto-prepends 'g' if user forgets (clears error after fix)
+  - Deploy button disabled when symbol doesn't start with 'g'
+  - Placeholder changed to 'gFOO'; user-facing strings updated: xToken→gToken, xTokenVault→gToken genome
+  - underlyingSymbol derived by stripping 'g' prefix (gMOTO→MOTO)
+
+## Phase 11 — My Genomes LP Claim (S143-S149)
+  - Created GenomeOwnerCard component in MyGenomesPage.tsx (industrial style, replaces MineCard grid)
+  - Created useGenomePoolInfo hook: fetches pool address via MotoSwapFactory.getPool, reserves, LP balance
+  - GenomeOwnerCard shows LIQUIDITY POOL section: pool address, Reserve A/B, LP balance
+  - Added Inject Rewards action: increaseAllowance(genome, amount)→injectRewards(amount), updates ratio
+  - Added Claim LP Fees→Genome flow (3-step):
+    Step 1: increaseAllowance LP tokens to MotoSwap router
+    Step 2: router.removeLiquidity(gToken, underlying, lpBalance, 0, 0, senderAddr, deadline)
+    Step 3: increaseAllowance underlying to genome → injectRewards(underlyingAmount)
+  - claimSuccess state shows 'LP fees claimed and injected into genome! Ratio increased.'
+  - Pool refetch trigger wired to GenomeOwnerCard after successful claim
+
+## Phase 12 — Branding & Polish (S150-S156)
+  - User-facing text pass: mine→genome, xToken→gToken across all pages and components
+  - Added Owner Actions section to MineDetailPage: Inject Rewards, Set Wrap Fee, Set Unwrap Fee (owner-only)
+  - Added Liquidity Pool section to MineDetailPage: pool address, reserves, Create Pool button if no pool
+  - Added gToken badge to MineCard (shown when symbol.startsWith('g'))
+  - Verified Navbar has My Genomes tab (conditional on isConnected), no stale imports
+  - Cleaned config.ts: HIDDEN_MINE_PUBKEYS→HIDDEN_GENOME_PUBKEYS, added GENOME_CONTRACT_VERSION=2
+  - Updated AGENTS.md: Genome contract patterns, MotoSwap pool interaction, LP claim flow, Address.fromString rules
