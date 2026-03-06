@@ -1109,3 +1109,14 @@
   - S125 already updated all comments (underlying->genome mapping, genome at current index, genome count, etc.)
   - Acceptance criteria already met: zero grep matches for [Mm]ine in Factory.ts
   - No file changes needed — marked passes:true
+
+[2026-03-05] S127 — Add injectRewards method to Genome.ts
+  - Added public injectRewards(_calldata: Calldata): BytesWriter after notifyAmmFee
+  - requireOwner() access control
+  - Reads amount u256, reverts with "zero amount" if == ZERO
+  - EFFECTS: increments _underlyingHeld via SafeMath.add
+  - INTERACTIONS: TransferHelper.transferFrom pulls underlying from sender to contractAddress
+  - Returns amount in BytesWriter(32)
+  - All arithmetic via SafeMath, CEI pattern followed
+  - No compile step (deferred to S128)
+

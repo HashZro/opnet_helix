@@ -1141,7 +1141,7 @@
       "title": "Add injectRewards method to Genome.ts",
       "description": "In contracts/src/genome/Genome.ts, add a new public method after notifyAmmFee: @method() @returns({ name: 'amount', type: ABIDataTypes.UINT256 }) public injectRewards(_calldata: Calldata): BytesWriter. Implementation: (1) this.requireOwner(). (2) const amount: u256 = _calldata.readU256(). (3) if (amount == ZERO) throw new Revert('zero amount'). (4) const heldKey = this.fieldKeySimple(this._underlyingHeld). (5) this.su(heldKey, SafeMath.add(this.lu(heldKey), amount)). (6) const underlying: Address = this.la(this.fieldKeySimple(this._underlying)). (7) TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount). (8) const response = new BytesWriter(32); response.writeU256(amount); return response.",
       "priority": 127,
-      "passes": false,
+      "passes": true,
       "acceptance": "Genome.ts has public injectRewards method with requireOwner, zero check, increments _underlyingHeld, calls TransferHelper.transferFrom. Method is placed after notifyAmmFee.",
       "model": "sonnet"
     },
