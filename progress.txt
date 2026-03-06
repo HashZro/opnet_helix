@@ -1296,3 +1296,12 @@
   - senderAddress passed as senderAddress ?? undefined to satisfy getContract type (Address | undefined)
   - GOTCHA: getContract 5th param is Address | undefined, but senderAddress prop is Address | null → use ?? undefined
   - npm run build: 83 modules, 0 TypeScript errors, exit 0
+
+[2026-03-05] S147 — Add Claim LP Rewards button to GenomeOwnerCard
+  - Added isClaiming (bool), claimStep (0-3), claimBtnHovered state to GenomeOwnerCard
+  - Added handleClaimLP stub async function (sets isClaiming/claimStep; logic in S148/S149)
+  - Added claimStepLabel computed value: 'Step 1/3: Approving LP...' / 'Step 2/3: Removing liquidity...' / 'Step 3/3: Injecting rewards...'
+  - Added 'Claim LP Fees' section to JSX: only renders when senderAddress && poolInfo.lpBalance > 0n
+  - Button label: 'Claim LP Fees -> Genome', disabled during claim, inverts on hover (matches ActionBtn style)
+  - Step indicator shown above button when isClaiming and claimStep > 0
+  - npm run build exits 0 — no TypeScript errors

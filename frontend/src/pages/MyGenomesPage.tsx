@@ -53,6 +53,9 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
     const [injectAmount, setInjectAmount] = useState('');
     const [isInjecting, setIsInjecting] = useState(false);
     const [btnHovered, setBtnHovered] = useState(false);
+    const [isClaiming, setIsClaiming] = useState(false);
+    const [claimStep, setClaimStep] = useState(0);
+    const [claimBtnHovered, setClaimBtnHovered] = useState(false);
 
     const toast = useToast();
     const { address: walletAddress } = useWallet();
@@ -97,6 +100,26 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
             setIsInjecting(false);
         }
     }
+
+    async function handleClaimLP() {
+        setIsClaiming(true);
+        setClaimStep(1);
+        try {
+            // Step 1 and 2 implemented in S148
+            // Step 3 implemented in S149
+        } catch (err) {
+            console.error('[claimLP] error:', err);
+            toast.error(parseContractError(err));
+        } finally {
+            setIsClaiming(false);
+            setClaimStep(0);
+        }
+    }
+
+    const claimStepLabel = claimStep === 1 ? 'Step 1/3: Approving LP...'
+        : claimStep === 2 ? 'Step 2/3: Removing liquidity...'
+        : claimStep === 3 ? 'Step 3/3: Injecting rewards...'
+        : null;
 
     const handleCopy = () => {
         navigator.clipboard.writeText(poolInfo.poolAddress).then(() => {
@@ -236,6 +259,40 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
                             {isInjecting ? '...' : 'Inject Rewards'}
                         </button>
                     </div>
+                </div>
+            )}
+
+            {/* Claim LP Rewards — only shown when connected and LP balance > 0 */}
+            {senderAddress && poolInfo.lpBalance > 0n && (
+                <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: `1px solid ${hovered ? '#333' : '#eee'}` }}>
+                    <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.65rem', color: hovered ? '#666' : '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                        Claim LP Fees
+                    </div>
+                    {isClaiming && claimStepLabel && (
+                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#aaa' : '#555', marginBottom: '8px' }}>
+                            {claimStepLabel}
+                        </div>
+                    )}
+                    <button
+                        onClick={handleClaimLP}
+                        disabled={isClaiming}
+                        onMouseEnter={() => setClaimBtnHovered(true)}
+                        onMouseLeave={() => setClaimBtnHovered(false)}
+                        style={{
+                            border: `1px solid ${hovered ? '#fff' : '#000'}`,
+                            background: claimBtnHovered && !isClaiming ? (hovered ? '#fff' : '#000') : 'transparent',
+                            color: claimBtnHovered && !isClaiming ? (hovered ? '#000' : '#fff') : (hovered ? '#fff' : '#000'),
+                            padding: '6px 12px',
+                            fontFamily: 'Sometype Mono',
+                            fontSize: '0.75rem',
+                            cursor: isClaiming ? 'not-allowed' : 'pointer',
+                            opacity: isClaiming ? 0.5 : 1,
+                            whiteSpace: 'nowrap',
+                            width: '100%',
+                        }}
+                    >
+                        {isClaiming ? claimStepLabel ?? '...' : 'Claim LP Fees -> Genome'}
+                    </button>
                 </div>
             )}
         </div>
