@@ -1,6 +1,6 @@
 {
   "project": "Genome Protocol \u2014 OPNet Port",
-  "description": "Token-wrapping yield protocol on Bitcoin L1. Genome Protocol \u2014 gToken yield wrapping. Wrap OP-20 tokens into gTokens that appreciate via fee yield. Genome owners earn yield via wrap/unwrap fees. LP rewards can be injected into genomes to increase the gToken ratio.",
+  "description": "Token-wrapping yield protocol on Bitcoin L1. Wrap OP-20 tokens into gTokens (yield-bearing genome tokens). Genome owners earn yield via wrap/unwrap fees. LP rewards can be injected into genomes to increase the gToken ratio.",
   "stories": [
     {
       "id": "S01",
@@ -1492,7 +1492,7 @@
       "title": "Final feature commit for genome protocol v2",
       "description": "Run git add -A from /home/dev/Documents/hashZroRepos/team-projects/optnet/helix. Then commit with message: 'feat: genome protocol v2 \u2014 gToken naming, injectRewards, LP claim flow'. Stage all relevant files: contracts/src/genome/, contracts/scripts/deploy-genome-factory.ts, contracts/scripts/register-genome-test.ts, frontend/src/, AGENTS.md, SUBMISSION.md, progress.txt, prd.json.",
       "priority": 166,
-      "passes": false,
+      "passes": true,
       "acceptance": "git log shows commit 'feat: genome protocol v2'. All changed files included in commit.",
       "model": "sonnet"
     },
@@ -1501,7 +1501,7 @@
       "title": "Production build verification",
       "description": "Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/frontend && npm run build. Verify dist/ directory is generated. Check that Genome.wasm is included in dist/. Verify bundle size is reasonable. If build fails, fix errors and re-run.",
       "priority": 167,
-      "passes": false,
+      "passes": true,
       "acceptance": "npm run build exits 0. dist/ directory exists with index.html, assets/, Genome.wasm. No build errors.",
       "model": "sonnet"
     },
@@ -1510,7 +1510,7 @@
       "title": "Vercel or IPFS deployment",
       "description": "Deploy the frontend. If using Vercel: run vercel --prod from frontend/. If using IPFS: use the ipfs deploy command or service configured. Verify the deployed URL loads correctly. Test navigation: /, /mine/:address, /create, /my-genomes all load. Verify wallet connection works on deployed version.",
       "priority": 168,
-      "passes": false,
+      "passes": true,
       "acceptance": "Frontend is deployed and accessible at a public URL. All routes load. Wallet connection functions.",
       "model": "sonnet"
     },
@@ -1519,7 +1519,7 @@
       "title": "Update README.md with Genome Protocol description",
       "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/README.md: (1) Change project name to 'Helix \u2014 Genome Protocol'. (2) Update description to explain gToken standard: wrap any OP-20 token, get gTokens that appreciate via fee yield. (3) Explain injectRewards. (4) Explain LP claim flow. (5) Update any references to 'mine' or 'xToken' to genome/gToken. Keep technical setup instructions.",
       "priority": 169,
-      "passes": false,
+      "passes": true,
       "acceptance": "README.md references Genome Protocol, gToken, injectRewards, LP claim. No mine/xToken references in user-facing description. File is valid markdown.",
       "model": "sonnet"
     },
@@ -1528,7 +1528,7 @@
       "title": "Update prd.json project metadata to Genome Protocol",
       "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/prd.json: change project field to 'Genome Protocol \u2014 OPNet Port'. Update description field to: 'Token-wrapping yield protocol on Bitcoin L1. Wrap OP-20 tokens into gTokens (yield-bearing genome tokens). Genome owners earn yield via wrap/unwrap fees. LP rewards can be injected into genomes to increase the gToken ratio.' Save and verify JSON is valid.",
       "priority": 170,
-      "passes": false,
+      "passes": true,
       "acceptance": "prd.json project field is 'Genome Protocol \u2014 OPNet Port'. Description reflects gToken/genome terminology. JSON is valid (python3 -c 'import json; json.load(open(\"prd.json\"))' exits 0).",
       "model": "sonnet"
     },
@@ -1537,7 +1537,7 @@
       "title": "Ralph completion checkpoint \u2014 verify all 50 stories pass",
       "description": "Verify all stories S122-S171 have passes: true in prd.json. Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/frontend && npm run build one final time. Update progress.txt with final status: 'Phase 8-13 complete. 171/171 stories passing. Genome Protocol v2 deployed.' Commit progress.txt update.",
       "priority": 171,
-      "passes": false,
+      "passes": true,
       "acceptance": "prd.json shows passes: true for S122-S171. npm run build exits 0. progress.txt notes 171/171 stories complete.",
       "model": "sonnet"
     }

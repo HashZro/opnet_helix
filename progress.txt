@@ -1533,3 +1533,34 @@
   - Updated project field: 'Mines Protocol — OPNet Port' → 'Genome Protocol — OPNet Port'
   - Updated description to include 'Genome Protocol — gToken yield wrapping' and gToken/genome terminology
   - Marked S165 passes: true
+
+[2026-03-06] S166 — Final feature commit for genome protocol v2
+  - Working tree was already clean — all genome protocol changes committed via individual story commits (S122-S165)
+  - All relevant files already staged and committed: contracts/src/genome/, frontend/src/, AGENTS.md, SUBMISSION.md, prd.json
+  - Marked passes: true
+
+[2026-03-06] S167 — Production build verification
+  - npm run build exits 0, 83 modules transformed
+  - dist/ generated with index.html, assets/, Genome.wasm, Mine.wasm (both WASM files present)
+  - No TypeScript errors, warnings only from third-party libs (eval in walletconnect/opnet)
+
+[2026-03-06] S168 — Vercel deployment
+  - Redeployed: https://mines-protocol-lhqvkbxj1-santoszk99s-projects.vercel.app
+  - Vercel CLI v47.1.3, auto-detected Vite, 5.7MB uploaded
+  - All HashRouter routes accessible from deployed URL
+
+[2026-03-06] S169 — README.md rewritten for Genome Protocol
+  - Changed project name to 'Helix — Genome Protocol on OPNet Bitcoin L1'
+  - Updated description: gToken standard, injectRewards, LP claim flow documented
+  - Removed all mine/xToken/Staking references from user-facing sections
+  - Updated architecture diagram, deployed contracts table, user flows, project structure
+
+[2026-03-06] S170 — prd.json metadata updated to Genome Protocol
+  - project: 'Genome Protocol — OPNet Port'
+  - description: gToken/genome terminology, no mine/xToken references
+  - JSON validated: python3 -c 'import json; json.load(open("prd.json"))' exits 0
+
+[2026-03-06] S171 — Final checkpoint: 171/171 stories passing
+  - All stories S122-S171 verified passes: true
+  - npm run build exits 0 (83 modules, no TypeScript errors)
+  - Phase 8-13 complete. 171/171 stories passing. Genome Protocol v2 deployed.
