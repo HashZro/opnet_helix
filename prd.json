@@ -1177,7 +1177,7 @@
       "title": "Deploy new Factory and update config.ts",
       "description": "Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx ts-node scripts/deploy-genome-factory.ts. Wait for output showing new Factory bech32 address and pubkey hex. Update frontend/src/config.ts: set CONTRACT_ADDRESSES.factory to the new bech32 address, CONTRACT_ADDRESSES.factoryPubkey to the new hex pubkey. Also clean up config.ts: remove or comment out stale entries (xMotoMine, xMotoMinePubkey, old mine/staking references that no longer exist). Add comment: // Factory v3 \u2014 Genome Protocol, deployed 2026-03-05.",
       "priority": 131,
-      "passes": false,
+      "passes": true,
       "acceptance": "frontend/src/config.ts has new factory address and pubkey. cd frontend && npm run build exits 0. New factory responds to getGenomeCount() call.",
       "model": "sonnet"
     },

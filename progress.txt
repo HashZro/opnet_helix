@@ -1148,3 +1148,17 @@
   - Changed title to 'Factory Deployment (Genome Protocol)'
   - Renamed local `factory` var to `txFactory` to avoid shadowing the imported TransactionFactory class
   - Script parses without syntax errors (node --experimental-strip-types --check)
+
+[2026-03-05] S131 — Deploy new Factory (Genome Protocol) and update config.ts
+  - Ran contracts/scripts/deploy-genome-factory.ts via npx ts-node --esm
+  - Factory v3 deployed successfully:
+    - Contract address: opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8
+    - Contract pubkey:  0x37df83dfbcca6447316f9e43a10009f81fc37171a9ad7d40d98a090b6806f67b
+    - Funding tx: 26080c02ae6190bb1054633703cfb1f1896e77f024bc2290f7a9148637c62a16
+    - Deploy tx:  6337574d24828b5716d2d92dfcda248ed7368c4baee04addeb777d9a9f655976
+  - Updated frontend/src/config.ts:
+    - Set factory + factoryPubkey to new values
+    - Removed stale: mine, minePubkey, staking, stakingPubkey, xMotoMine, xMotoMinePubkey, minerToken, minerTokenPubkey, lavaToken, crystalToken, stormToken (and pubkeys)
+    - Added comment: // Factory v3 — Genome Protocol, deployed 2026-03-05
+  - npm run build: 82 modules, 0 TypeScript errors, exit 0
+  - New Factory uses genome method names (registerGenome, getGenomeCount, getGenomeAtIndex, getGenomeAddress)
