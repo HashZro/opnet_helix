@@ -1420,7 +1420,7 @@
       "title": "TypeScript build verification \u2014 fix all errors",
       "description": "Run: npx tsc --noEmit 2>&1. Read the output and fix ALL TypeScript errors found. Common issues to look for: missing imports for useGenomePoolInfo, type mismatches in GenomeOwnerCard, Address usage patterns. After fixing, run npm run build to confirm clean production build.",
       "priority": 158,
-      "passes": false,
+      "passes": true,
       "acceptance": "npx tsc --noEmit exits 0 with no errors. npm run build exits 0. No type errors remain.",
       "model": "sonnet"
     },

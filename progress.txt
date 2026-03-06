@@ -1449,3 +1449,9 @@
   - Verified Navbar has My Genomes tab (conditional on isConnected), no stale imports
   - Cleaned config.ts: HIDDEN_MINE_PUBKEYS→HIDDEN_GENOME_PUBKEYS, added GENOME_CONTRACT_VERSION=2
   - Updated AGENTS.md: Genome contract patterns, MotoSwap pool interaction, LP claim flow, Address.fromString rules
+
+[2026-03-06] S158 — TypeScript build verification
+  - Ran: cd frontend && npx tsc --noEmit → zero errors
+  - Ran: npm run build → exits 0, 83 modules transformed, dist/ generated
+  - No fixes needed — codebase was already clean
+  - Warnings only: eval usage in @btc-vision/walletconnect and opnet (third-party, non-blocking), chunk size warning (non-blocking)
