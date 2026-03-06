@@ -52,8 +52,8 @@ function extractString(res: unknown, field: string): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildGetMineAtIndexCalldata(factoryContract: any, index: number): string {
-    const selectorBuf: Uint8Array = factoryContract.encodeCalldata('getMineAtIndex', []);
+function buildGetGenomeAtIndexCalldata(factoryContract: any, index: number): string {
+    const selectorBuf: Uint8Array = factoryContract.encodeCalldata('getGenomeAtIndex', []);
     const params = new BinaryWriter();
     params.writeU256(BigInt(index));
     const paramsBuf = params.getBuffer();
@@ -63,15 +63,15 @@ function buildGetMineAtIndexCalldata(factoryContract: any, index: number): strin
     return '0x' + Array.from(calldata).map((b: number) => b.toString(16).padStart(2, '0')).join('');
 }
 
-async function fetchMineData(mineAddress: string): Promise<MineInfo> {
-    // Round 1: mine code + all mine contract reads in parallel
-    const [mineCode, nameRes, symbolRes, totalSupplyRes, underlyingBalRes, wrapFeeRes, unwrapFeeRes, underlyingRes, ownerRes] =
+async function fetchGenomeData(genomeAddress: string): Promise<MineInfo> {
+    // Round 1: genome code + all genome contract reads in parallel
+    const [genomeCode, nameRes, symbolRes, totalSupplyRes, underlyingBalRes, wrapFeeRes, unwrapFeeRes, underlyingRes, ownerRes] =
         await Promise.all([
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (provider as any).getCode(mineAddress),
+            (provider as any).getCode(genomeAddress),
             ...((): Promise<unknown>[] => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const c = getContract<any>(mineAddress, MINE_ABI as any, provider, NETWORK);
+                const c = getContract<any>(genomeAddress, MINE_ABI as any, provider, NETWORK);
                 return [
                     c.name(),
                     c.symbol(),
@@ -85,7 +85,7 @@ async function fetchMineData(mineAddress: string): Promise<MineInfo> {
             })(),
         ]);
 
-    const rawPubkey = mineCode?.contractPublicKey;
+    const rawPubkey = genomeCode?.contractPublicKey;
     const pubkey: string = rawPubkey instanceof Uint8Array
         ? '0x' + Array.from(rawPubkey as Uint8Array).map((b: number) => b.toString(16).padStart(2, '0')).join('')
         : String(rawPubkey ?? '');
@@ -106,7 +106,7 @@ async function fetchMineData(mineAddress: string): Promise<MineInfo> {
     }
 
     return {
-        address: mineAddress,
+        address: genomeAddress,
         pubkey,
         name: extractString(nameRes, 'name'),
         symbol: extractString(symbolRes, 'symbol'),
@@ -141,14 +141,14 @@ export function useMines() {
                 // Round 1: get mine count
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const factoryContract = getContract<any>(CONTRACT_ADDRESSES.factory, FACTORY_ABI as any, provider, NETWORK);
-                const countRes = await factoryContract.getMineCount();
+                const countRes = await factoryContract.getGenomeCount();
                 const count = Number(extractU256(countRes, 'count'));
-                console.log('[useMines] mine count:', count);
+                console.log('[useGenomes] genome count:', count);
                 if (count === 0 || cancelled) return;
 
-                // Round 2: all getMineAtIndex calls in parallel
+                // Round 2: all getGenomeAtIndex calls in parallel
                 const calldatas = Array.from({ length: count }, (_, i) =>
-                    buildGetMineAtIndexCalldata(factoryContract, i)
+                    buildGetGenomeAtIndexCalldata(factoryContract, i)
                 );
                 const addrResults = await Promise.all(
                     calldatas.map(cd => provider.call(CONTRACT_ADDRESSES.factory, cd as any))
@@ -158,26 +158,26 @@ export function useMines() {
                 const addresses = addrResults
                     .map(res => (res as any)?.result?.readAddress?.()?.toString?.() ?? '')
                     .filter(Boolean);
-                console.log('[useMines] addresses:', addresses);
+                console.log('[useGenomes] addresses:', addresses);
 
-                // Round 3: all mine data fetches in parallel, render each card as it resolves
+                // Round 3: all genome data fetches in parallel, render each card as it resolves
                 const ordered = new Array<MineInfo | null>(addresses.length).fill(null);
                 await Promise.all(
                     addresses.map((addr, idx) =>
-                        fetchMineData(addr).then(mine => {
+                        fetchGenomeData(addr).then(genome => {
                             if (cancelled) return;
-                            ordered[idx] = mine;
-                            // Render cards progressively — show resolved mines immediately
+                            ordered[idx] = genome;
+                            // Render cards progressively — show resolved genomes immediately
                             setMines(ordered.filter((m): m is MineInfo => m !== null));
                         }).catch(err => {
-                            console.error(`[useMines] failed to fetch mine ${addr}:`, err);
+                            console.error(`[useGenomes] failed to fetch genome ${addr}:`, err);
                         })
                     )
                 );
             } catch (err) {
-                console.error('[useMines] error:', err);
+                console.error('[useGenomes] error:', err);
                 if (!cancelled) {
-                    setError(err instanceof Error ? err.message : 'Failed to fetch mines');
+                    setError(err instanceof Error ? err.message : 'Failed to fetch genomes');
                 }
             } finally {
                 if (!cancelled) {

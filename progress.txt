@@ -1179,3 +1179,14 @@
   - Updated output field names: mineAddress->genomeAddress in getGenomeAddress and getGenomeAtIndex
   - Updated comment: 'Factory ABI — mine registry' -> 'Factory ABI — genome registry'
   - cd frontend && npx tsc --noEmit exits 0
+
+[2026-03-05] S135 — Updated useMines.ts to use genome method names
+  - Renamed buildGetMineAtIndexCalldata -> buildGetGenomeAtIndexCalldata
+  - Updated encodeCalldata('getMineAtIndex') -> encodeCalldata('getGenomeAtIndex')
+  - Renamed fetchMineData -> fetchGenomeData; parameter mineAddress -> genomeAddress
+  - Updated mineCode -> genomeCode variable
+  - factoryContract.getMineCount() -> factoryContract.getGenomeCount()
+  - All console.log labels: '[useMines]' -> '[useGenomes]'
+  - Error message: 'Failed to fetch mines' -> 'Failed to fetch genomes'
+  - MineInfo type name kept for backward compatibility
+  - npx tsc --noEmit exits 0

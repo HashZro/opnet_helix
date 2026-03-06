@@ -1213,7 +1213,7 @@
       "title": "Update useMines.ts to use genome method names",
       "description": "In frontend/src/hooks/useMines.ts: update all contract method call strings from getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex. Rename buildGetMineAtIndexCalldata->buildGetGenomeAtIndexCalldata. Update console.log labels from '[useMines]' to '[useGenomes]'. Update internal variable names: mineAddress->genomeAddress, fetchMineData->fetchGenomeData where they appear. Keep MineInfo type name for backward compatibility (or rename to GenomeInfo and update all refs).",
       "priority": 135,
-      "passes": false,
+      "passes": true,
       "acceptance": "useMines.ts calls getGenomeCount and getGenomeAtIndex. buildGetGenomeAtIndexCalldata function exists. console logs say [useGenomes]. cd frontend && npx tsc --noEmit exits 0.",
       "model": "sonnet"
     },
