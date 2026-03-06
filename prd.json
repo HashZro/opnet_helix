@@ -1249,7 +1249,7 @@
       "title": "Enforce gToken symbol prefix 'g' in CreateGenomePage",
       "description": "In frontend/src/pages/CreateGenomePage.tsx: (1) Add validation on the symbol field: if value doesn't start with lowercase 'g', show inline error message 'Must start with g (e.g. gMOTO)' in red below the field. (2) Disable the Create/Deploy button when symbol is empty or does not start with 'g'. (3) Add state for symbolError. On symbol change: setSymbolError(val.length > 0 && !val.startsWith('g') ? 'Must start with g (e.g. gMOTO)' : '').",
       "priority": 139,
-      "passes": false,
+      "passes": true,
       "acceptance": "Entering 'MOTO' in symbol field shows red error 'Must start with g'. Deploy button is disabled. Entering 'gMOTO' clears error and enables button. npm run build exits 0.",
       "model": "sonnet"
     },

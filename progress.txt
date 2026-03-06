@@ -1216,3 +1216,11 @@
   - createdPoolAddress set from extractAddressStr(poolResult); console.log of result for debugging
   - Success UI: shows '✓ MotoSwap pool created: <address>' below the Factory registration confirmation
   - npm run build exits 0 (82 modules, no TypeScript errors)
+[2026-03-05] S139 — Enforce gToken symbol prefix in CreateGenomePage
+  - Added symbolError state to CreateGenomePage.tsx
+  - Symbol onChange: setSymbolError if val.length > 0 && \!val.startsWith('g') -> 'Must start with g (e.g. gMOTO)'
+  - Error shown in red Sometype Mono below the symbol field
+  - DeployButton disabled when \!xTokenSymbol || \!xTokenSymbol.startsWith('g')
+  - Changed symbol placeholder from 'XFOO' to 'gFOO'
+  - npm run build exits 0 (82 modules, no TypeScript errors)
+

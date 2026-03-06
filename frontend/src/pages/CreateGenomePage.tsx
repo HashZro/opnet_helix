@@ -101,6 +101,7 @@ export function CreateGenomePage() {
     const [underlyingAddress, setUnderlyingAddress] = useState('');
     const [xTokenName, setXTokenName] = useState('');
     const [xTokenSymbol, setXTokenSymbol] = useState('');
+    const [symbolError, setSymbolError] = useState('');
     const [wrapFee, setWrapFee] = useState(50);
     const [unwrapFee, setUnwrapFee] = useState(50);
     const [isBusy, setIsBusy] = useState(false);
@@ -584,11 +585,20 @@ export function CreateGenomePage() {
                         <input
                             type="text"
                             value={xTokenSymbol}
-                            onChange={(e) => setXTokenSymbol(e.target.value)}
-                            placeholder="XFOO"
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setXTokenSymbol(val);
+                                setSymbolError(val.length > 0 && !val.startsWith('g') ? 'Must start with g (e.g. gMOTO)' : '');
+                            }}
+                            placeholder="gFOO"
                             style={disabled ? disabledInput : inputStyle}
                             disabled={disabled}
                         />
+                        {symbolError && (
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: 'red', marginTop: '4px' }}>
+                                {symbolError}
+                            </div>
+                        )}
                     </div>
 
                     {divider}
@@ -624,7 +634,7 @@ export function CreateGenomePage() {
                         {wrapFee / 10}% wrap · {unwrapFee / 10}% unwrap · max 200 bps (20%)
                     </div>
 
-                    <DeployButton onClick={handleDeploy} busy={isBusy} disabled={!isConnected} />
+                    <DeployButton onClick={handleDeploy} busy={isBusy} disabled={!isConnected || !xTokenSymbol || !xTokenSymbol.startsWith('g')} />
                 </>
             )}
 
