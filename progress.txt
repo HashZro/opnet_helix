@@ -1141,3 +1141,10 @@
     - getGenomeCount() -> 0x955ba589
     - getGenomeAtIndex() -> 0xd64b436c
   - Warnings: unused event declarations from btc-runtime base classes (non-blocking)
+
+[2026-03-05] S130 — Created deploy-genome-factory.ts deploy script
+  - File: contracts/scripts/deploy-genome-factory.ts
+  - Copied exact pattern from deploy-factory.ts (same Factory.wasm, no calldata)
+  - Changed title to 'Factory Deployment (Genome Protocol)'
+  - Renamed local `factory` var to `txFactory` to avoid shadowing the imported TransactionFactory class
+  - Script parses without syntax errors (node --experimental-strip-types --check)

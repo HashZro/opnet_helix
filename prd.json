@@ -1168,7 +1168,7 @@
       "title": "Create deploy-genome-factory.ts deploy script",
       "description": "Create contracts/scripts/deploy-genome-factory.ts. Model after existing deploy scripts (e.g. deploy-crystal.ts or similar). The script should: (1) Load contracts/build/Factory.wasm as Uint8Array. (2) Use EC_PRIVATE_KEY + MLDSA_PRIVATE_KEY from .env. (3) Create wallet keypair. (4) Use TransactionFactory.signDeployment with the Factory.wasm bytecode and empty calldata (Factory constructor takes no params). (5) Broadcast funding + deployment transactions. (6) Print deployed bech32 address and contractPublicKey hex. Look at existing deploy scripts in contracts/scripts/ for the exact pattern.",
       "priority": 130,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/scripts/deploy-genome-factory.ts exists. Script compiles (npx ts-node --version check). Script follows same pattern as existing deploy scripts.",
       "model": "sonnet"
     },
