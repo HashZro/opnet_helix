@@ -142,7 +142,7 @@ function ProtocolStats({ mines, loading }: { mines: MineInfo[]; loading: boolean
             <StatCell label="Total Genomes" value={String(mines.length)} />
             <StatCell label="Unique Tokens" value={String(uniqueUnderlying)} />
             <StatCell label="Total Deposited" value={formatBalance(totalWrapped, 18)} />
-            <StatCell label="Total xToken Supply" value={formatBalance(totalXSupply, 18)} />
+            <StatCell label="Total gToken Supply" value={formatBalance(totalXSupply, 18)} />
             <StatCell label="Avg Ratio" value={avgRatio.toFixed(6)} />
             <StatCell label="Highest Ratio" value={`${highestRatio.toFixed(6)}`} />
             <StatCell label="Best Ratio Genome" value={highestRatioMine.symbol} />
@@ -168,7 +168,7 @@ export function HomePage() {
                     <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontFamily: 'Mulish', fontWeight: 700, fontSize: '1.5rem', color: '#000', lineHeight: 1.1 }}>
                         <span style={{ fontFamily: 'Sometype Mono', fontSize: '1rem', fontWeight: 400 }}>&#8801;</span>Helix <strong>Genomes</strong>
                     </h1>
-                    <p style={{ fontFamily: 'Sometype Mono', fontSize: '0.8rem', color: '#888', marginTop: '8px' }}>Wrap OP-20 tokens into yield-bearing xTokens on Bitcoin L1.</p>
+                    <p style={{ fontFamily: 'Sometype Mono', fontSize: '0.8rem', color: '#888', marginTop: '8px' }}>Wrap OP-20 tokens into yield-bearing gTokens on Bitcoin L1.</p>
                 </div>
                 <CreateBtn />
             </div>

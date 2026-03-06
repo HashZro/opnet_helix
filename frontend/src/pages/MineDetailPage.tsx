@@ -235,7 +235,7 @@ export function MineDetailPage() {
                 ) : (
                     <h1 style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1.5rem', color: '#000', display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <span style={{ fontFamily: 'Sometype Mono', fontWeight: 400, fontSize: '1rem' }}>|||</span>
-                        {mine ? mine.name : 'Mine Detail'}
+                        {mine ? mine.name : 'Genome Detail'}
                         {mine && <span style={{ fontFamily: 'Sometype Mono', fontWeight: 400, fontSize: '0.9rem', color: '#888' }}>{mine.symbol}</span>}
                     </h1>
                 )}
@@ -252,7 +252,7 @@ export function MineDetailPage() {
             <div style={SECTION_LABEL}>Tokens</div>
             <div style={{ display: 'flex', gap: '12px', marginBottom: '28px', flexWrap: 'wrap' }}>
                 <TokenCard
-                    label="xToken"
+                    label="gToken"
                     symbol={mine?.symbol ?? '—'}
                     address={address ?? ''}
                     pubkey={mine?.pubkey ?? ''}
@@ -280,7 +280,7 @@ export function MineDetailPage() {
                     <div style={SECTION_LABEL}>Your Balances</div>
                     <div style={{ display: 'flex', gap: '12px', marginBottom: '16px', flexWrap: 'wrap' }}>
                         <BalanceCard
-                            label={`${mine?.symbol ?? 'xToken'} Balance`}
+                            label={`${mine?.symbol ?? 'gToken'} Balance`}
                             amount={mine?.userXBalance ?? null}
                             symbol={mine?.symbol ?? ''}
                             loading={loading}
@@ -292,7 +292,7 @@ export function MineDetailPage() {
                             loading={loading}
                         />
                         <BalanceCard
-                            label="Underlying Value of xTokens"
+                            label="Underlying Value of gTokens"
                             amount={mine?.userUnderlyingValue ?? null}
                             symbol={underlyingSymbol}
                             loading={loading}
@@ -335,7 +335,7 @@ export function MineDetailPage() {
                         {[
                             ['Ratio', mine.ratio.toFixed(6)],
                             ['Total Wrapped', `${formatBalance(mine.underlyingBalance, 18)} ${underlyingSymbol}`],
-                            ['xToken Supply', `${formatBalance(mine.totalSupply, 18)} ${mine.symbol}`],
+                            ['gToken Supply', `${formatBalance(mine.totalSupply, 18)} ${mine.symbol}`],
                             ['Wrap Fee', `${(Number(mine.wrapFee) / 10).toFixed(1)}%`],
                             ['Unwrap Fee', `${(Number(mine.unwrapFee) / 10).toFixed(1)}%`],
                         ].map(([k, v]) => (

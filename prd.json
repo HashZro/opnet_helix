@@ -1348,7 +1348,7 @@
       "title": "User-facing text pass \u2014 mine to genome across all pages",
       "description": "Scan and update all user-facing display strings across the frontend. Files to update: frontend/src/pages/HomePage.tsx, MineDetailPage.tsx, CreateGenomePage.tsx, MyGenomesPage.tsx, frontend/src/components/MineCard.tsx, Navbar.tsx. Replace in string literals only (not variable names): 'Mine'->'Genome', 'mine'->'genome', 'xToken'->'gToken', 'x-token'->'gToken', 'wrapped token'->'gToken'. Also update page headings and empty state messages. Do NOT rename variables, types, or function names.",
       "priority": 150,
-      "passes": false,
+      "passes": true,
       "acceptance": "No 'Mine', 'xToken' visible in any page's displayed text. All replaced with Genome/gToken. npm run build exits 0.",
       "model": "sonnet"
     },

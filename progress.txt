@@ -1332,3 +1332,11 @@
   - Reuses gTokenAddr/underlyingAddr from step 2 (no duplicate declarations)
   - Build passes: tsc -b (0 TypeScript errors) + vite build ✓ (83 modules)
   - GOTCHA: Don't redeclare variables already in scope from earlier steps in same try block
+
+[2026-03-05] S150 — User-facing text pass: mine→genome, xToken→gToken across frontend
+  - HomePage.tsx: "Total xToken Supply" → "Total gToken Supply"; subtext "xTokens" → "gTokens"
+  - MineDetailPage.tsx: "Mine Detail" → "Genome Detail"; "xToken" label → "gToken"; "Underlying Value of xTokens" → "...gTokens"; "xToken Supply" → "gToken Supply"
+  - ApyBadge.tsx: tooltip "xToken ratio" → "gToken ratio"
+  - Navbar.tsx, MineCard.tsx, CreateGenomePage.tsx, MyGenomesPage.tsx: no remaining Mine/xToken user-facing strings (already clean from S109-S142)
+  - Variable names unchanged (xTokenName, xTokenSymbol, mine, etc.)
+  - npm run build exits 0 (83 modules, no TypeScript errors)

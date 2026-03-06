@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const TOOLTIP_TEXT =
-    'Estimated APY is calculated by comparing the current xToken ratio against the first time you visited this page. ' +
+    'Estimated APY is calculated by comparing the current gToken ratio against the first time you visited this page. ' +
     'It is annualised linearly and does not account for compounding or future fee volume. ' +
     'Yield comes from wrap, unwrap, and AMM trading fees accumulating in the pool.';
 
