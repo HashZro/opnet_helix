@@ -1429,7 +1429,7 @@
       "title": "Create register-genome-test.ts script",
       "description": "Create contracts/scripts/register-genome-test.ts. This script registers a test genome (gMOTO wrapping motoToken) with the new Factory. Use the registerGenome() selector (SHA256('registerGenome()').first4bytes). Read FACTORY_ADDRESS (new from config), MOTO_UNDERLYING (motoToken pubkey) from .env or hardcode. Modeled after existing register scripts but uses 'registerGenome()' as the method string in selector computation. Print the result of getGenomeCount() after registration to verify.",
       "priority": 159,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/scripts/register-genome-test.ts exists and compiles. Script uses registerGenome() selector. Script structure matches existing register scripts.",
       "model": "sonnet"
     },

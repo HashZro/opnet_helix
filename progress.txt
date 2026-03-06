@@ -1455,3 +1455,13 @@
   - Ran: npm run build → exits 0, 83 modules transformed, dist/ generated
   - No fixes needed — codebase was already clean
   - Warnings only: eval usage in @btc-vision/walletconnect and opnet (third-party, non-blocking), chunk size warning (non-blocking)
+
+[2026-03-06] S159 — Created register-genome-test.ts script
+  - File: contracts/scripts/register-genome-test.ts
+  - Modeled after register-mine-moto.ts pattern exactly
+  - Uses registerGenome() selector: SHA256('registerGenome()').first4bytes
+  - Reads GENOME_FACTORY_ADDRESS (defaults to new Factory v3 bech32), MOTO_UNDERLYING (defaults to moto pubkey), GENOME_ADDRESS from .env
+  - GENOME_ADDRESS is required — must be set to deployed Genome contract pubkey before running
+  - After registration: fetches getGenomeCount() and getGenomeAtIndex(i) to verify all registered genomes
+  - Waits 3s before querying to allow indexer to catch up
+  - Script parses without syntax errors (node --experimental-strip-types --check)
