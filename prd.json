@@ -1096,7 +1096,7 @@
       "title": "Git commit before redeploy",
       "description": "Run git add -A && git commit -m 'before redeploy: working state checkpoint' from /home/dev/Documents/hashZroRepos/team-projects/optnet/helix root. Update progress.txt adding a line: '2026-03-05 [S122] Saved working state as git commit before redeploy. Can revert to this point if anything breaks.'",
       "priority": 122,
-      "passes": false,
+      "passes": true,
       "acceptance": "git log shows commit message containing 'before redeploy'. progress.txt has the checkpoint line.",
       "model": "sonnet"
     },
@@ -1105,7 +1105,7 @@
       "title": "Rename Mine directory and files to Genome",
       "description": "Create contracts/src/genome/ directory. Copy contracts/src/mine/Mine.ts to contracts/src/genome/Genome.ts. Copy contracts/src/mine/index.ts to contracts/src/genome/index.ts and update it to export { Genome } from './Genome'. Update contracts/asconfig.json: rename target key 'mine' to 'genome', change outFile to 'build/Genome.wasm', textFile to 'build/Genome.wat', use abort=src/genome/index/abort. Do NOT delete src/mine/ yet (keep for reference). Run cd frontend && npm run build to verify no breakage.",
       "priority": 123,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/src/genome/Genome.ts exists. contracts/src/genome/index.ts exports Genome. asconfig.json has genome target with correct outFile. npm run build exits 0.",
       "model": "sonnet"
     },

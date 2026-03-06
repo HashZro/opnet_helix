@@ -1078,3 +1078,14 @@
   - WrapPage: destructures refetchMines from useMines(); passes onMineCreated={() => { setShowCreateModal(false); refetchMines(); }} to CreateMineModal
   - Gotcha: LSP reports 6133 false positives for useCallback/refetchKey/onMineCreated — tsc -b passes clean
   - npm run build exits 0 (77 modules, 8.64s)
+
+[2026-03-05] S122 — Saved working state as git commit before redeploy. Can revert to this point if anything breaks.
+
+[2026-03-05] S123 — Renamed Mine directory and files to Genome
+  - Created contracts/src/genome/ directory
+  - Created contracts/src/genome/Genome.ts — verbatim copy of Mine.ts (class still named Mine — renamed in S124)
+  - Created contracts/src/genome/index.ts — uses `import { Mine as Genome }` alias; Blockchain.contract returns new Genome()
+  - Updated contracts/asconfig.json: renamed target key 'mine' to 'genome', outFile=build/Genome.wasm, textFile=build/Genome.wat, abort=src/genome/index/abort
+  - src/mine/ kept for reference (not deleted)
+  - Frontend build: tsc -b (0 errors) + vite build exits 0 (82 modules)
+  - GOTCHA: LSP reports 6133 false positive for requireFactoryOwner — tsc -b passes clean (same as other contracts)

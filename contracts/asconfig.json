@@ -5,10 +5,10 @@
       "textFile": "build/MinerToken.wat",
       "use": ["abort=src/miner-token/index/abort"]
     },
-    "mine": {
-      "outFile": "build/Mine.wasm",
-      "textFile": "build/Mine.wat",
-      "use": ["abort=src/mine/index/abort"]
+    "genome": {
+      "outFile": "build/Genome.wasm",
+      "textFile": "build/Genome.wat",
+      "use": ["abort=src/genome/index/abort"]
     },
     "factory": {
       "outFile": "build/Factory.wasm",
