@@ -593,6 +593,14 @@ export function CreateGenomePage() {
                                 setXTokenSymbol(val);
                                 setSymbolError(val.length > 0 && !val.startsWith('g') ? 'Must start with g (e.g. gMOTO)' : '');
                             }}
+                            onBlur={(e) => {
+                                const val = e.target.value;
+                                if (val.length > 0 && !val.startsWith('g')) {
+                                    const fixed = 'g' + val;
+                                    setXTokenSymbol(fixed);
+                                    setSymbolError('');
+                                }
+                            }}
                             placeholder="gFOO"
                             style={disabled ? disabledInput : inputStyle}
                             disabled={disabled}

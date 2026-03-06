@@ -1267,7 +1267,7 @@
       "title": "Auto-prepend g prefix in CreateGenomePage symbol field",
       "description": "In frontend/src/pages/CreateGenomePage.tsx symbol input: on onBlur, if the field value is non-empty and doesn't start with 'g', auto-prepend 'g': setSymbol('g' + value). Also clear the error after auto-fix. This way users who type 'MOTO' have it auto-corrected to 'gMOTO' when they tab away. Do not auto-prepend while user is actively typing (only onBlur).",
       "priority": 141,
-      "passes": false,
+      "passes": true,
       "acceptance": "Typing 'MOTO' and tabbing away auto-corrects to 'gMOTO'. Error clears. npm run build exits 0.",
       "model": "sonnet"
     },

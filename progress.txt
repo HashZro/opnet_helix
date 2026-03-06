@@ -1224,3 +1224,11 @@
   - Changed symbol placeholder from 'XFOO' to 'gFOO'
   - npm run build exits 0 (82 modules, no TypeScript errors)
 
+
+[2026-03-05] S141 — Auto-prepend g prefix in CreateGenomePage symbol field
+  - Added onBlur handler to symbol input in CreateGenomePage.tsx
+  - On blur: if value non-empty and doesn't start with 'g', prepends 'g' automatically
+  - Clears symbolError after auto-fix (no red error shown when auto-corrected)
+  - onChange still validates and shows error while typing (live feedback)
+  - onBlur only fires when user leaves field (tabs away or clicks elsewhere)
+  - npm run build exits 0 (82 modules, no TypeScript errors)
