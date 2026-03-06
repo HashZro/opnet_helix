@@ -102,8 +102,17 @@ export const MINE_ABI = [
         outputs: [{ name: 'success', type: ABIDataTypes.BOOL }],
         type: BitcoinAbiTypes.Function,
     },
+    {
+        name: 'injectRewards',
+        inputs: [],
+        outputs: [{ name: 'amount', type: ABIDataTypes.UINT256 }],
+        type: BitcoinAbiTypes.Function,
+    },
     ...OP_20_ABI,
 ];
+
+// GENOME_ABI — alias for MINE_ABI (gradual migration)
+export const GENOME_ABI = MINE_ABI;
 
 // Factory ABI — mine registry
 export const FACTORY_ABI = [

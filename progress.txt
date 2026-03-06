@@ -1168,3 +1168,8 @@
   - Updated CreateGenomePage.tsx loadBytecode(): fetch('./Mine.wasm') -> fetch('./Genome.wasm')
   - frontend npm run build exits 0 (82 modules, no TypeScript errors)
   - Mine.wasm still present in public/ for reference (not deleted)
+
+[2026-03-05] S133 — Update MINE_ABI in contracts.ts to add injectRewards
+  - Added injectRewards entry to MINE_ABI: inputs:[], outputs:[{name:'amount', type:ABIDataTypes.UINT256}]
+  - Added export const GENOME_ABI = MINE_ABI alias below MINE_ABI
+  - cd frontend && npx tsc --noEmit exits 0

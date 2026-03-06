@@ -1195,7 +1195,7 @@
       "title": "Update MINE_ABI in contracts.ts to add injectRewards",
       "description": "In frontend/src/lib/contracts.ts, add injectRewards to MINE_ABI: { name: 'injectRewards', inputs: [], outputs: [{ name: 'amount', type: ABIDataTypes.UINT256 }], type: BitcoinAbiTypes.Function }. Also export GENOME_ABI as an alias: export const GENOME_ABI = MINE_ABI. This allows gradual migration \u2014 both names work.",
       "priority": 133,
-      "passes": false,
+      "passes": true,
       "acceptance": "MINE_ABI in contracts.ts includes injectRewards entry. GENOME_ABI is exported as alias. cd frontend && npx tsc --noEmit exits 0.",
       "model": "sonnet"
     },
