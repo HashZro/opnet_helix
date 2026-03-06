@@ -47,11 +47,7 @@ export function Navbar() {
                     <div className="hidden md:flex" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                         <NavTab to="/">Explore</NavTab>
                         <NavTab to="/create">Create</NavTab>
-                        {isConnected && (
-                            <NavTab to="/my-genomes">
-                                My Genomes
-                            </NavTab>
-                        )}
+                        <NavTab to="/my-genomes">My Genomes</NavTab>
                         <a
                             href={OPSCAN_FACTORY_URL}
                             target="_blank"
@@ -110,11 +106,7 @@ export function Navbar() {
                 <div style={{ borderTop: '1px solid #000', padding: '12px 2rem', background: '#fff', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     <NavTab to="/">Explore</NavTab>
                     <NavTab to="/create">Create</NavTab>
-                    {isConnected && (
-                        <NavTab to="/my-genomes">
-                            My Genomes
-                        </NavTab>
-                    )}
+                    <NavTab to="/my-genomes">My Genomes</NavTab>
                     <a
                         href={OPSCAN_FACTORY_URL}
                         target="_blank"
