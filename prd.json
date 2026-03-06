@@ -1159,7 +1159,7 @@
       "title": "Compile Factory contract to WASM",
       "description": "Run the Factory contract compilation: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx asc src/factory/index.ts --config asconfig.json --target factory. If compilation fails, check contracts/src/factory/Factory.ts for syntax errors from the rename in S125. Fix and re-run. Verify build/Factory.wasm exists and is non-zero.",
       "priority": 129,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/build/Factory.wasm exists and is non-zero. asc compilation exits 0 with no errors.",
       "model": "sonnet"
     },

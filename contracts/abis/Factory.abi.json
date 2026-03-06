@@ -1,7 +1,7 @@
 {
     "functions": [
         {
-            "name": "registerMine",
+            "name": "registerGenome",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
@@ -14,20 +14,20 @@
             ]
         },
         {
-            "name": "getMineAddress",
+            "name": "getGenomeAddress",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [],
             "outputs": [
                 {
-                    "name": "mineAddress",
+                    "name": "genomeAddress",
                     "type": "ADDRESS"
                 }
             ]
         },
         {
-            "name": "getMineCount",
+            "name": "getGenomeCount",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
@@ -40,14 +40,14 @@
             ]
         },
         {
-            "name": "getMineAtIndex",
+            "name": "getGenomeAtIndex",
             "type": "Function",
             "payable": false,
             "onlyOwner": false,
             "inputs": [],
             "outputs": [
                 {
-                    "name": "mineAddress",
+                    "name": "genomeAddress",
                     "type": "ADDRESS"
                 }
             ]

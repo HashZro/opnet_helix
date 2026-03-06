@@ -10,9 +10,9 @@ import { CallResult, OPNetEvent, IOP_NETContract } from 'opnet';
 // ------------------------------------------------------------------
 
 /**
- * @description Represents the result of the registerMine function call.
+ * @description Represents the result of the registerGenome function call.
  */
-export type RegisterMine = CallResult<
+export type RegisterGenome = CallResult<
     {
         count: bigint;
     },
@@ -20,19 +20,19 @@ export type RegisterMine = CallResult<
 >;
 
 /**
- * @description Represents the result of the getMineAddress function call.
+ * @description Represents the result of the getGenomeAddress function call.
  */
-export type GetMineAddress = CallResult<
+export type GetGenomeAddress = CallResult<
     {
-        mineAddress: Address;
+        genomeAddress: Address;
     },
     OPNetEvent<never>[]
 >;
 
 /**
- * @description Represents the result of the getMineCount function call.
+ * @description Represents the result of the getGenomeCount function call.
  */
-export type GetMineCount = CallResult<
+export type GetGenomeCount = CallResult<
     {
         count: bigint;
     },
@@ -40,11 +40,11 @@ export type GetMineCount = CallResult<
 >;
 
 /**
- * @description Represents the result of the getMineAtIndex function call.
+ * @description Represents the result of the getGenomeAtIndex function call.
  */
-export type GetMineAtIndex = CallResult<
+export type GetGenomeAtIndex = CallResult<
     {
-        mineAddress: Address;
+        genomeAddress: Address;
     },
     OPNetEvent<never>[]
 >;
@@ -53,8 +53,8 @@ export type GetMineAtIndex = CallResult<
 // IFactory
 // ------------------------------------------------------------------
 export interface IFactory extends IOP_NETContract {
-    registerMine(): Promise<RegisterMine>;
-    getMineAddress(): Promise<GetMineAddress>;
-    getMineCount(): Promise<GetMineCount>;
-    getMineAtIndex(): Promise<GetMineAtIndex>;
+    registerGenome(): Promise<RegisterGenome>;
+    getGenomeAddress(): Promise<GetGenomeAddress>;
+    getGenomeCount(): Promise<GetGenomeCount>;
+    getGenomeAtIndex(): Promise<GetGenomeAtIndex>;
 }

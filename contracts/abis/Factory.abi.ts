@@ -4,27 +4,27 @@ export const FactoryEvents = [];
 
 export const FactoryAbi = [
     {
-        name: 'registerMine',
+        name: 'registerGenome',
         inputs: [],
         outputs: [{ name: 'count', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getMineAddress',
+        name: 'getGenomeAddress',
         inputs: [],
-        outputs: [{ name: 'mineAddress', type: ABIDataTypes.ADDRESS }],
+        outputs: [{ name: 'genomeAddress', type: ABIDataTypes.ADDRESS }],
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getMineCount',
+        name: 'getGenomeCount',
         inputs: [],
         outputs: [{ name: 'count', type: ABIDataTypes.UINT256 }],
         type: BitcoinAbiTypes.Function,
     },
     {
-        name: 'getMineAtIndex',
+        name: 'getGenomeAtIndex',
         inputs: [],
-        outputs: [{ name: 'mineAddress', type: ABIDataTypes.ADDRESS }],
+        outputs: [{ name: 'genomeAddress', type: ABIDataTypes.ADDRESS }],
         type: BitcoinAbiTypes.Function,
     },
     ...FactoryEvents,

@@ -1129,3 +1129,15 @@
   - All 20 Genome methods confirmed by transform: wrap, unwrap, getWrappedAmount, getUnwrappedAmount, underlyingBalance, getUnderlyingAmount, getWrapFee, getUnwrapFee, getUnderlying, getOwner, setWrapFee, setUnwrapFee, setAmmPool, getAmmPool, setAmmBuyFee, setAmmSellFee, getAmmBuyFee, getAmmSellFee, notifyAmmFee, injectRewards
   - injectRewards() selector: 0x1efde43e
   - Only warnings: unused event declarations from btc-runtime base classes (non-blocking)
+
+[2026-03-05] S129 — Compiled Factory contract to WASM
+  - Ran: npx asc src/factory/index.ts --config asconfig.json --target factory
+  - Compilation succeeded on first attempt (exit 0, no errors)
+  - build/Factory.wasm: 19555 bytes
+  - ABIs auto-generated: Factory.abi.json, Factory.abi.ts, Factory.d.ts
+  - New selectors (renamed from mine to genome):
+    - registerGenome() -> 0xce9c26cb
+    - getGenomeAddress() -> 0x7f00213e
+    - getGenomeCount() -> 0x955ba589
+    - getGenomeAtIndex() -> 0xd64b436c
+  - Warnings: unused event declarations from btc-runtime base classes (non-blocking)
