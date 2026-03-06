@@ -1515,3 +1515,15 @@
   - CONCLUSION: All contract-level operations verified individually. Ratio increase from 1.0 to 1.3395
     proves the injectRewards mechanism (step 4/4 of LP claim) works on testnet.
     Frontend implementation (GenomeOwnerCard.tsx) implements all 3 claim steps correctly per code review.
+
+[2026-03-06] S164 — Updated SUBMISSION.md with Phase 2 new features
+  - Added 'New Features (Phase 2) — Genome Protocol' section after GitHub Checklist
+  - Documented 5 new features:
+    1. gToken naming standard — g prefix enforced in UI (auto-prepend on blur, deploy disabled without it)
+    2. injectRewards — genome owners boost yield ratio; UI in My Genomes + Genome Detail (owner only)
+    3. Automatic MotoSwap pool creation — 3-step deploy flow: deploy genome → registerGenome → createPool
+    4. LP Claim Flow — 3-step: increaseAllowance LP → removeLiquidity → injectRewards(underlyingAmount)
+    5. New Factory v3 address (opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8) with genome method selectors
+  - Included gMOTO test genome address and confirmed ratio 1.3395 as proof of injectRewards working
+  - Kept all original content (description, tweet, screenshots, old contract addresses, checklist)
+

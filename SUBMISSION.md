@@ -69,3 +69,65 @@ npm run dev
 - [ ] `frontend/` contains React frontend
 - [ ] Contract ABIs in `contracts/abis/`
 - [ ] `.env.example` present (no secrets committed)
+
+---
+
+## New Features (Phase 2) — Genome Protocol
+
+### 1. gToken Naming Standard
+
+All genome (wrapped) tokens must start with the `g` prefix (e.g. `gMOTO`, `gWBTC`). This is enforced in the Create Genome UI: the symbol field auto-prepends `g` on blur, and the Deploy button is disabled until the symbol starts with `g`. The underlying symbol is derived by stripping the `g` prefix for display (gMOTO → MOTO).
+
+### 2. injectRewards
+
+Genome owners can manually boost the gToken yield ratio by calling `injectRewards(amount)` on the Genome contract. This transfers the specified amount of underlying tokens from the caller into the genome's pool, increasing `_underlyingHeld` and therefore the ratio (`underlyingBalance / totalSupply`). The UI exposes this in:
+
+- **My Genomes page** — Inject Rewards input + button in each GenomeOwnerCard
+- **Genome Detail page** — Owner Actions section (only visible to the genome owner)
+
+### 3. Automatic MotoSwap Pool Creation on Genome Deploy
+
+When a user deploys a new genome via the Create Genome modal, the frontend automatically:
+
+1. Deploys the Genome contract (WASM + calldata via `signDeployment`)
+2. Registers it in Factory v3 via `registerGenome(underlying, genome)`
+3. Creates a MotoSwap liquidity pool for the pair `(gToken, underlying)` via `motoFactory.createPool(genomePubkey, underlyingPubkey)`
+
+This ensures every genome immediately has a trading pool on MotoSwap, enabling liquidity provision and LP fee accumulation.
+
+### 4. LP Claim Flow (My Genomes page)
+
+Genome owners who have provided liquidity to their genome's MotoSwap pool can claim accumulated LP fees and inject them directly into the genome to increase the ratio. The 3-step flow in `GenomeOwnerCard`:
+
+1. **Approve LP tokens** — `increaseAllowance(router, lpBalance)` on the pool contract
+2. **Remove liquidity** — `router.removeLiquidity(gToken, underlying, lpBalance, 0, 0, owner, deadline)`
+3. **Inject rewards** — `increaseAllowance(genome, underlyingAmount)` on underlying → `genome.injectRewards(underlyingAmount)`
+
+On success, the genome ratio increases immediately and the pool info refetches automatically.
+
+### 5. New Factory Address (v3 — Genome Protocol)
+
+The original Factory v2 used `registerMine` / `getMineCount` method names. Factory v3 uses genome terminology throughout:
+
+| Method | Selector |
+|---|---|
+| `registerGenome()` | `0xce9c26cb` |
+| `getGenomeCount()` | `0x955ba589` |
+| `getGenomeAtIndex()` | `0xd64b436c` |
+| `getGenomeAddress()` | `0x7f00213e` |
+
+**Factory v3 (Genome Protocol):**
+
+| Field | Value |
+|---|---|
+| Bech32 | `opt1sqpfg7r4n6jqen30xqtm5fak5gllpczhd3syzafv8` |
+| Pubkey | `0x37df83dfbcca6447316f9e43a10009f81fc37171a9ad7d40d98a090b6806f67b` |
+| Deploy tx | `6337574d24828b5716d2d92dfcda248ed7368c4baee04addeb777d9a9f655976` |
+
+**gMOTO Genome (test genome — Moto token wrapped):**
+
+| Field | Value |
+|---|---|
+| Bech32 | `opt1sqr4mgm9fsuyszwt8jm0ry57m8juyzxs70yngde4w` |
+| Pubkey | `0x8c8cacdec6bfc9af74161cd25ef1af7bcdefe99fc43f12a849f299c720c4c898` |
+| Ratio (verified) | `1.3395` (genome ratio > 1 confirms injectRewards working) |

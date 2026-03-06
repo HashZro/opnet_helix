@@ -1474,7 +1474,7 @@
       "title": "Update SUBMISSION.md with new features",
       "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/SUBMISSION.md: add section 'New Features (Phase 2)' documenting: (1) gToken naming standard \u2014 all genome tokens start with g prefix, enforced in UI. (2) injectRewards \u2014 genome owners can boost yield by injecting underlying tokens. (3) Automatic MotoSwap pool creation on genome deploy. (4) LP Claim Flow \u2014 My Genomes page lets owners remove LP fees and inject them into genome. (5) New Factory address. Keep existing content.",
       "priority": 164,
-      "passes": false,
+      "passes": true,
       "acceptance": "SUBMISSION.md has Phase 2 features section with all 4 new features documented. File is valid markdown.",
       "model": "sonnet"
     },
