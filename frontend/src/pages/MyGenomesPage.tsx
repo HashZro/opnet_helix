@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import type { Address } from '@btc-vision/transaction';
 import { useMines } from '../hooks/useMines';
 import { useWallet } from '../hooks/useWallet';
+import { useGenomePoolInfo } from '../hooks/useGenomePoolInfo';
 import { formatBalance, truncateAddress } from '../lib/helpers';
 import { HIDDEN_MINE_PUBKEYS } from '../config';
 import type { MineInfo } from '../hooks/useMines';
+
+function isZeroPool(addr: string): boolean {
+    return !addr || /^0x0+$/.test(addr);
+}
 
 function SkeletonCard() {
     return (
@@ -29,15 +35,26 @@ function SkeletonCard() {
 
 interface GenomeOwnerCardProps {
     mine: MineInfo;
+    senderAddress: Address | null;
 }
 
-function GenomeOwnerCard({ mine }: GenomeOwnerCardProps) {
+function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
     const { address, name, symbol, underlyingBalance, totalSupply, wrapFee, unwrapFee } = mine;
     const ratio = totalSupply > 0n ? Number(underlyingBalance) / Number(totalSupply) : 1.0;
     const wrapFeePercent = (Number(wrapFee) / 10).toFixed(1);
     const unwrapFeePercent = (Number(unwrapFee) / 10).toFixed(1);
     const underlyingSymbol = mine.underlyingSymbol || (symbol.startsWith('g') ? symbol.slice(1) : symbol);
     const [hovered, setHovered] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const poolInfo = useGenomePoolInfo(address, mine.pubkey, mine.underlyingAddress, senderAddress);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(poolInfo.poolAddress).then(() => {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 1500);
+        }).catch(() => {});
+    };
 
     return (
         <div
@@ -84,15 +101,46 @@ function GenomeOwnerCard({ mine }: GenomeOwnerCardProps) {
                 </div>
             </div>
 
-            {/* Pool info placeholder */}
-            <div style={{
-                marginTop: '16px',
-                paddingTop: '12px',
-                borderTop: `1px solid ${hovered ? '#333' : '#eee'}`,
-            }}>
-                <span style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#666' : '#aaa', letterSpacing: '0.05em' }}>
-                    Loading pool...
-                </span>
+            {/* Pool info */}
+            <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: `1px solid ${hovered ? '#333' : '#eee'}` }}>
+                <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.65rem', color: hovered ? '#666' : '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Liquidity Pool
+                </div>
+                {poolInfo.loading ? (
+                    <div style={{ background: '#eee', height: '14px', width: '60%' }} className="animate-pulse" />
+                ) : isZeroPool(poolInfo.poolAddress) ? (
+                    <div style={{ display: 'inline-block', border: `1px solid ${hovered ? '#555' : '#ccc'}`, padding: '2px 8px', fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#888' : '#999' }}>
+                        No Pool
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#bbb' : '#555' }}>
+                                {truncateAddress(poolInfo.poolAddress)}
+                            </span>
+                            <button
+                                onClick={handleCopy}
+                                style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'Sometype Mono', fontSize: '0.65rem', color: hovered ? '#888' : '#aaa', padding: '0 4px' }}
+                            >
+                                {copied ? '✓' : '⎘'}
+                            </button>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.75rem' }}>Reserve A</span>
+                            <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.75rem', fontFamily: 'Sometype Mono' }}>{formatBalance(poolInfo.reserve0, 18)}</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                            <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.75rem' }}>Reserve B</span>
+                            <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.75rem', fontFamily: 'Sometype Mono' }}>{formatBalance(poolInfo.reserve1, 18)}</span>
+                        </div>
+                        {senderAddress && (
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.75rem' }}>LP Balance</span>
+                                <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.75rem', fontFamily: 'Sometype Mono' }}>{formatBalance(poolInfo.lpBalance, 18)}</span>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -100,7 +148,7 @@ function GenomeOwnerCard({ mine }: GenomeOwnerCardProps) {
 
 export function MyGenomesPage() {
     const { mines: allMines, loading, error } = useMines();
-    const { identityKey, isConnected } = useWallet();
+    const { identityKey, isConnected, senderAddress } = useWallet();
 
     const mines = allMines
         .filter(m => !HIDDEN_MINE_PUBKEYS.includes(m.pubkey))
@@ -137,7 +185,7 @@ export function MyGenomesPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {mines.map((mine) => <GenomeOwnerCard key={mine.address} mine={mine} />)}
+                    {mines.map((mine) => <GenomeOwnerCard key={mine.address} mine={mine} senderAddress={senderAddress} />)}
                 </div>
             )}
         </div>

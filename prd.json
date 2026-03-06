@@ -1303,7 +1303,7 @@
       "title": "Display pool status panel in GenomeOwnerCard",
       "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard: use useGenomePoolInfo hook to fetch pool data. Display pool panel below genome stats: (1) If loading: show skeleton. (2) If poolAddress is zero/empty: show 'No Pool' badge in grey border. (3) If pool exists: show pool address truncated (first 8 + last 6 chars) with copy button, reserve0 formatted, reserve1 formatted, user LP balance formatted. Section label 'Liquidity Pool' in Sometype Mono uppercase grey.",
       "priority": 145,
-      "passes": false,
+      "passes": true,
       "acceptance": "GenomeOwnerCard shows pool address, reserves, LP balance when pool exists. Shows 'No Pool' when pool address is zero. npm run build exits 0.",
       "model": "sonnet"
     },

@@ -1270,3 +1270,17 @@
   - Both MotoSwapFactoryAbi and MotoswapPoolAbi are exported from 'opnet' main barrel
   - getPool args: Address.fromString(pubkeyHex) for both tokens (matches MineDetailPage pattern)
   - npx tsc --noEmit exits 0
+
+[2026-03-05] S145 — Display pool status panel in GenomeOwnerCard
+  - Added `isZeroPool(addr)` helper in MyGenomesPage.tsx (local, not exported from hook)
+  - Added `senderAddress: Address | null` prop to GenomeOwnerCardProps
+  - Called `useGenomePoolInfo(address, mine.pubkey, mine.underlyingAddress, senderAddress)` inside GenomeOwnerCard
+  - Added copied/handleCopy state for clipboard copy button on pool address
+  - Pool panel replaces placeholder "Loading pool..." section:
+    1. Loading: animated skeleton block (#eee bg)
+    2. No pool: inline-block grey bordered "No Pool" badge
+    3. Pool exists: truncated pool address + ⎘ copy button; Reserve A / Reserve B rows; LP Balance row (only when senderAddress present)
+  - Section label: 'LIQUIDITY POOL' in Sometype Mono uppercase grey
+  - Updated MyGenomesPage destructure to include `senderAddress` from useWallet()
+  - Passed `senderAddress` to each GenomeOwnerCard in the grid render
+  - npm run build exits 0 (83 modules, tsc -b passes)
