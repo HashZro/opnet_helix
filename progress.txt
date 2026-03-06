@@ -1318,3 +1318,17 @@
   - Step 3 placeholder left (S149 handles inject rewards)
   - npm run build exits 0 (83 modules, no TypeScript errors)
   - LSP false positives (6133) for new imports — tsc -b passes clean as expected
+
+[2026-03-05] S149 — Implemented Claim LP Rewards step 3 (injectRewards) in MyGenomesPage
+  - In MyGenomesPage.tsx handleClaimLP: replaced step 3 placeholder with actual implementation
+  - Step 3a: underlyingContract.increaseAllowance(gTokenAddr, underlyingAmount) — approve genome to spend underlying
+  - Step 3b: genomeContract.injectRewards(underlyingAmount) — inject underlying into genome
+  - Step 3c: setClaimSuccess(true) — shows success banner 'LP fees claimed and injected into genome! Ratio increased.'
+  - Step 3d: setPoolRefetchTrigger(t => t + 1) + onRefetch?.() — refetches pool info and mine data
+  - Added poolRefetchTrigger state counter to GenomeOwnerCard; passed to useGenomePoolInfo as 5th arg
+  - Added _refetchTrigger optional param to useGenomePoolInfo hook (in dep array, triggers refetch)
+  - Added onRefetch?: () => void prop to GenomeOwnerCardProps; useMines refetch wired in parent
+  - claimSuccess state drives green success message displayed in Claim LP Fees section
+  - Reuses gTokenAddr/underlyingAddr from step 2 (no duplicate declarations)
+  - Build passes: tsc -b (0 TypeScript errors) + vite build ✓ (83 modules)
+  - GOTCHA: Don't redeclare variables already in scope from earlier steps in same try block

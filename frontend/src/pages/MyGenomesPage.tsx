@@ -40,9 +40,10 @@ function SkeletonCard() {
 interface GenomeOwnerCardProps {
     mine: MineInfo;
     senderAddress: Address | null;
+    onRefetch?: () => void;
 }
 
-function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
+function GenomeOwnerCard({ mine, senderAddress, onRefetch }: GenomeOwnerCardProps) {
     const { address, name, symbol, underlyingBalance, totalSupply, wrapFee, unwrapFee } = mine;
     const ratio = totalSupply > 0n ? Number(underlyingBalance) / Number(totalSupply) : 1.0;
     const wrapFeePercent = (Number(wrapFee) / 10).toFixed(1);
@@ -56,11 +57,13 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
     const [isClaiming, setIsClaiming] = useState(false);
     const [claimStep, setClaimStep] = useState(0);
     const [claimBtnHovered, setClaimBtnHovered] = useState(false);
+    const [claimSuccess, setClaimSuccess] = useState(false);
+    const [poolRefetchTrigger, setPoolRefetchTrigger] = useState(0);
 
     const toast = useToast();
     const { address: walletAddress } = useWallet();
 
-    const poolInfo = useGenomePoolInfo(address, mine.pubkey, mine.underlyingAddress, senderAddress);
+    const poolInfo = useGenomePoolInfo(address, mine.pubkey, mine.underlyingAddress, senderAddress, poolRefetchTrigger);
 
     async function handleInject() {
         const parsed = parseAmount(injectAmount, 18);
@@ -171,9 +174,38 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
             console.log('[claimLP] underlyingAmount extracted:', underlyingAmount.toString());
             toast.success('Liquidity removed');
 
-            // Step 3 implemented in S149
+            // Step 3: Inject underlying into genome (reuse gTokenAddr/underlyingAddr from step 2)
             setClaimStep(3);
-            void underlyingAmount; // referenced in S149
+
+            console.log('[claimLP] Step 3a: Approving underlying to genome', {
+                underlying: mine.underlyingAddress,
+                genome: mine.pubkey,
+                underlyingAmount: underlyingAmount.toString(),
+            });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const underlyingContract = getContract<any>(underlyingAddr, OP_20_ABI as any, provider, NETWORK, senderAddress);
+            const approveSim2 = await underlyingContract.increaseAllowance(gTokenAddr, underlyingAmount);
+            console.log('[claimLP] Step 3a increaseAllowance sim:', approveSim2);
+            if ('error' in (approveSim2 as object)) throw new Error(String((approveSim2 as { error: unknown }).error));
+            toast.info('Step 3/3: Approving underlying to genome...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (approveSim2 as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Underlying approved');
+
+            console.log('[claimLP] Step 3b: Injecting rewards into genome', { amount: underlyingAmount.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const genomeContract = getContract<any>(mine.address, GENOME_ABI as any, provider, NETWORK, senderAddress);
+            const injectSim = await genomeContract.injectRewards(underlyingAmount);
+            console.log('[claimLP] Step 3b injectRewards sim:', injectSim);
+            if ('error' in (injectSim as object)) throw new Error(String((injectSim as { error: unknown }).error));
+            toast.info('Step 3/3: Injecting rewards into genome...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (injectSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+
+            toast.success('LP fees claimed and injected into genome! Ratio increased.');
+            setClaimSuccess(true);
+            setPoolRefetchTrigger(t => t + 1);
+            onRefetch?.();
         } catch (err) {
             console.error('[claimLP] error:', err);
             toast.error(parseContractError(err));
@@ -335,6 +367,11 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
                     <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.65rem', color: hovered ? '#666' : '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
                         Claim LP Fees
                     </div>
+                    {claimSuccess && (
+                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#6f6' : '#060', marginBottom: '8px' }}>
+                            LP fees claimed and injected into genome! Ratio increased.
+                        </div>
+                    )}
                     {isClaiming && claimStepLabel && (
                         <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#aaa' : '#555', marginBottom: '8px' }}>
                             {claimStepLabel}
@@ -367,7 +404,7 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
 }
 
 export function MyGenomesPage() {
-    const { mines: allMines, loading, error } = useMines();
+    const { mines: allMines, loading, error, refetch } = useMines();
     const { identityKey, isConnected, senderAddress } = useWallet();
 
     const mines = allMines
@@ -405,7 +442,7 @@ export function MyGenomesPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {mines.map((mine) => <GenomeOwnerCard key={mine.address} mine={mine} senderAddress={senderAddress} />)}
+                    {mines.map((mine) => <GenomeOwnerCard key={mine.address} mine={mine} senderAddress={senderAddress} onRefetch={refetch} />)}
                 </div>
             )}
         </div>

@@ -1339,7 +1339,7 @@
       "title": "Implement Claim LP Rewards step 3 \u2014 injectRewards in MyGenomesPage",
       "description": "In frontend/src/pages/MyGenomesPage.tsx claim handler after removeLiquidity: Step 3 \u2014 inject underlying into genome. (a) getContract with GENOME_ABI on mine.address (with senderAddress), call underlyingContract.increaseAllowance(Address.fromString(mine.pubkey), underlyingAmount), send. (b) call genomeContract.injectRewards(underlyingAmount), send. (c) Show success state: 'LP fees claimed and injected into genome! Ratio increased.' (d) Refetch pool info and mine data. gToken amount returned from removeLiquidity stays in user wallet (do not re-wrap automatically).",
       "priority": 149,
-      "passes": false,
+      "passes": true,
       "acceptance": "Step 3 executes: underlying approved to genome, injectRewards called. Success message shown. Pool info refetched. npm run build exits 0.",
       "model": "sonnet"
     },

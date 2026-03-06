@@ -64,6 +64,7 @@ export function useGenomePoolInfo(
     genomePubkey: string,
     underlyingPubkey: string,
     senderAddress: Address | null,
+    _refetchTrigger?: number,
 ): GenomePoolInfo {
     const [state, setState] = useState<GenomePoolInfo>({ ...EMPTY });
 
@@ -133,7 +134,7 @@ export function useGenomePoolInfo(
         void fetch();
         return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [genomeAddress, genomePubkey, underlyingPubkey, senderKey]);
+    }, [genomeAddress, genomePubkey, underlyingPubkey, senderKey, _refetchTrigger]);
 
     return state;
 }
