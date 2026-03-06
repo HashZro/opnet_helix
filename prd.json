@@ -1276,7 +1276,7 @@
       "title": "Update CreateGenomePage copy from xToken to gToken",
       "description": "In frontend/src/pages/CreateGenomePage.tsx: replace all user-facing display strings 'xToken'->'{symbol} (gToken)', 'x-Token'->'gToken', 'Mine'->'Genome', 'mine'->'genome' in labels, headings, helper text, step descriptions, button text. Do not change variable names, only string literals displayed to user. Also update page <title> or heading if it says 'Create Mine'.",
       "priority": 142,
-      "passes": false,
+      "passes": true,
       "acceptance": "No 'xToken' or 'Mine' visible in the CreateGenomePage UI. All replaced with gToken/Genome. npm run build exits 0.",
       "model": "sonnet"
     },

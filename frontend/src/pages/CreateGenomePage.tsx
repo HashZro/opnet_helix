@@ -126,7 +126,7 @@ export function CreateGenomePage() {
     const [liqBusy, setLiqBusy] = useState(false);
     const [liqDone, setLiqDone] = useState(false);
 
-    const underlyingSymbol = xTokenSymbol.startsWith('x') ? xTokenSymbol.slice(1) : (xTokenSymbol || 'TOKEN');
+    const underlyingSymbol = xTokenSymbol.startsWith('g') ? xTokenSymbol.slice(1) : (xTokenSymbol || 'TOKEN');
 
     // -----------------------------------------------------------------------
     // Pool existence check — fires when underlying address changes
@@ -217,7 +217,7 @@ export function CreateGenomePage() {
         if (!deployedAddress || !deployedPubKey || !resolvedUnderlyingPubkey) throw new Error('Deploy first');
         const rawX = parseAmount(liqXAmount, 18);
         const rawUnderlying = parseAmount(liqUnderlyingAmount, 18);
-        if (rawX === 0n) throw new Error('Enter an xToken amount greater than zero');
+        if (rawX === 0n) throw new Error('Enter a gToken amount greater than zero');
         if (rawUnderlying === 0n) throw new Error('Enter an underlying amount greater than zero');
 
         const routerAddress = Address.fromString(CONTRACT_ADDRESSES.motoswapRouter);
@@ -250,10 +250,10 @@ export function CreateGenomePage() {
         if (bAllowance < rawX) {
             const sim = await tokenBContract.increaseAllowance(routerAddress, UINT256_MAX);
             if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
-            toast.info('Approving xToken...');
+            toast.info('Approving gToken...');
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (sim as any).sendTransaction({ refundTo: walletAddress, maximumAllowedSatToSpend: BigInt(100_000), feeRate: 10, network: NETWORK, minGas: BigInt(100_000) });
-            toast.success('xToken approved');
+            toast.success('gToken approved');
         }
 
         // Build access list from simulated approvals
@@ -288,7 +288,7 @@ export function CreateGenomePage() {
     const handleDeploy = async () => {
         if (!isConnected || !walletAddress) { toast.error('Connect wallet first'); return; }
         if (!underlyingAddress.trim()) { toast.error('Enter underlying token address'); return; }
-        if (!xTokenName.trim() || !xTokenSymbol.trim()) { toast.error('Enter xToken name and symbol'); return; }
+        if (!xTokenName.trim() || !xTokenSymbol.trim()) { toast.error('Enter gToken name and symbol'); return; }
 
         setIsBusy(true);
         try {
@@ -466,7 +466,7 @@ export function CreateGenomePage() {
                     Create Genome
                 </h1>
                 <p style={{ fontFamily: 'Sometype Mono', fontSize: '0.75rem', color: '#888', marginTop: '6px' }}>
-                    Deploy a new xToken vault and register it on-chain.
+                    Deploy a new gToken genome and register it on-chain.
                 </p>
             </div>
 
@@ -510,8 +510,8 @@ export function CreateGenomePage() {
                                     value={liqXAmount}
                                     onChange={setLiqXAmount}
                                     decimals={18}
-                                    symbol={xTokenSymbol || 'xTOKEN'}
-                                    tokenName={xTokenName || 'xToken'}
+                                    symbol={xTokenSymbol || 'gTOKEN'}
+                                    tokenName={xTokenName || 'gToken'}
                                     disabled={liqBusy}
                                 />
                                 <DepositInput
@@ -568,7 +568,7 @@ export function CreateGenomePage() {
 
                     {divider}
 
-                    <div style={SECTION_LABEL}>xToken Config</div>
+                    <div style={SECTION_LABEL}>gToken Config</div>
                     <div style={{ marginBottom: '16px' }}>
                         <label style={labelStyle}>Name</label>
                         <input

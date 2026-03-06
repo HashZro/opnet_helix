@@ -1232,3 +1232,17 @@
   - onChange still validates and shows error while typing (live feedback)
   - onBlur only fires when user leaves field (tabs away or clicks elsewhere)
   - npm run build exits 0 (82 modules, no TypeScript errors)
+
+[2026-03-05] S142 — Update CreateGenomePage copy from xToken to gToken
+  - Updated 7 user-facing string literals in CreateGenomePage.tsx:
+    1. underlyingSymbol: startsWith('x') → startsWith('g') (fixes symbol stripping for gToken prefix)
+    2. Error toast: 'Enter an xToken amount greater than zero' → 'Enter a gToken amount greater than zero'
+    3. Toast info: 'Approving xToken...' → 'Approving gToken...'
+    4. Toast success: 'xToken approved' → 'gToken approved'
+    5. Error toast: 'Enter xToken name and symbol' → 'Enter gToken name and symbol'
+    6. Subtitle: 'Deploy a new xToken vault...' → 'Deploy a new gToken genome...'
+    7. Symbol/tokenName fallbacks: 'xTOKEN'/'xToken' → 'gTOKEN'/'gToken'
+    8. Section label: 'xToken Config' → 'gToken Config'
+  - Variable names (xTokenName, xTokenSymbol) unchanged — only display strings changed
+  - Template interpolations ({xTokenSymbol}) display the actual g-prefixed symbol correctly
+  - npm run build exits 0 (82 modules, no TypeScript errors)
