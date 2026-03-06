@@ -1246,3 +1246,14 @@
   - Variable names (xTokenName, xTokenSymbol) unchanged — only display strings changed
   - Template interpolations ({xTokenSymbol}) display the actual g-prefixed symbol correctly
   - npm run build exits 0 (82 modules, no TypeScript errors)
+
+[2026-03-05] S143 — Replace MineCard grid in MyGenomesPage with GenomeOwnerCard
+  - Created GenomeOwnerCard component inline in MyGenomesPage.tsx
+  - Props: mine: MineInfo (same as useMines type)
+  - Shows: name, symbol▸underlyingSymbol header, truncated address
+  - Stats: Ratio (6 decimal places), Total Wrapped (formatted with underlyingSymbol), Wrap Fee %, Unwrap Fee %
+  - underlyingSymbol derived by stripping 'g' prefix (gMOTO → MOTO)
+  - Hover invert (black bg, white text) matching MineCard industrial style
+  - Pool info placeholder: 'Loading pool...' section below stats (bordered top separator)
+  - Removed MineCard import — no longer used in this file
+  - npm run build exits 0 (82 modules, no TypeScript errors)

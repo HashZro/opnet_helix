@@ -1285,7 +1285,7 @@
       "title": "Replace MineCard grid in MyGenomesPage with GenomeOwnerCard",
       "description": "In frontend/src/pages/MyGenomesPage.tsx: create a GenomeOwnerCard component (in the same file) that replaces MineCard for the owner view. GenomeOwnerCard props: mine: MineInfo. Shows: genome name, symbol (with g prefix styling), ratio (6 decimal places), underlyingBalance formatted, underlyingSymbol, and a status area for pool info (to be filled in S144-S145). Add placeholder 'Loading pool...' text where pool info will go. Replace MineCard with GenomeOwnerCard in the grid.",
       "priority": 143,
-      "passes": false,
+      "passes": true,
       "acceptance": "MyGenomesPage uses GenomeOwnerCard instead of MineCard. Each card shows name, symbol, ratio, underlyingBalance. npm run build exits 0.",
       "model": "sonnet"
     },

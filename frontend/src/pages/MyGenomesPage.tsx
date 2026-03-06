@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useMines } from '../hooks/useMines';
 import { useWallet } from '../hooks/useWallet';
-import { MineCard } from '../components/MineCard';
+import { formatBalance, truncateAddress } from '../lib/helpers';
 import { HIDDEN_MINE_PUBKEYS } from '../config';
+import type { MineInfo } from '../hooks/useMines';
 
 function SkeletonCard() {
     return (
@@ -20,6 +22,77 @@ function SkeletonCard() {
                         <div style={{ background: '#eee', height: '16px', borderRadius: 0 }} className="w-16" />
                     </div>
                 ))}
+            </div>
+        </div>
+    );
+}
+
+interface GenomeOwnerCardProps {
+    mine: MineInfo;
+}
+
+function GenomeOwnerCard({ mine }: GenomeOwnerCardProps) {
+    const { address, name, symbol, underlyingBalance, totalSupply, wrapFee, unwrapFee } = mine;
+    const ratio = totalSupply > 0n ? Number(underlyingBalance) / Number(totalSupply) : 1.0;
+    const wrapFeePercent = (Number(wrapFee) / 10).toFixed(1);
+    const unwrapFeePercent = (Number(unwrapFee) / 10).toFixed(1);
+    const underlyingSymbol = mine.underlyingSymbol || (symbol.startsWith('g') ? symbol.slice(1) : symbol);
+    const [hovered, setHovered] = useState(false);
+
+    return (
+        <div
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+                position: 'relative',
+                border: '1px solid #000',
+                background: hovered ? '#000' : '#fff',
+                padding: '20px',
+                transition: 'background 0s',
+            }}
+        >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <div>
+                    <h3 style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1rem', color: hovered ? '#fff' : '#000', marginBottom: '2px' }}>{name}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span style={{ fontSize: '0.75rem', fontFamily: 'Sometype Mono', color: hovered ? '#aaa' : '#888' }}>{symbol}</span>
+                        <span style={{ fontSize: '0.65rem', color: hovered ? '#666' : '#ccc' }}>▸</span>
+                        <span style={{ fontSize: '0.75rem', fontFamily: 'Sometype Mono', color: hovered ? '#bbb' : '#555' }}>{underlyingSymbol}</span>
+                    </div>
+                </div>
+                <span style={{ fontSize: '0.7rem', color: hovered ? '#aaa' : '#888', fontFamily: 'Sometype Mono', marginTop: '2px' }}>{truncateAddress(address)}</span>
+            </div>
+
+            {/* Stats */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', margin: '12px 0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.8rem' }}>Ratio</span>
+                    <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.8rem' }}>{ratio.toFixed(6)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.8rem' }}>Total Wrapped</span>
+                    <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.8rem' }}>{formatBalance(underlyingBalance, 18)} {underlyingSymbol}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.8rem' }}>Wrap Fee</span>
+                    <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.8rem' }}>{wrapFeePercent}%</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: hovered ? '#aaa' : '#888', fontSize: '0.8rem' }}>Unwrap Fee</span>
+                    <span style={{ color: hovered ? '#fff' : '#000', fontSize: '0.8rem' }}>{unwrapFeePercent}%</span>
+                </div>
+            </div>
+
+            {/* Pool info placeholder */}
+            <div style={{
+                marginTop: '16px',
+                paddingTop: '12px',
+                borderTop: `1px solid ${hovered ? '#333' : '#eee'}`,
+            }}>
+                <span style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: hovered ? '#666' : '#aaa', letterSpacing: '0.05em' }}>
+                    Loading pool...
+                </span>
             </div>
         </div>
     );
@@ -64,7 +137,7 @@ export function MyGenomesPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {mines.map((mine) => <MineCard key={mine.address} mine={mine} />)}
+                    {mines.map((mine) => <GenomeOwnerCard key={mine.address} mine={mine} />)}
                 </div>
             )}
         </div>
