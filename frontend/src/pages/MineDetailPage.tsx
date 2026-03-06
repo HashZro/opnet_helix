@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getContract, MotoSwapFactoryAbi } from 'opnet';
 import { Address } from '@btc-vision/transaction';
 import { useMine } from '../hooks/useMine';
 import { useWallet } from '../hooks/useWallet';
+import { useGenomePoolInfo } from '../hooks/useGenomePoolInfo';
 import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
 import { provider } from '../lib/provider';
 import { NETWORK, CONTRACT_ADDRESSES } from '../config';
@@ -186,39 +187,24 @@ export function MineDetailPage() {
     const [showWrap, setShowWrap] = useState(false);
     const [showUnwrap, setShowUnwrap] = useState(false);
     const [showAddLiquidity, setShowAddLiquidity] = useState(false);
-    const [poolExists, setPoolExists] = useState<boolean | null>(null);
     const [injectAmount, setInjectAmount] = useState('');
     const [isInjecting, setIsInjecting] = useState(false);
     const [wrapFeeInput, setWrapFeeInput] = useState('');
     const [isSettingWrapFee, setIsSettingWrapFee] = useState(false);
     const [unwrapFeeInput, setUnwrapFeeInput] = useState('');
     const [isSettingUnwrapFee, setIsSettingUnwrapFee] = useState(false);
+    const [isCreatingPool, setIsCreatingPool] = useState(false);
+    const [poolCopied, setPoolCopied] = useState(false);
+
+    const poolInfo = useGenomePoolInfo(
+        mine?.address ?? null,
+        mine?.pubkey ?? '',
+        mine?.underlyingPubkey ?? '',
+        senderAddress ?? null,
+    );
+    const poolExists = poolInfo.poolAddress !== '';
 
     const isOwner = isConnected && !!identityKey && !!mine && identityKey.toLowerCase() === mine.ownerAddress.toLowerCase();
-
-    useEffect(() => {
-        if (!mine?.pubkey || !mine.underlyingPubkey) return;
-        let cancelled = false;
-        const check = async () => {
-            try {
-                const factoryAddress = Address.fromString(CONTRACT_ADDRESSES.motoswapFactory);
-                const underlyingAddr = Address.fromString(mine.underlyingPubkey!);
-                const xTokenAddr = Address.fromString(mine.pubkey);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const factory = getContract<any>(factoryAddress, MotoSwapFactoryAbi as any, provider, NETWORK);
-                const res = await factory.getPool(underlyingAddr, xTokenAddr);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const poolAddress = (res as any)?.properties?.pool ?? (res as any)?.decoded?.[0];
-                const poolStr = poolAddress?.toString?.() ?? '';
-                const exists = poolStr !== '' && !poolStr.match(/^0x0+$/) && poolStr !== '0x';
-                if (!cancelled) setPoolExists(exists);
-            } catch {
-                if (!cancelled) setPoolExists(null);
-            }
-        };
-        void check();
-        return () => { cancelled = true; };
-    }, [mine?.pubkey, mine?.underlyingPubkey]);
 
     async function handleInjectRewards() {
         if (!senderAddress || !walletAddress || !mine) return;
@@ -302,6 +288,30 @@ export function MineDetailPage() {
             toast.error(parseContractError(err));
         } finally {
             setIsSettingUnwrapFee(false);
+        }
+    }
+
+    async function handleCreatePool() {
+        if (!senderAddress || !walletAddress || !mine) return;
+        setIsCreatingPool(true);
+        try {
+            console.log('[createPool]', { gTokenPubkey: mine.pubkey, underlyingPubkey: mine.underlyingPubkey });
+            const factoryAddress = Address.fromString(CONTRACT_ADDRESSES.motoswapFactory);
+            const gTokenAddr = Address.fromString(mine.pubkey);
+            const underlyingAddr = Address.fromString(mine.underlyingPubkey!);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const factory = getContract<any>(factoryAddress, MotoSwapFactoryAbi as any, provider, NETWORK, senderAddress);
+            const sim = await factory.createPool(gTokenAddr, underlyingAddr);
+            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
+            toast.info('Creating pool...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (sim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Pool created');
+        } catch (err) {
+            console.error('[createPool] error:', err);
+            toast.error(parseContractError(err));
+        } finally {
+            setIsCreatingPool(false);
         }
     }
 
@@ -448,6 +458,88 @@ export function MineDetailPage() {
                     </tbody>
                 </table>
             ) : null}
+
+            {/* Liquidity Pool */}
+            {divider}
+            <div style={SECTION_LABEL}>Liquidity Pool</div>
+            {poolInfo.loading ? (
+                <div style={{ marginBottom: '28px' }}>
+                    {[1, 2].map(i => <div key={i} style={{ background: '#eee', height: '38px', marginBottom: '4px' }} />)}
+                </div>
+            ) : poolExists ? (
+                <div style={{ border: '1px solid #000', marginBottom: '28px' }}>
+                    {/* Pool address row */}
+                    <div style={{ padding: '10px 14px', borderBottom: '1px solid #000', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                        <span style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: '#888', flexShrink: 0 }}>Pool</span>
+                        <span
+                            onClick={() => {
+                                navigator.clipboard.writeText(poolInfo.poolAddress).then(() => {
+                                    setPoolCopied(true);
+                                    setTimeout(() => setPoolCopied(false), 1500);
+                                });
+                            }}
+                            title="Click to copy"
+                            style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: '#555', cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        >
+                            {poolInfo.poolAddress.length > 20
+                                ? poolInfo.poolAddress.slice(0, 10) + '…' + poolInfo.poolAddress.slice(-8)
+                                : poolInfo.poolAddress}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="square" strokeLinejoin="miter">
+                                <rect x="9" y="9" width="13" height="13" rx="0" />
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                            </svg>
+                            {poolCopied && <span style={{ color: '#000', fontSize: '0.7rem' }}>✓</span>}
+                        </span>
+                        <a
+                            href={`https://opscan.org/tokens/${poolInfo.poolAddress}?network=op_testnet`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: '#000', border: '1px solid #000', padding: '2px 6px', textDecoration: 'none', marginLeft: 'auto' }}
+                        >
+                            OpScan ↗
+                        </a>
+                    </div>
+                    {/* Reserves */}
+                    <div style={{ display: 'flex' }}>
+                        <div style={{ flex: 1, padding: '10px 14px', borderRight: '1px solid #000' }}>
+                            <div style={{ ...SECTION_LABEL, marginBottom: '4px' }}>Reserve0 ({mine?.symbol ?? 'gToken'})</div>
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.85rem', color: '#000' }}>
+                                {formatBalance(poolInfo.reserve0, 18)}
+                            </div>
+                        </div>
+                        <div style={{ flex: 1, padding: '10px 14px' }}>
+                            <div style={{ ...SECTION_LABEL, marginBottom: '4px' }}>Reserve1 ({underlyingSymbol})</div>
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.85rem', color: '#000' }}>
+                                {formatBalance(poolInfo.reserve1, 18)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div style={{ border: '1px solid #000', padding: '16px 20px', marginBottom: '28px' }}>
+                    <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.8rem', color: '#888', marginBottom: '12px' }}>
+                        No pool exists for this genome.
+                    </div>
+                    {isConnected && mine && (
+                        <button
+                            onClick={() => { void handleCreatePool(); }}
+                            disabled={isCreatingPool}
+                            style={{
+                                border: '1px solid #000',
+                                background: '#000',
+                                color: '#fff',
+                                padding: '10px 18px',
+                                fontFamily: 'Sometype Mono',
+                                fontSize: '0.85rem',
+                                cursor: isCreatingPool ? 'not-allowed' : 'pointer',
+                                opacity: isCreatingPool ? 0.6 : 1,
+                            }}
+                        >
+                            {isCreatingPool ? 'Creating Pool...' : 'Create Pool'}
+                        </button>
+                    )}
+                </div>
+            )}
 
             {/* Owner Actions — only for genome owner */}
             {isOwner && mine && (

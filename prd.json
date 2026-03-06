@@ -1366,7 +1366,7 @@
       "title": "Add Liquidity Pool section to MineDetailPage",
       "description": "In frontend/src/pages/MineDetailPage.tsx: add a 'Liquidity Pool' section. Use useGenomePoolInfo hook (from S144) with mine.address, mine.pubkey, mine.underlyingPubkey, senderAddress. Display: (1) Pool address truncated with copy button and OpScan link. (2) Reserve0 (gToken) and Reserve1 (underlying) formatted amounts. (3) If no pool: show 'No pool exists' + 'Create Pool' button that calls motoFactory.createPool(gTokenPubkey, underlyingPubkey). Place section between Protocol stats and Owner Actions.",
       "priority": 152,
-      "passes": false,
+      "passes": true,
       "acceptance": "MineDetailPage shows Liquidity Pool section with pool address, reserves. Create Pool button appears when no pool. npm run build exits 0.",
       "model": "sonnet"
     },

@@ -1354,3 +1354,11 @@
   - Section placed after Protocol stats table, before modals — with divider separator
   - LSP 6133 false positives (as expected) — tsc -b passes clean
   - npm run build exits 0 (83 modules, no TypeScript errors)
+
+## S152 — Add Liquidity Pool section to MineDetailPage
+- Replaced standalone `poolExists` state + useEffect with `useGenomePoolInfo` hook call
+- Liquidity Pool section added between Protocol stats and Owner Actions
+- When pool exists: shows truncated pool address with copy button + OpScan link, Reserve0 (gToken) and Reserve1 (underlying) formatted amounts
+- When no pool: shows 'No pool exists' message + 'Create Pool' button (connected only) that calls motoFactory.createPool(gTokenAddr, underlyingAddr)
+- Removed unused `useEffect` import; `MotoSwapFactoryAbi` and `CONTRACT_ADDRESSES` still used in handleCreatePool
+- Build: npm run build exits 0 with no TS errors
