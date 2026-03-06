@@ -30,7 +30,7 @@ const FEE_DENOMINATOR: u256 = u256.fromU32(1000);
 const ZERO: u256 = u256.fromU32(0);
 
 @final
-export class Mine extends OP20 {
+export class Genome extends OP20 {
     // ── Storage pointers (each gets a unique u16 via Blockchain.nextPointer) ──
     private readonly _underlying: u16 = Blockchain.nextPointer;          // Address of wrapped token
     private readonly _owner: u16 = Blockchain.nextPointer;               // Controller address

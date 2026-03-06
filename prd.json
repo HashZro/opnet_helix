@@ -1114,7 +1114,7 @@
       "title": "Rename class Mine to Genome in Genome.ts",
       "description": "In contracts/src/genome/Genome.ts: rename class Mine to Genome (mark @final export class Genome extends OP20). Update all internal comments from 'mine'/'Mine' to 'genome'/'Genome'. Update error message strings: 'not owner' stays, any others referencing 'mine' updated to 'genome'. No logic changes. Keep all method implementations identical.",
       "priority": 124,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/src/genome/Genome.ts has 'export class Genome extends OP20'. No compilation errors when running asc on it (test compile). All method signatures unchanged.",
       "model": "sonnet"
     },

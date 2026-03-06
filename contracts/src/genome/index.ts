@@ -1,6 +1,6 @@
 import { Blockchain } from '@btc-vision/btc-runtime/runtime';
 import { revertOnError } from '@btc-vision/btc-runtime/runtime/abort/abort';
-import { Mine as Genome } from './Genome';
+import { Genome } from './Genome';
 
 Blockchain.contract = () => {
     return new Genome();

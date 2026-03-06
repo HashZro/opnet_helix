@@ -1089,3 +1089,9 @@
   - src/mine/ kept for reference (not deleted)
   - Frontend build: tsc -b (0 errors) + vite build exits 0 (82 modules)
   - GOTCHA: LSP reports 6133 false positive for requireFactoryOwner — tsc -b passes clean (same as other contracts)
+
+[2026-03-05] S124 — Renamed class Mine to Genome in contracts/src/genome/Genome.ts
+  - Changed `export class Mine extends OP20` to `export class Genome extends OP20` on line 33
+  - Updated contracts/src/genome/index.ts: replaced `import { Mine as Genome }` alias with direct `import { Genome }`
+  - No logic changes; all method signatures, error strings, storage pointers unchanged
+  - Test compile succeeded: build/Genome.wasm produced (39KB), no errors
