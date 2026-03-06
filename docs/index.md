@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Open App
-      link: https://helix.opnet.org
+      link: https://app.helixbtc.io
     - theme: alt
       text: Get Started
       link: /concepts/what-is-helix

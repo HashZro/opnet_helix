@@ -4,12 +4,14 @@ export default defineConfig({
     title: 'HELIX',
     description: 'Genome Protocol on OPNet — Bitcoin L1 yield wrapping',
     appearance: false,
+    head: [['link', { rel: 'icon', type: 'image/png', href: '/helixIcon.png' }]],
 
     themeConfig: {
         siteTitle: 'HELIX',
 
         nav: [
-            { text: 'Explore App', link: 'https://helix.opnet.org' },
+            { text: 'Explore App', link: 'https://app.helixbtc.io' },
+            { text: 'helixbtc.io', link: 'https://helixbtc.io' },
         ],
 
         sidebar: [
