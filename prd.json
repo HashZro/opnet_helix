@@ -1132,7 +1132,7 @@
       "title": "Update Factory.ts comments and error strings to genome",
       "description": "In contracts/src/factory/Factory.ts: update all comment strings from 'mine'/'Mine' to 'genome'/'Genome'. Update any error message strings (Revert messages) that mention 'mine' to use 'genome'. Change 'Mine Protocol' references to 'Genome Protocol' in comments. No logic changes.",
       "priority": 126,
-      "passes": false,
+      "passes": true,
       "acceptance": "Factory.ts has no remaining 'mine' or 'Mine' strings in comments or Revert messages. All replaced with genome/Genome equivalents.",
       "model": "sonnet"
     },

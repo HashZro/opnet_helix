@@ -1103,3 +1103,9 @@
   - Comments updated: '-> mine mapping', '-> underlying reverse mapping', 'mine at current index', 'mine count' -> genome equivalents
   - @returns name fields updated: mineAddress->genomeAddress in getGenomeAddress and getGenomeAtIndex
   - No logic changes — all storage pointers retain their Blockchain.nextPointer assignment order
+
+[2026-03-05] S126 — Update Factory.ts comments and error strings to genome
+  - Verified Factory.ts has no remaining 'mine'/'Mine' strings in comments or Revert messages
+  - S125 already updated all comments (underlying->genome mapping, genome at current index, genome count, etc.)
+  - Acceptance criteria already met: zero grep matches for [Mm]ine in Factory.ts
+  - No file changes needed — marked passes:true
