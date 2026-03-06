@@ -1402,7 +1402,7 @@
       "title": "Update AGENTS.md with Genome contract and LP claim patterns",
       "description": "Append to /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/AGENTS.md: (1) Genome contract patterns: injectRewards method signature, gToken naming rules (must start with g), Genome class extends OP20. (2) MotoSwap pool interaction pattern: useGenomePoolInfo hook usage, getPool/createPool/getReserves call patterns. (3) LP Claim flow: 5-step sequence (getPool, getLPBalance, increaseAllowance LP->router, removeLiquidity, injectRewards). (4) Address pattern for contract addresses: Address.fromString(hex) with one arg.",
       "priority": 156,
-      "passes": false,
+      "passes": true,
       "acceptance": "AGENTS.md has new sections for Genome contract, MotoSwap pool interaction, LP claim flow. File is valid markdown.",
       "model": "sonnet"
     },

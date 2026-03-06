@@ -301,3 +301,137 @@ const result = await factory.signInteraction({
 8. Frontend: `maximumAllowedSatToSpend` + `minGas` must be < wallet balance
 9. `OP20.totalSupply(_: Calldata)` is a public @method returning BytesWriter — for internal u256 access use `this._totalSupply.value` instead
 10. `Address` extends `Uint8Array` — there is NO `.toBytes()` method. Index directly into the Address (e.g., `addr[i]`) for byte access in key builders
+
+## Genome Contract Patterns
+
+### Genome class (extends OP20)
+```typescript
+// Genome.ts — gToken yield-wrapping contract
+@final
+export class Genome extends OP20 {
+    // ... same storage pointer pattern as Mine.ts
+}
+```
+
+### gToken Naming Rules
+- All genome token symbols **MUST** start with lowercase `g` (e.g. `gMOTO`, `gPILL`)
+- Validated in CreateGenomePage.tsx: symbol onChange shows error, onBlur auto-prepends `g`
+- underlyingSymbol derived by stripping `g` prefix: `gMOTO` → `MOTO`
+
+### injectRewards Method Signature
+```typescript
+@method()
+@returns({ name: 'amount', type: ABIDataTypes.UINT256 })
+public injectRewards(_calldata: Calldata): BytesWriter {
+    this.requireOwner();
+    const amount: u256 = _calldata.readU256();
+    if (amount == ZERO) throw new Revert('zero amount');
+    // EFFECTS: increment _underlyingHeld
+    const heldKey = this.fieldKeySimple(this._underlyingHeld);
+    this.su(heldKey, SafeMath.add(this.lu(heldKey), amount));
+    // INTERACTIONS: pull underlying from caller
+    const underlying: Address = this.la(this.fieldKeySimple(this._underlying));
+    TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount);
+    const response = new BytesWriter(32);
+    response.writeU256(amount);
+    return response;
+}
+```
+
+## MotoSwap Pool Interaction Patterns
+
+### useGenomePoolInfo Hook
+```typescript
+import { useGenomePoolInfo } from '../hooks/useGenomePoolInfo';
+
+const { poolAddress, reserve0, reserve1, lpBalance, loading, error } =
+    useGenomePoolInfo(genomeAddress, genomePubkey, underlyingPubkey, senderAddress);
+```
+
+### getPool / createPool / getReserves
+```typescript
+import { MotoSwapFactoryAbi, MotoswapPoolAbi, type IMotoswapFactoryContract } from 'opnet';
+import { Address } from '@btc-vision/transaction';
+
+// Read pool address (no sender needed)
+const factory = getContract<IMotoswapFactoryContract>(
+    CONTRACT_ADDRESSES.motoswapFactory, MotoSwapFactoryAbi as any, provider, NETWORK
+);
+const poolResult = await factory.getPool(
+    Address.fromString(genomePubkey),
+    Address.fromString(underlyingPubkey)
+);
+
+// Create pool (sender required)
+const factoryWrite = getContract<IMotoswapFactoryContract>(
+    CONTRACT_ADDRESSES.motoswapFactory, MotoSwapFactoryAbi as any, provider, NETWORK, senderAddress
+);
+const poolSim = await factoryWrite.createPool(
+    Address.fromString(genomePubkey),
+    Address.fromString(underlyingPubkey)
+);
+await poolSim.sendTransaction({ /* signer/mldsaSigner omitted */ refundTo: walletAddress, ... });
+
+// Get reserves (no sender)
+const poolContract = getContract(poolAddress, MotoswapPoolAbi as any, provider, NETWORK);
+const reservesResult = await poolContract.getReserves();
+```
+
+### Address.fromString — single-arg pattern (contract addresses)
+```typescript
+// For contract pubkeys stored as 0x-prefixed hex, use ONE argument:
+Address.fromString(pubkeyHex)
+// Two-arg form is only for wallet identity keys (identity + tweaked pubkey pair):
+Address.fromString(identityHex, compressedTweakedHex)
+```
+
+## LP Claim Flow (5-step sequence)
+
+Full flow to remove LP tokens and inject underlying rewards into a Genome:
+
+```typescript
+// Step 1 — Get pool address
+const pool = await motoFactory.getPool(gTokenAddr, underlyingAddr);
+
+// Step 2 — Get LP balance (already in useGenomePoolInfo)
+const lpBalance = ...; // bigint from OP_20 balanceOf on pool address
+
+// Step 3 — Approve LP tokens to router
+const lpContract = getContract(poolAddress, MotoswapPoolAbi as any, provider, NETWORK, senderAddress);
+const approveSim = await lpContract.increaseAllowance(
+    Address.fromString(CONTRACT_ADDRESSES.motoswapRouter), lpBalance
+);
+await approveSim.sendTransaction({ refundTo: walletAddress, ... });
+
+// Step 4 — Remove liquidity (returns underlying amount)
+const router = getContract(CONTRACT_ADDRESSES.motoswapRouter, MOTOSWAP_ROUTER_ABI as any, provider, NETWORK, senderAddress);
+const removeSim = await router.removeLiquidity(
+    gTokenAddress, underlyingAddress, lpBalance,
+    0n, 0n, walletSenderAddress,
+    BigInt(Math.floor(Date.now() / 1000) + 1200)  // deadline: now + 20min
+);
+await removeSim.sendTransaction({ refundTo: walletAddress, ... });
+// Extract underlyingAmount from result (the amount of underlying token returned)
+
+// Step 5 — Inject underlying into Genome
+const underlyingContract = getContract(underlyingAddress, OP_20_ABI as any, provider, NETWORK, senderAddress);
+await (await underlyingContract.increaseAllowance(Address.fromString(genomePubkey), underlyingAmount))
+    .sendTransaction({ refundTo: walletAddress, ... });
+const genomeContract = getContract(genomeAddress, GENOME_ABI as any, provider, NETWORK, senderAddress);
+await (await genomeContract.injectRewards(underlyingAmount))
+    .sendTransaction({ refundTo: walletAddress, ... });
+// Genome ratio increases — all existing xToken holders earn yield
+```
+
+### signInteraction — omit signer/mldsaSigner entirely (frontend)
+```typescript
+// CORRECT: omit signer and mldsaSigner keys entirely
+await sim.sendTransaction({
+    refundTo: walletAddress,
+    maximumAllowedSatToSpend: BigInt(100_000),
+    feeRate: 10,
+    network: NETWORK,
+    minGas: BigInt(100_000),
+});
+// WRONG: signer: null, mldsaSigner: null → OPWallet rejects
+```

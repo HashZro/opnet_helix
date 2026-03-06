@@ -1384,3 +1384,15 @@
   - Updated all references: HomePage.tsx (import + filter usage), MyGenomesPage.tsx (import + filter usage)
   - Stale addresses (xMotoMine, mine, staking, etc.) were already removed in S131 — config.ts was already clean
   - npm run build exits 0 (83 modules, no TypeScript errors)
+
+[2026-03-05] S156 — Updated AGENTS.md with Genome contract and LP claim patterns
+  - Added '## Genome Contract Patterns' section: Genome class extends OP20, gToken naming rules (must start with g),
+    injectRewards method signature (requireOwner, zero check, SafeMath add to _underlyingHeld, TransferHelper.transferFrom)
+  - Added '## MotoSwap Pool Interaction Patterns' section: useGenomePoolInfo hook usage,
+    getPool/createPool/getReserves call patterns with correct imports (MotoSwapFactoryAbi, MotoswapPoolAbi from 'opnet')
+  - Added '## LP Claim Flow' section: 5-step sequence documented with code:
+    1. getPool, 2. getLPBalance (via OP_20 balanceOf on pool), 3. increaseAllowance LP→router,
+    4. removeLiquidity (router.removeLiquidity with deadline=now+20min), 5. injectRewards (approve underlying→genome, injectRewards)
+  - Added Address.fromString single-arg vs two-arg distinction (single for contract pubkeys, two for wallet identity)
+  - Added signInteraction rule: omit signer/mldsaSigner entirely on frontend (OPWallet rejects null values)
+  - prd.json S156 set to passes: true
