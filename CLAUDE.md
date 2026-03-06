@@ -82,10 +82,11 @@ Token-wrapping yield protocol on OPNet (Bitcoin L1). Port of Ethereum Mines prot
 - `../monorepo/contracts/src/alpha/AlphaToken.ts` — OP_20 token pattern
 - `../monorepo/contracts/asconfig.json` — Build configuration
 - `../monorepo/contracts/scripts/deploy-vault.ts` — Deploy script pattern
-- `../optnet_tricks.md` — Frontend integration patterns
+- `../opnet_dev_guide.md` — Frontend integration patterns (replaces optnet_tricks.md)
 
 ## Session Efficiency
 - ONE story per iteration
 - Read specific reference files, don't dump directories
 - If compilation fails, fix the error, don't restart from scratch
 - Paste only error lines, not full logs
+- For frontend function call on contracts, always fill it up with console logs, specifying the function name and values

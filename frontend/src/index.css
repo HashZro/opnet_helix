@@ -34,6 +34,15 @@ button {
   font-family: 'Sometype Mono', monospace;
 }
 
+select {
+  accent-color: #000;
+}
+
+select:focus {
+  outline: 2px solid #000;
+  outline-offset: 0;
+}
+
 body {
   min-width: 320px;
   min-height: 100vh;

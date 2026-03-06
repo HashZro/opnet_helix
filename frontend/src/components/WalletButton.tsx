@@ -20,8 +20,8 @@ export function WalletButton() {
 
     const buttonStyle = {
         border: '1px solid #000',
-        background: hovered ? '#000' : '#fff',
-        color: hovered ? '#fff' : '#000',
+        background: hovered ? '#fff' : '#000',
+        color: hovered ? '#000' : '#fff',
         fontFamily: "'Sometype Mono', monospace",
         fontSize: '0.75rem',
         padding: '6px 16px',

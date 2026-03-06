@@ -7,6 +7,7 @@ import { useWallet } from './useWallet';
 
 export interface MineData {
     address: string;
+    pubkey: string;   // hex-encoded contract public key e.g. 0x044494c8... (needed for signInteraction contract field)
     name: string;
     symbol: string;
     totalSupply: bigint;
@@ -14,9 +15,10 @@ export interface MineData {
     ratio: number;
     wrapFee: bigint;
     unwrapFee: bigint;
-    controllerFee: bigint;
-    protocolFee: bigint;
     underlyingAddress: string;
+    underlyingPubkey: string;
+    underlyingName: string;
+    underlyingSymbol: string;
     ownerAddress: string;
     // user-specific (null when wallet not connected)
     userXBalance: bigint | null;
@@ -76,6 +78,14 @@ export function useMine(mineAddress: string | null) {
 
         const run = async () => {
             try {
+                // Resolve mine contract pubkey hex (required for signInteraction contract field)
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const mineCode = await (provider as any).getCode(mineAddress);
+                const rawPubkey = mineCode?.contractPublicKey;
+                const pubkey: string = rawPubkey instanceof Uint8Array
+                    ? '0x' + Array.from(rawPubkey as Uint8Array).map((b: number) => b.toString(16).padStart(2, '0')).join('')
+                    : String(rawPubkey ?? '');
+
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const mineContract = getContract<any>(
                     mineAddress,
@@ -86,7 +96,7 @@ export function useMine(mineAddress: string | null) {
 
                 const [
                     nameRes, symbolRes, totalSupplyRes, underlyingBalRes,
-                    wrapFeeRes, unwrapFeeRes, controllerFeeRes, protocolFeeRes,
+                    wrapFeeRes, unwrapFeeRes,
                     underlyingRes, ownerRes,
                 ] = await Promise.all([
                     mineContract.name(),
@@ -95,8 +105,6 @@ export function useMine(mineAddress: string | null) {
                     mineContract.underlyingBalance(),
                     mineContract.getWrapFee(),
                     mineContract.getUnwrapFee(),
-                    mineContract.getControllerFee(),
-                    mineContract.getProtocolFee(),
                     mineContract.getUnderlying(),
                     mineContract.getOwner(),
                 ]);
@@ -108,6 +116,30 @@ export function useMine(mineAddress: string | null) {
                 const ratio = totalSupply === BigInt(0) ? 1.0 : Number(underlyingBalance) / Number(totalSupply);
                 const underlyingAddress = extractAddress(underlyingRes, 'underlying');
                 const ownerAddress = extractAddress(ownerRes, 'owner');
+
+                // Fetch underlying contract pubkey + name + symbol in parallel
+                let underlyingPubkey = '';
+                let underlyingName = '';
+                let underlyingSymbol = '';
+                if (underlyingAddress) {
+                    try {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        const uc = getContract<any>(underlyingAddress, OP_20_ABI as any, provider, NETWORK);
+                        const [underlyingCode, uNameRes, uSymbolRes] = await Promise.all([
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            (provider as any).getCode(underlyingAddress),
+                            uc.name(),
+                            uc.symbol(),
+                        ]);
+                        const rawUp = underlyingCode?.contractPublicKey;
+                        underlyingPubkey = rawUp instanceof Uint8Array
+                            ? '0x' + Array.from(rawUp as Uint8Array).map((b: number) => b.toString(16).padStart(2, '0')).join('')
+                            : String(rawUp ?? '');
+                        underlyingName = extractString(uNameRes, 'name');
+                        underlyingSymbol = extractString(uSymbolRes, 'symbol');
+                    } catch { /* non-fatal */ }
+                }
+                if (cancelled) return;
 
                 let userXBalance: bigint | null = null;
                 let userUnderlyingBalance: bigint | null = null;
@@ -141,10 +173,10 @@ export function useMine(mineAddress: string | null) {
                         userUnderlyingBalance = extractU256(underlyingBalUserRes, 'balance');
                     }
 
-                    if (userXBalance > BigInt(0)) {
-                        const underlyingValRes = await mineContract.getUnderlyingAmount(userXBalance);
-                        if (cancelled) return;
-                        userUnderlyingValue = extractU256(underlyingValRes, 'underlyingAmount');
+                    // Compute client-side: xAmount * underlyingBalance / totalSupply
+                    // (mirrors _getUnderlyingAmount in Mine.ts — avoids selector mismatch for bare @method())
+                    if (userXBalance > BigInt(0) && totalSupply > BigInt(0)) {
+                        userUnderlyingValue = userXBalance * underlyingBalance / totalSupply;
                     } else {
                         userUnderlyingValue = BigInt(0);
                     }
@@ -153,6 +185,7 @@ export function useMine(mineAddress: string | null) {
                 if (!cancelled) {
                     setData({
                         address: mineAddress,
+                        pubkey,
                         name: extractString(nameRes, 'name'),
                         symbol: extractString(symbolRes, 'symbol'),
                         totalSupply,
@@ -160,9 +193,10 @@ export function useMine(mineAddress: string | null) {
                         ratio,
                         wrapFee: extractU256(wrapFeeRes, 'wrapFee'),
                         unwrapFee: extractU256(unwrapFeeRes, 'unwrapFee'),
-                        controllerFee: extractU256(controllerFeeRes, 'controllerFee'),
-                        protocolFee: extractU256(protocolFeeRes, 'protocolFee'),
                         underlyingAddress,
+                        underlyingPubkey,
+                        underlyingName,
+                        underlyingSymbol,
                         ownerAddress,
                         userXBalance,
                         userUnderlyingBalance,

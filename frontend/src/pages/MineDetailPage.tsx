@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { getContract, MotoSwapFactoryAbi } from 'opnet';
+import { Address } from '@btc-vision/transaction';
 import { useMine } from '../hooks/useMine';
 import { useWallet } from '../hooks/useWallet';
 import { formatBalance } from '../lib/helpers';
+import { provider } from '../lib/provider';
+import { NETWORK, CONTRACT_ADDRESSES } from '../config';
 import { WrapModal } from '../components/WrapModal';
 import { UnwrapModal } from '../components/UnwrapModal';
 import { AddLiquidityModal } from '../components/AddLiquidityModal';
+import { ApyBadge } from '../components/ApyBadge';
+import { useApyEstimate } from '../hooks/useApyEstimate';
 import type { MineInfo } from '../hooks/useMines';
 
 const SECTION_LABEL: React.CSSProperties = {
@@ -100,6 +106,50 @@ function TokenCard({ label, symbol, address, pubkey, loading }: { label: string;
     );
 }
 
+function TradeCard({ underlyingPubkey, xTokenPubkey, loading }: { underlyingPubkey: string; xTokenPubkey: string; loading: boolean }) {
+    const [hovered, setHovered] = useState(false);
+    const url = underlyingPubkey && xTokenPubkey
+        ? `https://motoswap.org/swap/${underlyingPubkey}/${xTokenPubkey}/`
+        : null;
+
+    return (
+        <div style={{ flex: 1, border: '1px solid #000', padding: '16px 20px', minWidth: '180px' }}>
+            <div style={SECTION_LABEL}>Trade</div>
+            {loading ? (
+                <>
+                    <div style={{ background: '#eee', height: '20px', marginBottom: '8px' }} />
+                    <div style={{ background: '#eee', height: '14px', width: '70%' }} />
+                </>
+            ) : (
+                <>
+                    <div style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1.1rem', color: '#000', marginBottom: '8px' }}>MotoSwap</div>
+                    {url && (
+                        <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onMouseEnter={() => setHovered(true)}
+                            onMouseLeave={() => setHovered(false)}
+                            style={{
+                                display: 'inline-block',
+                                fontFamily: 'Sometype Mono',
+                                fontSize: '0.7rem',
+                                color: hovered ? '#fff' : '#000',
+                                background: hovered ? '#000' : 'transparent',
+                                border: '1px solid #000',
+                                padding: '3px 8px',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            Trade on MotoSwap ↗
+                        </a>
+                    )}
+                </>
+            )}
+        </div>
+    );
+}
+
 function ActionBtn({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
     const [hovered, setHovered] = useState(false);
     return (
@@ -128,9 +178,36 @@ export function MineDetailPage() {
     const { address } = useParams<{ address: string }>();
     const { data: mine, loading, error } = useMine(address ?? null);
     const { isConnected } = useWallet();
+    const ratio = mine && mine.totalSupply > 0n ? Number(mine.underlyingBalance) / Number(mine.totalSupply) : 1.0;
+    const apy = useApyEstimate(address ?? '', ratio);
     const [showWrap, setShowWrap] = useState(false);
     const [showUnwrap, setShowUnwrap] = useState(false);
     const [showAddLiquidity, setShowAddLiquidity] = useState(false);
+    const [poolExists, setPoolExists] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        if (!mine?.pubkey || !mine.underlyingPubkey) return;
+        let cancelled = false;
+        const check = async () => {
+            try {
+                const factoryAddress = Address.fromString(CONTRACT_ADDRESSES.motoswapFactory);
+                const underlyingAddr = Address.fromString(mine.underlyingPubkey!);
+                const xTokenAddr = Address.fromString(mine.pubkey);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const factory = getContract<any>(factoryAddress, MotoSwapFactoryAbi as any, provider, NETWORK);
+                const res = await factory.getPool(underlyingAddr, xTokenAddr);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const poolAddress = (res as any)?.properties?.pool ?? (res as any)?.decoded?.[0];
+                const poolStr = poolAddress?.toString?.() ?? '';
+                const exists = poolStr !== '' && !poolStr.match(/^0x0+$/) && poolStr !== '0x';
+                if (!cancelled) setPoolExists(exists);
+            } catch {
+                if (!cancelled) setPoolExists(null);
+            }
+        };
+        void check();
+        return () => { cancelled = true; };
+    }, [mine?.pubkey, mine?.underlyingPubkey]);
 
     const underlyingSymbol = mine?.underlyingSymbol || (mine
         ? (mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol)
@@ -188,6 +265,11 @@ export function MineDetailPage() {
                     pubkey={mine?.underlyingPubkey ?? ''}
                     loading={loading}
                 />
+                <TradeCard
+                    underlyingPubkey={mine?.underlyingPubkey ?? ''}
+                    xTokenPubkey={mine?.pubkey ?? ''}
+                    loading={loading}
+                />
             </div>
 
             {divider}
@@ -226,11 +308,13 @@ export function MineDetailPage() {
                                     Unwrap {mine.symbol} → {underlyingSymbol}
                                 </ActionBtn>
                             </div>
-                            <div style={{ display: 'flex', gap: '12px', marginBottom: '28px' }}>
-                                <ActionBtn onClick={() => setShowAddLiquidity(true)}>
-                                    + Add Liquidity on MotoSwap
-                                </ActionBtn>
-                            </div>
+                            {poolExists !== true && (
+                                <div style={{ display: 'flex', gap: '12px', marginBottom: '28px' }}>
+                                    <ActionBtn onClick={() => setShowAddLiquidity(true)}>
+                                        + Add Liquidity on MotoSwap
+                                    </ActionBtn>
+                                </div>
+                            )}
                         </>
                     )}
                     {divider}
@@ -260,9 +344,16 @@ export function MineDetailPage() {
                                 <td style={{ border: '1px solid #000', padding: '10px 14px', fontSize: '0.8rem', fontFamily: 'Sometype Mono', color: '#000' }}>{v}</td>
                             </tr>
                         ))}
+                        <tr>
+                            <td colSpan={2} style={{ border: '1px solid #000', padding: '10px 14px', fontSize: '0.8rem', fontFamily: 'Sometype Mono' }}>
+                                <ApyBadge apy={apy} labelColor="#888" valueColor="#000" />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             ) : null}
+
+            <div style={SECTION_LABEL}>Genomes</div>
 
             {showWrap && mineAsInfo && (
                 <WrapModal mine={mineAsInfo} onClose={() => setShowWrap(false)} />

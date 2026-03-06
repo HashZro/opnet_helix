@@ -1,40 +1,60 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { WalletButton } from './WalletButton';
+import { useWallet } from '../hooks/useWallet';
+import { useBalances } from '../contexts/BalancesContext';
 
-const NAV_LINKS = [
-    { label: '/Wrap', to: '/wrap' },
-    { label: '/Unwrap', to: '/unwrap' },
-];
+function NavTab({ to, children }: { to: string; children: React.ReactNode }) {
+    const location = useLocation();
+    const active = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+    return (
+        <Link
+            to={to}
+            style={{
+                fontFamily: 'Sometype Mono, monospace',
+                fontSize: '0.75rem',
+                color: active ? '#000' : '#888',
+                textDecoration: 'none',
+                padding: '4px 0',
+                borderBottom: active ? '1px solid #000' : '1px solid transparent',
+                letterSpacing: '0.04em',
+                transition: 'color 0.1s, border-color 0.1s',
+            }}
+        >
+            {children}
+        </Link>
+    );
+}
 
 export function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { isConnected } = useWallet();
+    const { btcBalance } = useBalances();
 
     return (
         <nav style={{ borderBottom: '1px solid #000', background: '#fff', position: 'sticky', top: 0, zIndex: 100 }}>
-            <div style={{ maxWidth: '900px', margin: '0 auto', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem' }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem' }}>
                 {/* Brand */}
                 <Link to="/" style={{ fontFamily: 'Mulish, sans-serif', fontWeight: 800, fontSize: '1.1rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#000', textDecoration: 'none' }}>
                     HELIX
                 </Link>
 
-                {/* Desktop nav */}
-                <div style={{ display: 'flex', gap: '24px' }}>
-                    {NAV_LINKS.map((link) => (
-                        <Link
-                            key={link.to}
-                            to={link.to}
-                            style={{ fontFamily: 'Sometype Mono, monospace', fontSize: '0.8rem', color: '#000', textDecoration: 'none' }}
-                            onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
-                            onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
-                </div>
-
-                {/* Wallet + hamburger */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                {/* Tabs + Wallet */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div className="hidden md:flex" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                        <NavTab to="/">Explore</NavTab>
+                        <NavTab to="/create">Create</NavTab>
+                        {isConnected && (
+                            <NavTab to="/my-genomes">
+                                My Genomes
+                            </NavTab>
+                        )}
+                    </div>
+                    {isConnected && (
+                        <span style={{ border: '1px solid #000', background: '#fff', color: '#000', fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', padding: '6px 16px' }}>
+                            {btcBalance ?? '...'} BTC
+                        </span>
+                    )}
                     <div className="hidden md:block">
                         <WalletButton />
                     </div>
@@ -60,16 +80,18 @@ export function Navbar() {
             {/* Mobile menu */}
             {menuOpen && (
                 <div style={{ borderTop: '1px solid #000', padding: '12px 2rem', background: '#fff', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {NAV_LINKS.map((link) => (
-                        <Link
-                            key={link.to}
-                            to={link.to}
-                            style={{ fontFamily: 'Sometype Mono, monospace', fontSize: '0.8rem', color: '#000', textDecoration: 'none' }}
-                            onClick={() => setMenuOpen(false)}
-                        >
-                            {link.label}
-                        </Link>
-                    ))}
+                    <NavTab to="/">Explore</NavTab>
+                    <NavTab to="/create">Create</NavTab>
+                    {isConnected && (
+                        <NavTab to="/my-genomes">
+                            My Genomes
+                        </NavTab>
+                    )}
+                    {isConnected && (
+                        <span style={{ border: '1px solid #000', background: '#fff', color: '#000', fontFamily: 'Sometype Mono, monospace', fontSize: '0.75rem', padding: '6px 16px', alignSelf: 'flex-start' }}>
+                            {btcBalance ?? '...'} BTC
+                        </span>
+                    )}
                     <div>
                         <WalletButton />
                     </div>

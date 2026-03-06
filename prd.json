@@ -976,7 +976,7 @@
     },
     {
       "id": "S109",
-      "title": "Navbar redesign — industrial HELIX brand, slash-prefixed links",
+      "title": "Navbar redesign \u2014 industrial HELIX brand, slash-prefixed links",
       "description": "Rewrite frontend/src/components/Navbar.tsx. Change nav link labels to '/Wrap' and '/Unwrap' (slash is part of label). Remove 'Home' link. Nav element style: borderBottom:'1px solid #000', background:'#fff', position:'sticky', top:0, zIndex:100. Inner container div style: maxWidth:'900px', margin:'0 auto', height:'48px', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 2rem'. Brand Link to '/' style: fontFamily:'Mulish', fontWeight:800, fontSize:'1.1rem', textTransform:'uppercase', letterSpacing:'0.05em', color:'#000', textDecoration:'none', text 'HELIX'. Desktop links: display flex gap:24px. Each Link style: fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#000', textDecoration:'none'. On hover: textDecoration:'underline' only, no background change. Mobile menu div style: borderTop:'1px solid #000', padding:'12px 2rem', background:'#fff', display:'flex', flexDirection:'column', gap:'12px'. Remove all Tailwind classes with bg-gray-900, border-gray-800, text-gray-400, text-white, hover:text-white, rounded. Run: cd frontend && npm run build.",
       "priority": 28,
       "passes": true,
@@ -985,7 +985,7 @@
     },
     {
       "id": "S110",
-      "title": "Layout redesign — white bg, 900px container, left rail",
+      "title": "Layout redesign \u2014 white bg, 900px container, left rail",
       "description": "Rewrite frontend/src/components/Layout.tsx. Outer wrapper: style={{ position:'relative', minHeight:'100vh', background:'#fff', color:'#000', display:'flex', flexDirection:'column' }}. Remove className 'flex flex-col min-h-screen bg-gray-950 text-gray-100'. Add left rail div as first child inside outer wrapper (before Navbar): <div aria-hidden='true' style={{ position:'absolute', left:'calc((100vw - 900px) / 2 - 28px)', top:'80px', width:'1px', background:'#000', height:'60vh', pointerEvents:'none' }} />. Main element: style={{ maxWidth:'900px', margin:'0 auto', padding:'0 2rem', flex:1, width:'100%' }}. Remove className 'flex-1' from main. Keep Navbar at top inside outer wrapper. Run: cd frontend && npm run build.",
       "priority": 28,
       "passes": true,
@@ -994,7 +994,7 @@
     },
     {
       "id": "S111",
-      "title": "MineCard redesign — bordered card with corner bracket motifs",
+      "title": "MineCard redesign \u2014 bordered card with corner bracket motifs",
       "description": "Rewrite frontend/src/components/MineCard.tsx styles. Outer div: style={{ position:'relative', border:'1px solid #000', background:'#fff', padding:'20px', cursor:'pointer' }}. Remove rounded-xl, bg-gray-900, hover:bg-gray-800, border-gray-800, transition-colors. Add top-right bracket as first child: <div aria-hidden='true' style={{ position:'absolute', top:'-1px', right:'-1px', width:'16px', height:'16px', borderTop:'1px solid #000', borderRight:'1px solid #000' }} />. Add bottom-left bracket as last child before closing outer div: <div aria-hidden='true' style={{ position:'absolute', bottom:'-1px', left:'-1px', width:'16px', height:'16px', borderBottom:'1px solid #000', borderLeft:'1px solid #000' }} />. Mine name h3: style={{ fontFamily:'Mulish', fontWeight:700, fontSize:'1rem', color:'#000' }}. Remove text-lg, font-semibold, text-white. Symbol span: style={{ fontSize:'0.8rem', color:'#888' }}. Address span: style={{ fontSize:'0.7rem', color:'#888', fontFamily:'Sometype Mono' }}. Stat labels span: color:'#888', fontSize:'0.8rem'. Stat values span: color:'#000', fontSize:'0.8rem'. Remove text-gray-400, text-white, text-purple-400, text-blue-400. Stats container: display:'flex', flexDirection:'column', gap:'6px', margin:'12px 0'. Each stat row: display:'flex', justifyContent:'space-between'. Wrap Link: add hovered state via useState, style={{ display:'block', width:'100%', textAlign:'center', border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', padding:'8px', fontFamily:'Sometype Mono', fontSize:'0.8rem', marginTop:'16px', textDecoration:'none' }}, onMouseEnter/Leave toggles hovered. Remove bg-purple-600, rounded-lg from Link. Run: cd frontend && npm run build.",
       "priority": 29,
       "passes": true,
@@ -1003,7 +1003,7 @@
     },
     {
       "id": "S112",
-      "title": "TokenInput + TransactionButton redesign — industrial form controls",
+      "title": "TokenInput + TransactionButton redesign \u2014 industrial form controls",
       "description": "Rewrite styles in 2 files. (1) frontend/src/components/TokenInput.tsx: Label style: fontSize:'0.75rem', color:'#888', fontFamily:'Sometype Mono', display:'block', marginBottom:'4px'. Max span style: fontSize:'0.7rem', color:'#888'. Input container div style: display:'flex', alignItems:'stretch', border:'1px solid #000', background:'#fff'. Remove bg-gray-800, border-gray-700, rounded-lg, focus-within classes, overflow-hidden. Input element style: flex:1, background:'transparent', border:'none', outline:'none', padding:'10px 12px', color:'#000', fontFamily:'Sometype Mono', fontSize:'0.9rem'. Remove text-white, placeholder-gray-600, appearance classes. MAX button style: borderLeft:'1px solid #000', background:'transparent', color:'#000', padding:'4px 10px', fontFamily:'Sometype Mono', fontSize:'0.7rem', cursor:'pointer', border:'none' then override borderLeft:'1px solid #000' (use a style object with only borderLeft). Remove text-purple-400, hover:bg-gray-700, rounded, mr-1. Symbol badge span style: borderLeft:'1px solid #000', padding:'10px 12px', fontSize:'0.8rem', color:'#000', background:'#fff', whiteSpace:'nowrap', display:'flex', alignItems:'center'. Remove bg-gray-750, text-gray-300. (2) frontend/src/components/TransactionButton.tsx: Add const [hovered, setHovered] = useState(false). Button style: border:'1px solid #000', background: hovered && !disabled ? '#000' : '#fff', color: hovered && !disabled ? '#fff' : '#000', width:'100%', padding:'10px 16px', fontFamily:'Sometype Mono', fontSize:'0.8rem', cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.4 : 1. Add onMouseEnter/Leave for hovered state. Remove all purple gradient, rounded-lg, transition classes. Run: cd frontend && npm run build.",
       "priority": 29,
       "passes": true,
@@ -1012,7 +1012,7 @@
     },
     {
       "id": "S113",
-      "title": "HomePage redesign — section heading with glyph, tick divider, monochrome grid",
+      "title": "HomePage redesign \u2014 section heading with glyph, tick divider, monochrome grid",
       "description": "Rewrite frontend/src/pages/HomePage.tsx visual layer. (1) Page container: style={{ padding:'48px 0' }}. Remove className 'max-w-6xl mx-auto p-4 md:p-6'. (2) Replace entire heading block with: <div style={{ marginBottom:'16px' }}><h1 style={{ display:'flex', alignItems:'center', gap:'12px', fontFamily:'Mulish', fontWeight:700, fontSize:'1.5rem', color:'#000', lineHeight:1.1 }}><span style={{ fontFamily:'Sometype Mono', fontSize:'1rem', fontWeight:400 }}>&#8801;</span>Helix <strong>Genomes</strong></h1><p style={{ fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#888', marginTop:'8px' }}>Wrap OP-20 tokens into yield-bearing xTokens on Bitcoin L1.</p></div>. (3) Add tick-mark divider before mine grid: <div style={{ backgroundImage:'repeating-linear-gradient(to right, #000 0px, #000 1px, transparent 1px, transparent 6px)', height:'16px', width:'100%', margin:'32px 0' }} />. (4) Skeleton card outer: style={{ border:'1px solid #eee', background:'#fff', padding:'20px' }}, inner skeleton blocks: style={{ background:'#eee', height:'NNpx', marginBottom:'8px', borderRadius:0 }}. Remove bg-gray-900, bg-gray-800, rounded-xl. (5) Empty state: style={{ textAlign:'center', padding:'80px 0', color:'#888', fontFamily:'Sometype Mono' }}. Remove text-gray-500. (6) Error block: style={{ border:'1px solid #000', padding:'16px', marginBottom:'24px', fontFamily:'Sometype Mono', fontSize:'0.8rem', color:'#000' }}, prepend '[!] ' to message. Remove bg-red-900/30, border-red-700, text-red-300, rounded-lg. Run: cd frontend && npm run build.",
       "priority": 29,
       "passes": true,
@@ -1021,16 +1021,16 @@
     },
     {
       "id": "S114",
-      "title": "WrapPage + UnwrapPage redesign — industrial form layout",
+      "title": "WrapPage + UnwrapPage redesign \u2014 industrial form layout",
       "description": "Apply identical style changes to both frontend/src/pages/WrapPage.tsx and frontend/src/pages/UnwrapPage.tsx. (1) Page container: style={{ padding:'48px 0', maxWidth:'520px', margin:'0 auto' }}. Remove 'max-w-lg mx-auto p-4 md:p-6'. (2) h1: style={{ fontFamily:'Mulish', fontWeight:700, fontSize:'1.5rem', color:'#000', marginBottom:'32px', display:'flex', alignItems:'center', gap:'10px' }}. Prepend <span style={{ fontFamily:'Sometype Mono', fontWeight:400 }}>&#xB7;&#xB7;&#xB7;</span> before title text. (3) Mine selector label: style={{ fontSize:'0.75rem', color:'#888', fontFamily:'Sometype Mono', display:'block', marginBottom:'4px' }}. (4) Select: style={{ width:'100%', border:'1px solid #000', background:'#fff', color:'#000', padding:'10px 12px', fontFamily:'Sometype Mono', fontSize:'0.85rem', outline:'none', appearance:'none' }}. Remove bg-gray-800, border-gray-700, rounded-lg. (5) Skeleton blocks: style={{ background:'#eee', height:'NNpx', marginBottom:'8px' }}. Remove bg-gray-700, bg-gray-800. (6) Preview box: style={{ border:'1px solid #000', padding:'16px', marginTop:'8px' }}. Remove bg-gray-900, rounded-lg. Preview 'Preview' label: style={{ fontSize:'0.65rem', color:'#888', fontFamily:'Sometype Mono', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'8px' }}. Preview row labels: color:'#888'. Preview row values: color:'#000'. Remove text-gray-400, text-purple-400, text-gray-300. (7) Connect wallet message: style={{ textAlign:'center', color:'#888', fontSize:'0.85rem', fontFamily:'Sometype Mono', padding:'16px 0' }}. (8) Balance info: style={{ fontSize:'0.75rem', textAlign:'center', color:'#888', fontFamily:'Sometype Mono' }}. Run: cd frontend && npm run build.",
       "priority": 29,
       "passes": true,
-      "acceptance": "npm run build exits 0. WrapPage and UnwrapPage: white background throughout. Heading has '···' glyph prefix in Mulish. Select has 1px black border, no radius. Preview box has 1px black border white bg. Labels #888, values #000. No bg-gray-* or purple colors.",
+      "acceptance": "npm run build exits 0. WrapPage and UnwrapPage: white background throughout. Heading has '\u00b7\u00b7\u00b7' glyph prefix in Mulish. Select has 1px black border, no radius. Preview box has 1px black border white bg. Labels #888, values #000. No bg-gray-* or purple colors.",
       "model": "sonnet"
     },
     {
       "id": "S115",
-      "title": "MineDetailPage redesign — bordered stats table, outlined action buttons",
+      "title": "MineDetailPage redesign \u2014 bordered stats table, outlined action buttons",
       "description": "Rewrite frontend/src/pages/MineDetailPage.tsx styles. (1) Page container: style={{ padding:'48px 0' }}. (2) Title h1/heading: style={{ fontFamily:'Mulish', fontWeight:700, fontSize:'1.5rem', color:'#000', marginBottom:'32px', display:'flex', alignItems:'center', gap:'10px' }}. Prepend <span style={{ fontFamily:'Sometype Mono', fontWeight:400 }}>|||</span>. (3) Replace stat card divs with <table style={{ borderCollapse:'collapse', width:'100%', border:'1px solid #000', marginBottom:'32px' }}>. Each stat: <tr><td style={{ border:'1px solid #000', padding:'10px 14px', fontSize:'0.8rem', fontFamily:'Sometype Mono', color:'#888', width:'40%' }}>label</td><td style={{ border:'1px solid #000', padding:'10px 14px', fontSize:'0.8rem', fontFamily:'Sometype Mono', color:'#000' }}>value</td></tr>. Stat rows: Ratio, Total Wrapped, xToken Supply, Wrap Fee %, Unwrap Fee %, Underlying Token. (4) User position section (wallet connected): same bordered table for 'Your xToken Balance' and 'Your Underlying Value'. Add section label above: style={{ fontSize:'0.7rem', color:'#888', fontFamily:'Sometype Mono', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:'8px' }} text 'Your Position'. (5) Action buttons row: style={{ display:'flex', gap:'16px', marginTop:'32px' }}. Each Link/button: style={{ flex:1, border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', padding:'10px', fontFamily:'Sometype Mono', fontSize:'0.8rem', textAlign:'center', textDecoration:'none', display:'block', cursor:'pointer' }}, use per-button hovered state. (6) Skeleton: border:'1px solid #eee', background:'#eee'. (7) Error: bordered mono box '[!] ' prefix. Remove all bg-gray-*, text-gray-*, text-purple-*, rounded-*. Run: cd frontend && npm run build.",
       "priority": 29,
       "passes": true,
@@ -1039,8 +1039,8 @@
     },
     {
       "id": "S116",
-      "title": "Spinner + ToastContainer redesign — monochrome black/white only",
-      "description": "Redesign 2 components. (1) frontend/src/components/Spinner.tsx: Read file. Replace colored border Tailwind classes (border-purple-*, border-blue-*, border-indigo-*) with border-black and border-t-transparent (or inline style border:'2px solid #000', borderTopColor:'transparent'). Keep animate-spin class or equivalent @keyframes. borderRadius:50% is the one allowed exception to the no-radius rule for spinners. (2) frontend/src/components/ToastContainer.tsx and any Toast subcomponent inside it: Replace bg-green-*, bg-red-*, bg-blue-*, bg-emerald-* with background:'#fff'. Replace border-green-*, border-red-*, border-blue-* with border:'1px solid #000'. Replace text-green-*, text-red-*, text-blue-*, text-emerald-* with color:'#000'. Add fontFamily:'Sometype Mono', fontSize:'0.75rem' to toast item. Prepend type prefix to message: success → '[OK] ', error → '[!] ', info → '[i] '. Keep fixed positioning, z-index, and auto-dismiss timer unchanged. Run: cd frontend && npm run build.",
+      "title": "Spinner + ToastContainer redesign \u2014 monochrome black/white only",
+      "description": "Redesign 2 components. (1) frontend/src/components/Spinner.tsx: Read file. Replace colored border Tailwind classes (border-purple-*, border-blue-*, border-indigo-*) with border-black and border-t-transparent (or inline style border:'2px solid #000', borderTopColor:'transparent'). Keep animate-spin class or equivalent @keyframes. borderRadius:50% is the one allowed exception to the no-radius rule for spinners. (2) frontend/src/components/ToastContainer.tsx and any Toast subcomponent inside it: Replace bg-green-*, bg-red-*, bg-blue-*, bg-emerald-* with background:'#fff'. Replace border-green-*, border-red-*, border-blue-* with border:'1px solid #000'. Replace text-green-*, text-red-*, text-blue-*, text-emerald-* with color:'#000'. Add fontFamily:'Sometype Mono', fontSize:'0.75rem' to toast item. Prepend type prefix to message: success \u2192 '[OK] ', error \u2192 '[!] ', info \u2192 '[i] '. Keep fixed positioning, z-index, and auto-dismiss timer unchanged. Run: cd frontend && npm run build.",
       "priority": 30,
       "passes": true,
       "acceptance": "npm run build exits 0. Spinner: black border with transparent top edge, monochrome. Toasts: white bg, 1px black border, black Sometype Mono text, type indicated by text prefix ([OK] / [!] / [i]). No green/red/blue/purple in either component.",
@@ -1048,7 +1048,7 @@
     },
     {
       "id": "S117",
-      "title": "WalletButton redesign — outlined monochrome, instant hover invert",
+      "title": "WalletButton redesign \u2014 outlined monochrome, instant hover invert",
       "description": "Rewrite frontend/src/components/WalletButton.tsx. Read file first. Add: const [hovered, setHovered] = useState(false). Both connected and disconnected button style: border:'1px solid #000', background: hovered ? '#000' : '#fff', color: hovered ? '#fff' : '#000', fontFamily:'Sometype Mono', fontSize:'0.75rem', padding:'6px 16px', cursor:'pointer'. Add onMouseEnter={() => setHovered(true)} and onMouseLeave={() => setHovered(false)}. Disconnected label: 'Connect Wallet'. Connected label: truncated address (use existing truncateAddress helper or addr.slice(0,8)+'...'+addr.slice(-6)). Keep all existing onClick connect/disconnect logic unchanged. Remove className props containing bg-purple-*, bg-blue-*, bg-indigo-*, hover:bg-*, text-purple-*, text-blue-*, text-white, rounded-*, border-purple-*, border-blue-*. Do NOT add any CSS transition property. Run: cd frontend && npm run build.",
       "priority": 30,
       "passes": true,
@@ -1057,8 +1057,8 @@
     },
     {
       "id": "S118",
-      "title": "CreateMineModal — UI shell on WrapPage",
-      "description": "Add a 'Create Wrapper' button to frontend/src/pages/WrapPage.tsx (top-right area, next to the mine selector). Create frontend/src/components/CreateMineModal.tsx: a full-screen overlay modal (position:fixed, inset:0, z-index:9999, black bg at 50% opacity). Inside: a centered white box (max-width:480px, border:'1px solid #000', padding:24px, Sometype Mono font). Fields: (1) Underlying token address (text input, placeholder: 'opt1sq... token address'), (2) xToken name (text, placeholder: 'xFoo'), (3) xToken symbol (text, placeholder: 'xFOO'), (4) Wrap fee bps (number, default 50), (5) Unwrap fee bps (number, default 50). Buttons: 'Deploy Mine' (black bg, white text) and 'Cancel' (outlined). Modal opens when 'Create Wrapper' is clicked; 'Cancel' or clicking the backdrop closes it. No transaction logic yet — just UI state. Run: cd frontend && npm run build.",
+      "title": "CreateMineModal \u2014 UI shell on WrapPage",
+      "description": "Add a 'Create Wrapper' button to frontend/src/pages/WrapPage.tsx (top-right area, next to the mine selector). Create frontend/src/components/CreateMineModal.tsx: a full-screen overlay modal (position:fixed, inset:0, z-index:9999, black bg at 50% opacity). Inside: a centered white box (max-width:480px, border:'1px solid #000', padding:24px, Sometype Mono font). Fields: (1) Underlying token address (text input, placeholder: 'opt1sq... token address'), (2) xToken name (text, placeholder: 'xFoo'), (3) xToken symbol (text, placeholder: 'xFOO'), (4) Wrap fee bps (number, default 50), (5) Unwrap fee bps (number, default 50). Buttons: 'Deploy Mine' (black bg, white text) and 'Cancel' (outlined). Modal opens when 'Create Wrapper' is clicked; 'Cancel' or clicking the backdrop closes it. No transaction logic yet \u2014 just UI state. Run: cd frontend && npm run build.",
       "priority": 31,
       "passes": true,
       "acceptance": "npm run build exits 0. WrapPage shows 'Create Wrapper' button. Clicking it opens modal overlay. Modal has 5 input fields and two buttons. Cancel closes modal. No transactions sent yet.",
@@ -1066,7 +1066,7 @@
     },
     {
       "id": "S119",
-      "title": "CreateMineModal — bundle Mine.wasm into frontend",
+      "title": "CreateMineModal \u2014 bundle Mine.wasm into frontend",
       "description": "Copy contracts/build/Mine.wasm to frontend/public/Mine.wasm. In CreateMineModal.tsx, add a loadBytecode() async function that does: const resp = await fetch('./Mine.wasm'); const buf = await resp.arrayBuffer(); return new Uint8Array(buf). Call it inside handleDeploy (not on mount). Add a console.log to confirm the WASM loaded and its byte length. Run: cd frontend && npm run build.",
       "priority": 31,
       "passes": true,
@@ -1075,7 +1075,7 @@
     },
     {
       "id": "S120",
-      "title": "CreateMineModal — deploy Mine contract via wallet",
+      "title": "CreateMineModal \u2014 deploy Mine contract via wallet",
       "description": "Implement handleDeploy in CreateMineModal.tsx. Use useWallet() to get senderAddress, address (walletAddress), and isConnected. Import TransactionFactory, OPNetLimitedProvider, Wallet from '@btc-vision/transaction'; BinaryWriter, Address from '@btc-vision/transaction'; networks from '@btc-vision/bitcoin'. Steps: (1) Load Mine.wasm bytecode via fetch. (2) Resolve underlying token pubkey: const code = await (provider as any).getCode(underlyingAddress); extract contractPublicKey as '0x...' hex. (3) Build calldata with BinaryWriter: writeAddress(Address.fromString(underlyingPubkey)), writeU8(18), writeStringWithLength(name), writeStringWithLength(symbol), writeU256(BigInt(wrapFee)), writeU256(BigInt(unwrapFee)), writeU256(BigInt(wrapFee)), writeU256(BigInt(unwrapFee)). (4) Use TransactionFactory.signDeployment with signer:null, mldsaSigner:null, network:NETWORK, utxos (fetch via OPNetLimitedProvider.fetchUTXOMultiAddr for walletAddress), challenge from rpc.getChallenge(). (5) Broadcast fundingTransaction then interactionTransaction via OPNetLimitedProvider. (6) Store deployed contractAddress and contractPubKey in state, show toast. Run: cd frontend && npm run build.",
       "priority": 31,
       "passes": true,
@@ -1084,11 +1084,461 @@
     },
     {
       "id": "S121",
-      "title": "CreateMineModal — register deployed Mine in Factory",
-      "description": "After successful Mine deployment (contractAddress and contractPubKey available), automatically call Factory.registerMine. Use the existing register-mine pattern from frontend: (1) Get Factory pubkey via (provider as any).getCode(CONTRACT_ADDRESSES.factory) → contractPublicKey. (2) Build calldata: BinaryWriter with writeSelector(sha256('registerMine').first4bytes), writeAddress(Address.fromString(underlyingPubkey)), writeAddress(Address.fromString(deployedMinePubkey)). (3) Fetch fresh UTXOs. (4) Get new challenge. (5) Use TransactionFactory.signInteraction with to:CONTRACT_ADDRESSES.factory, from:walletAddress, contract:factoryPubkeyHex, calldata, signer:null, mldsaSigner:null. (6) Broadcast. (7) Toast success with register tx hash. (8) Call a prop onMineCreated() so WrapPage refreshes the mine list. Run: cd frontend && npm run build.",
+      "title": "CreateMineModal \u2014 register deployed Mine in Factory",
+      "description": "After successful Mine deployment (contractAddress and contractPubKey available), automatically call Factory.registerMine. Use the existing register-mine pattern from frontend: (1) Get Factory pubkey via (provider as any).getCode(CONTRACT_ADDRESSES.factory) \u2192 contractPublicKey. (2) Build calldata: BinaryWriter with writeSelector(sha256('registerMine').first4bytes), writeAddress(Address.fromString(underlyingPubkey)), writeAddress(Address.fromString(deployedMinePubkey)). (3) Fetch fresh UTXOs. (4) Get new challenge. (5) Use TransactionFactory.signInteraction with to:CONTRACT_ADDRESSES.factory, from:walletAddress, contract:factoryPubkeyHex, calldata, signer:null, mldsaSigner:null. (6) Broadcast. (7) Toast success with register tx hash. (8) Call a prop onMineCreated() so WrapPage refreshes the mine list. Run: cd frontend && npm run build.",
       "priority": 31,
       "passes": true,
       "acceptance": "npm run build exits 0. After deploy tx broadcasts, register tx is also broadcast. onMineCreated() callback triggers useMines() refetch. New mine appears in list after block confirmation.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S122",
+      "title": "Git commit before redeploy",
+      "description": "Run git add -A && git commit -m 'before redeploy: working state checkpoint' from /home/dev/Documents/hashZroRepos/team-projects/optnet/helix root. Update progress.txt adding a line: '2026-03-05 [S122] Saved working state as git commit before redeploy. Can revert to this point if anything breaks.'",
+      "priority": 122,
+      "passes": false,
+      "acceptance": "git log shows commit message containing 'before redeploy'. progress.txt has the checkpoint line.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S123",
+      "title": "Rename Mine directory and files to Genome",
+      "description": "Create contracts/src/genome/ directory. Copy contracts/src/mine/Mine.ts to contracts/src/genome/Genome.ts. Copy contracts/src/mine/index.ts to contracts/src/genome/index.ts and update it to export { Genome } from './Genome'. Update contracts/asconfig.json: rename target key 'mine' to 'genome', change outFile to 'build/Genome.wasm', textFile to 'build/Genome.wat', use abort=src/genome/index/abort. Do NOT delete src/mine/ yet (keep for reference). Run cd frontend && npm run build to verify no breakage.",
+      "priority": 123,
+      "passes": false,
+      "acceptance": "contracts/src/genome/Genome.ts exists. contracts/src/genome/index.ts exports Genome. asconfig.json has genome target with correct outFile. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S124",
+      "title": "Rename class Mine to Genome in Genome.ts",
+      "description": "In contracts/src/genome/Genome.ts: rename class Mine to Genome (mark @final export class Genome extends OP20). Update all internal comments from 'mine'/'Mine' to 'genome'/'Genome'. Update error message strings: 'not owner' stays, any others referencing 'mine' updated to 'genome'. No logic changes. Keep all method implementations identical.",
+      "priority": 124,
+      "passes": false,
+      "acceptance": "contracts/src/genome/Genome.ts has 'export class Genome extends OP20'. No compilation errors when running asc on it (test compile). All method signatures unchanged.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S125",
+      "title": "Rename Factory.ts methods and storage from mine to genome",
+      "description": "In contracts/src/factory/Factory.ts: rename methods registerMine->registerGenome, getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex, getMineAddress->getGenomeAddress. Rename storage pointer variables: pMineByUnderlying->pGenomeByUnderlying, pUnderlyingByMine->pUnderlyingByGenome, pMineByIndex->pGenomeByIndex, _mineCount->_genomeCount. Update all internal variable names that reference 'mine' to 'genome' (e.g. const mineAddress -> const genomeAddress). Update comments.",
+      "priority": 125,
+      "passes": false,
+      "acceptance": "Factory.ts has methods getGenomeCount, getGenomeAtIndex, getGenomeAddress, registerGenome. Storage variable names use genome prefix. No mine references remain in method names or storage variables.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S126",
+      "title": "Update Factory.ts comments and error strings to genome",
+      "description": "In contracts/src/factory/Factory.ts: update all comment strings from 'mine'/'Mine' to 'genome'/'Genome'. Update any error message strings (Revert messages) that mention 'mine' to use 'genome'. Change 'Mine Protocol' references to 'Genome Protocol' in comments. No logic changes.",
+      "priority": 126,
+      "passes": false,
+      "acceptance": "Factory.ts has no remaining 'mine' or 'Mine' strings in comments or Revert messages. All replaced with genome/Genome equivalents.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S127",
+      "title": "Add injectRewards method to Genome.ts",
+      "description": "In contracts/src/genome/Genome.ts, add a new public method after notifyAmmFee: @method() @returns({ name: 'amount', type: ABIDataTypes.UINT256 }) public injectRewards(_calldata: Calldata): BytesWriter. Implementation: (1) this.requireOwner(). (2) const amount: u256 = _calldata.readU256(). (3) if (amount == ZERO) throw new Revert('zero amount'). (4) const heldKey = this.fieldKeySimple(this._underlyingHeld). (5) this.su(heldKey, SafeMath.add(this.lu(heldKey), amount)). (6) const underlying: Address = this.la(this.fieldKeySimple(this._underlying)). (7) TransferHelper.transferFrom(underlying, Blockchain.tx.sender, Blockchain.contractAddress, amount). (8) const response = new BytesWriter(32); response.writeU256(amount); return response.",
+      "priority": 127,
+      "passes": false,
+      "acceptance": "Genome.ts has public injectRewards method with requireOwner, zero check, increments _underlyingHeld, calls TransferHelper.transferFrom. Method is placed after notifyAmmFee.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S128",
+      "title": "Compile Genome contract to WASM",
+      "description": "Run the genome contract compilation. First verify contracts/src/genome/index.ts correctly exports the Genome class. Then run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx asc src/genome/index.ts --config asconfig.json --target genome. If compilation succeeds, build/Genome.wasm should exist. If there are errors, fix them in Genome.ts and re-run. Common fixes: ensure ABIDataTypes decorators are correct, SafeMath imports present, TransferHelper imported.",
+      "priority": 128,
+      "passes": false,
+      "acceptance": "contracts/build/Genome.wasm file exists after compilation. No asc compilation errors. File size > 0 bytes.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S129",
+      "title": "Compile Factory contract to WASM",
+      "description": "Run the Factory contract compilation: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx asc src/factory/index.ts --config asconfig.json --target factory. If compilation fails, check contracts/src/factory/Factory.ts for syntax errors from the rename in S125. Fix and re-run. Verify build/Factory.wasm exists and is non-zero.",
+      "priority": 129,
+      "passes": false,
+      "acceptance": "contracts/build/Factory.wasm exists and is non-zero. asc compilation exits 0 with no errors.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S130",
+      "title": "Create deploy-genome-factory.ts deploy script",
+      "description": "Create contracts/scripts/deploy-genome-factory.ts. Model after existing deploy scripts (e.g. deploy-crystal.ts or similar). The script should: (1) Load contracts/build/Factory.wasm as Uint8Array. (2) Use EC_PRIVATE_KEY + MLDSA_PRIVATE_KEY from .env. (3) Create wallet keypair. (4) Use TransactionFactory.signDeployment with the Factory.wasm bytecode and empty calldata (Factory constructor takes no params). (5) Broadcast funding + deployment transactions. (6) Print deployed bech32 address and contractPublicKey hex. Look at existing deploy scripts in contracts/scripts/ for the exact pattern.",
+      "priority": 130,
+      "passes": false,
+      "acceptance": "contracts/scripts/deploy-genome-factory.ts exists. Script compiles (npx ts-node --version check). Script follows same pattern as existing deploy scripts.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S131",
+      "title": "Deploy new Factory and update config.ts",
+      "description": "Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx ts-node scripts/deploy-genome-factory.ts. Wait for output showing new Factory bech32 address and pubkey hex. Update frontend/src/config.ts: set CONTRACT_ADDRESSES.factory to the new bech32 address, CONTRACT_ADDRESSES.factoryPubkey to the new hex pubkey. Also clean up config.ts: remove or comment out stale entries (xMotoMine, xMotoMinePubkey, old mine/staking references that no longer exist). Add comment: // Factory v3 \u2014 Genome Protocol, deployed 2026-03-05.",
+      "priority": 131,
+      "passes": false,
+      "acceptance": "frontend/src/config.ts has new factory address and pubkey. cd frontend && npm run build exits 0. New factory responds to getGenomeCount() call.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S132",
+      "title": "Copy Genome.wasm to frontend public directory",
+      "description": "Copy contracts/build/Genome.wasm to frontend/public/Genome.wasm. Verify the file is present. Update CreateGenomePage.tsx (or any file that fetches the WASM) to use '/Genome.wasm' instead of '/Mine.wasm'. Verify the fetch URL in CreateGenomePage references Genome.wasm.",
+      "priority": 132,
+      "passes": false,
+      "acceptance": "frontend/public/Genome.wasm exists. CreateGenomePage.tsx fetches '/Genome.wasm'. cd frontend && npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S133",
+      "title": "Update MINE_ABI in contracts.ts to add injectRewards",
+      "description": "In frontend/src/lib/contracts.ts, add injectRewards to MINE_ABI: { name: 'injectRewards', inputs: [], outputs: [{ name: 'amount', type: ABIDataTypes.UINT256 }], type: BitcoinAbiTypes.Function }. Also export GENOME_ABI as an alias: export const GENOME_ABI = MINE_ABI. This allows gradual migration \u2014 both names work.",
+      "priority": 133,
+      "passes": false,
+      "acceptance": "MINE_ABI in contracts.ts includes injectRewards entry. GENOME_ABI is exported as alias. cd frontend && npx tsc --noEmit exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S134",
+      "title": "Update FACTORY_ABI in contracts.ts to genome method names",
+      "description": "In frontend/src/lib/contracts.ts, update FACTORY_ABI method names: getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex, getMineAddress->getGenomeAddress, registerMine->registerGenome. These must match the newly compiled Factory.wasm method selectors exactly. Also update any comments referencing 'mine' in contracts.ts.",
+      "priority": 134,
+      "passes": false,
+      "acceptance": "FACTORY_ABI has getGenomeCount, getGenomeAtIndex, getGenomeAddress, registerGenome. No getMineCount/getMineAtIndex/getMineAddress/registerMine remain in FACTORY_ABI. npx tsc --noEmit exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S135",
+      "title": "Update useMines.ts to use genome method names",
+      "description": "In frontend/src/hooks/useMines.ts: update all contract method call strings from getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex. Rename buildGetMineAtIndexCalldata->buildGetGenomeAtIndexCalldata. Update console.log labels from '[useMines]' to '[useGenomes]'. Update internal variable names: mineAddress->genomeAddress, fetchMineData->fetchGenomeData where they appear. Keep MineInfo type name for backward compatibility (or rename to GenomeInfo and update all refs).",
+      "priority": 135,
+      "passes": false,
+      "acceptance": "useMines.ts calls getGenomeCount and getGenomeAtIndex. buildGetGenomeAtIndexCalldata function exists. console logs say [useGenomes]. cd frontend && npx tsc --noEmit exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S136",
+      "title": "Update useMine.ts comments and variable names",
+      "description": "In frontend/src/hooks/useMine.ts: update internal comments from mine->genome. Update variable names: mineContract->genomeContract, mineCode->genomeCode, mineAddress->genomeAddress in the hook body (but keep the exported function name useMine for now). Update console.log labels. No logic changes.",
+      "priority": 136,
+      "passes": false,
+      "acceptance": "useMine.ts has genomeContract, genomeCode variable names internally. Comments use genome terminology. npx tsc --noEmit exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S137",
+      "title": "Update CreateGenomePage.tsx WASM path and registerGenome selector",
+      "description": "In frontend/src/pages/CreateGenomePage.tsx: (1) Change fetch URL from '/Mine.wasm' to '/Genome.wasm'. (2) Update the registerMine selector computation to registerGenome: change createHash('sha256').update('registerMine()') to createHash('sha256').update('registerGenome()'). (3) Update any other hardcoded 'registerMine' or 'Mine.wasm' strings. (4) Run cd frontend && npm run build to verify.",
+      "priority": 137,
+      "passes": false,
+      "acceptance": "CreateGenomePage.tsx fetches /Genome.wasm. Selector uses 'registerGenome()'. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S138",
+      "title": "Make MotoSwap pool creation mandatory in CreateGenomePage.tsx",
+      "description": "In frontend/src/pages/CreateGenomePage.tsx, after successful Factory registerGenome call (step 2), add mandatory step 3: create MotoSwap pool. Import MotoSwapFactoryAbi, IMotoswapFactoryContract from 'opnet'. Import Address from '@btc-vision/transaction'. Use CONTRACT_ADDRESSES.motoswapFactory. Call: const motoFactory = getContract<IMotoswapFactoryContract>(Address.fromString(CONTRACT_ADDRESSES.motoswapFactory), MotoSwapFactoryAbi as any, provider, NETWORK, senderAddress); const poolSim = await motoFactory.createPool(Address.fromString(deployedGenomePubkey), Address.fromString(underlyingPubkey)); await poolSim.sendTransaction({...omit signer/mldsaSigner...}). Show 'Creating liquidity pool...' in progress. Show pool address on success. If step fails, show error but do not block (genome is already registered).",
+      "priority": 138,
+      "passes": false,
+      "acceptance": "CreateGenomePage shows step 3 'Creating Pool' after registration. On success shows pool address. MotoSwap factory createPool is called with gToken and underlying pubkeys. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S139",
+      "title": "Enforce gToken symbol prefix 'g' in CreateGenomePage",
+      "description": "In frontend/src/pages/CreateGenomePage.tsx: (1) Add validation on the symbol field: if value doesn't start with lowercase 'g', show inline error message 'Must start with g (e.g. gMOTO)' in red below the field. (2) Disable the Create/Deploy button when symbol is empty or does not start with 'g'. (3) Add state for symbolError. On symbol change: setSymbolError(val.length > 0 && !val.startsWith('g') ? 'Must start with g (e.g. gMOTO)' : '').",
+      "priority": 139,
+      "passes": false,
+      "acceptance": "Entering 'MOTO' in symbol field shows red error 'Must start with g'. Deploy button is disabled. Entering 'gMOTO' clears error and enables button. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S140",
+      "title": "Add live gToken symbol preview in CreateGenomePage",
+      "description": "In frontend/src/pages/CreateGenomePage.tsx: (1) Below the symbol input field, add a preview section shown when symbol starts with 'g'. Style: border: '1px solid #000', padding: '8px 12px', fontFamily: 'Sometype Mono', showing 'Preview: {symbol}'. (2) Above the symbol field, add a mandatory note: '* gToken symbols must begin with g (e.g. gMOTO, gPILL)' in small grey Sometype Mono text. (3) The preview updates live as user types.",
+      "priority": 140,
+      "passes": false,
+      "acceptance": "Typing 'gMOTO' in symbol field shows 'Preview: gMOTO' box below. Mandatory note is visible above field. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S141",
+      "title": "Auto-prepend g prefix in CreateGenomePage symbol field",
+      "description": "In frontend/src/pages/CreateGenomePage.tsx symbol input: on onBlur, if the field value is non-empty and doesn't start with 'g', auto-prepend 'g': setSymbol('g' + value). Also clear the error after auto-fix. This way users who type 'MOTO' have it auto-corrected to 'gMOTO' when they tab away. Do not auto-prepend while user is actively typing (only onBlur).",
+      "priority": 141,
+      "passes": false,
+      "acceptance": "Typing 'MOTO' and tabbing away auto-corrects to 'gMOTO'. Error clears. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S142",
+      "title": "Update CreateGenomePage copy from xToken to gToken",
+      "description": "In frontend/src/pages/CreateGenomePage.tsx: replace all user-facing display strings 'xToken'->'{symbol} (gToken)', 'x-Token'->'gToken', 'Mine'->'Genome', 'mine'->'genome' in labels, headings, helper text, step descriptions, button text. Do not change variable names, only string literals displayed to user. Also update page <title> or heading if it says 'Create Mine'.",
+      "priority": 142,
+      "passes": false,
+      "acceptance": "No 'xToken' or 'Mine' visible in the CreateGenomePage UI. All replaced with gToken/Genome. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S143",
+      "title": "Replace MineCard grid in MyGenomesPage with GenomeOwnerCard",
+      "description": "In frontend/src/pages/MyGenomesPage.tsx: create a GenomeOwnerCard component (in the same file) that replaces MineCard for the owner view. GenomeOwnerCard props: mine: MineInfo. Shows: genome name, symbol (with g prefix styling), ratio (6 decimal places), underlyingBalance formatted, underlyingSymbol, and a status area for pool info (to be filled in S144-S145). Add placeholder 'Loading pool...' text where pool info will go. Replace MineCard with GenomeOwnerCard in the grid.",
+      "priority": 143,
+      "passes": false,
+      "acceptance": "MyGenomesPage uses GenomeOwnerCard instead of MineCard. Each card shows name, symbol, ratio, underlyingBalance. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S144",
+      "title": "Add useGenomePoolInfo hook to fetch pool status",
+      "description": "Create frontend/src/hooks/useGenomePoolInfo.ts. Hook signature: useGenomePoolInfo(genomeAddress: string | null, genomePubkey: string, underlyingPubkey: string, senderAddress: Address | null). Implementation: (1) Get pool address via MotoSwapFactory.getPool(genomePubkey, underlyingPubkey) \u2014 use provider (no sender needed for reads). (2) If pool address is non-zero, get reserves via MotoswapPoolAbi getReserves() call on pool address. (3) Get user LP balance via OP_20_ABI balanceOf(senderAddress) on pool address. Returns: { poolAddress: string, reserve0: bigint, reserve1: bigint, lpBalance: bigint, loading: boolean, error: string | null }. Import MotoSwapFactoryAbi, MotoswapPoolAbi from 'opnet'. Import CONTRACT_ADDRESSES from config.",
+      "priority": 144,
+      "passes": false,
+      "acceptance": "frontend/src/hooks/useGenomePoolInfo.ts exists and exports useGenomePoolInfo. Hook returns poolAddress, reserve0, reserve1, lpBalance. npx tsc --noEmit exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S145",
+      "title": "Display pool status panel in GenomeOwnerCard",
+      "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard: use useGenomePoolInfo hook to fetch pool data. Display pool panel below genome stats: (1) If loading: show skeleton. (2) If poolAddress is zero/empty: show 'No Pool' badge in grey border. (3) If pool exists: show pool address truncated (first 8 + last 6 chars) with copy button, reserve0 formatted, reserve1 formatted, user LP balance formatted. Section label 'Liquidity Pool' in Sometype Mono uppercase grey.",
+      "priority": 145,
+      "passes": false,
+      "acceptance": "GenomeOwnerCard shows pool address, reserves, LP balance when pool exists. Shows 'No Pool' when pool address is zero. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S146",
+      "title": "Add Inject Rewards button to GenomeOwnerCard",
+      "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard: add 'Inject Rewards' action section. Show: (1) Amount input (text field) for underlying token amount. (2) Button 'Inject Rewards' styled like ActionBtn (black border, inverts on hover). On click: (a) Parse amount. (b) Import OP_20_ABI, GENOME_ABI from contracts.ts. (c) Call underlyingContract.increaseAllowance(Address.fromString(mine.pubkey), parsedAmount) and send. (d) Call genomeContract.injectRewards(parsedAmount) and send. (e) Show success toast 'Rewards injected \u2014 ratio increased'. Handle errors. Only shown when isConnected.",
+      "priority": 146,
+      "passes": false,
+      "acceptance": "GenomeOwnerCard has amount input and Inject Rewards button. Clicking it approves underlying then calls injectRewards. Toast shows on success. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S147",
+      "title": "Add Claim LP Rewards button to GenomeOwnerCard",
+      "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard: add 'Claim LP Rewards' button. Show only when lpBalance > 0n. Button label: 'Claim LP Fees -> Genome'. On click: set a claiming state to show progress steps. Button disabled during claim. Show step indicator: 'Step 1/3: Approving LP...', 'Step 2/3: Removing liquidity...', 'Step 3/3: Injecting rewards...'. This is the container \u2014 actual logic in S148 and S149.",
+      "priority": 147,
+      "passes": false,
+      "acceptance": "Claim LP Rewards button shows only when lpBalance > 0. Button shows step progress during claim. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S148",
+      "title": "Implement Claim LP Rewards step 1 and 2 in MyGenomesPage",
+      "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard claim handler: Step 1 \u2014 approve LP tokens to router: getContract with MotoswapPoolAbi on poolAddress (with senderAddress), call increaseAllowance(Address.fromString(CONTRACT_ADDRESSES.motoswapRouter), lpBalance), sendTransaction. Step 2 \u2014 remove liquidity: getContract with MOTOSWAP_ROUTER_ABI on CONTRACT_ADDRESSES.motoswapRouter (with senderAddress), call removeLiquidity(gTokenAddress, underlyingAddress, lpBalance, 0n, 0n, walletSenderAddress, deadline=BigInt(Math.floor(Date.now()/1000)+1200)), sendTransaction. Extract underlyingAmount from result (amount of underlying token returned). Import MOTOSWAP_ROUTER_ABI, MotoswapPoolAbi from 'opnet'.",
+      "priority": 148,
+      "passes": false,
+      "acceptance": "Claim flow steps 1 and 2 execute: LP approval tx sent, removeLiquidity tx sent. underlyingAmount extracted from result. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S149",
+      "title": "Implement Claim LP Rewards step 3 \u2014 injectRewards in MyGenomesPage",
+      "description": "In frontend/src/pages/MyGenomesPage.tsx claim handler after removeLiquidity: Step 3 \u2014 inject underlying into genome. (a) getContract with GENOME_ABI on mine.address (with senderAddress), call underlyingContract.increaseAllowance(Address.fromString(mine.pubkey), underlyingAmount), send. (b) call genomeContract.injectRewards(underlyingAmount), send. (c) Show success state: 'LP fees claimed and injected into genome! Ratio increased.' (d) Refetch pool info and mine data. gToken amount returned from removeLiquidity stays in user wallet (do not re-wrap automatically).",
+      "priority": 149,
+      "passes": false,
+      "acceptance": "Step 3 executes: underlying approved to genome, injectRewards called. Success message shown. Pool info refetched. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S150",
+      "title": "User-facing text pass \u2014 mine to genome across all pages",
+      "description": "Scan and update all user-facing display strings across the frontend. Files to update: frontend/src/pages/HomePage.tsx, MineDetailPage.tsx, CreateGenomePage.tsx, MyGenomesPage.tsx, frontend/src/components/MineCard.tsx, Navbar.tsx. Replace in string literals only (not variable names): 'Mine'->'Genome', 'mine'->'genome', 'xToken'->'gToken', 'x-token'->'gToken', 'wrapped token'->'gToken'. Also update page headings and empty state messages. Do NOT rename variables, types, or function names.",
+      "priority": 150,
+      "passes": false,
+      "acceptance": "No 'Mine', 'xToken' visible in any page's displayed text. All replaced with Genome/gToken. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S151",
+      "title": "Add Owner Actions section to MineDetailPage",
+      "description": "In frontend/src/pages/MineDetailPage.tsx: add an 'Owner Actions' section shown only when isConnected and identityKey === mine.ownerAddress (case-insensitive). Section contains: (1) Inject Rewards: amount input + button that calls increaseAllowance then injectRewards(amount). (2) Set Wrap Fee: number input (0-20 = 0%-20%) + button that calls setWrapFee. (3) Set Unwrap Fee: same for setUnwrapFee. Style consistently with existing ActionBtn. Place section after the Protocol stats table and before modals.",
+      "priority": 151,
+      "passes": false,
+      "acceptance": "Owner Actions section appears only when wallet is connected and user is genome owner. injectRewards, setWrapFee, setUnwrapFee buttons work. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S152",
+      "title": "Add Liquidity Pool section to MineDetailPage",
+      "description": "In frontend/src/pages/MineDetailPage.tsx: add a 'Liquidity Pool' section. Use useGenomePoolInfo hook (from S144) with mine.address, mine.pubkey, mine.underlyingPubkey, senderAddress. Display: (1) Pool address truncated with copy button and OpScan link. (2) Reserve0 (gToken) and Reserve1 (underlying) formatted amounts. (3) If no pool: show 'No pool exists' + 'Create Pool' button that calls motoFactory.createPool(gTokenPubkey, underlyingPubkey). Place section between Protocol stats and Owner Actions.",
+      "priority": 152,
+      "passes": false,
+      "acceptance": "MineDetailPage shows Liquidity Pool section with pool address, reserves. Create Pool button appears when no pool. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S153",
+      "title": "Add gToken badge to MineCard",
+      "description": "In frontend/src/components/MineCard.tsx: next to the token symbol in the header, add a small 'g' badge \u2014 a span with border: '1px solid currentColor', padding: '1px 4px', fontSize: '0.6rem', fontFamily: 'Sometype Mono' showing 'gToken'. Color matches card state (dark on white, light on black hover). Position it after the symbol text in the top row. Only show if symbol starts with 'g'.",
+      "priority": 153,
+      "passes": false,
+      "acceptance": "MineCard shows 'gToken' badge next to symbol when symbol starts with 'g'. Badge inverts color on hover. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S154",
+      "title": "Navbar cleanup \u2014 verify My Genomes tab and remove stale code",
+      "description": "In frontend/src/components/Navbar.tsx: verify the My Genomes NavTab links to /my-genomes and shows correctly when connected. Remove any stale imports or variables (there should be no useMines import, no myGenomeCount). Verify useWallet returns isConnected correctly. Run npm run build and fix any TypeScript errors.",
+      "priority": 154,
+      "passes": false,
+      "acceptance": "Navbar.tsx has no stale imports. My Genomes tab shows for connected users. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S155",
+      "title": "Clean up config.ts and add genome version constant",
+      "description": "In frontend/src/config.ts: (1) Remove or comment out stale addresses: xMotoMine, xMotoMinePubkey, mine, minePubkey, staking, stakingPubkey (these refer to old deployed contracts). (2) Add export const GENOME_CONTRACT_VERSION = 2. (3) Add comment block at top: '// Factory v3 \u2014 Genome Protocol deployed 2026-03-05'. (4) Keep motoswapRouter, motoswapFactory, motoToken, pillToken and other token addresses. (5) Update HIDDEN_MINE_PUBKEYS comment to HIDDEN_GENOME_PUBKEYS.",
+      "priority": 155,
+      "passes": false,
+      "acceptance": "config.ts has no stale mine/staking addresses. GENOME_CONTRACT_VERSION exported. npm run build exits 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S156",
+      "title": "Update AGENTS.md with Genome contract and LP claim patterns",
+      "description": "Append to /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/AGENTS.md: (1) Genome contract patterns: injectRewards method signature, gToken naming rules (must start with g), Genome class extends OP20. (2) MotoSwap pool interaction pattern: useGenomePoolInfo hook usage, getPool/createPool/getReserves call patterns. (3) LP Claim flow: 5-step sequence (getPool, getLPBalance, increaseAllowance LP->router, removeLiquidity, injectRewards). (4) Address pattern for contract addresses: Address.fromString(hex) with one arg.",
+      "priority": 156,
+      "passes": false,
+      "acceptance": "AGENTS.md has new sections for Genome contract, MotoSwap pool interaction, LP claim flow. File is valid markdown.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S157",
+      "title": "Update progress.txt with Phase 8-12 summary",
+      "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/progress.txt: add Phase 8 (Contract Refactor), Phase 9 (Frontend Hooks), Phase 10 (gToken Enforcement), Phase 11 (My Genomes LP Claim), Phase 12 (Branding) as completed phases. Note: new Factory address, Genome.wasm compiled, injectRewards added, LP claim flow implemented. Format consistently with existing progress.txt entries.",
+      "priority": 157,
+      "passes": false,
+      "acceptance": "progress.txt has Phase 8-12 summary. Notes new factory address and key features added.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S158",
+      "title": "TypeScript build verification \u2014 fix all errors",
+      "description": "Run: npx tsc --noEmit 2>&1. Read the output and fix ALL TypeScript errors found. Common issues to look for: missing imports for useGenomePoolInfo, type mismatches in GenomeOwnerCard, Address usage patterns. After fixing, run npm run build to confirm clean production build.",
+      "priority": 158,
+      "passes": false,
+      "acceptance": "npx tsc --noEmit exits 0 with no errors. npm run build exits 0. No type errors remain.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S159",
+      "title": "Create register-genome-test.ts script",
+      "description": "Create contracts/scripts/register-genome-test.ts. This script registers a test genome (gMOTO wrapping motoToken) with the new Factory. Use the registerGenome() selector (SHA256('registerGenome()').first4bytes). Read FACTORY_ADDRESS (new from config), MOTO_UNDERLYING (motoToken pubkey) from .env or hardcode. Modeled after existing register scripts but uses 'registerGenome()' as the method string in selector computation. Print the result of getGenomeCount() after registration to verify.",
+      "priority": 159,
+      "passes": false,
+      "acceptance": "contracts/scripts/register-genome-test.ts exists and compiles. Script uses registerGenome() selector. Script structure matches existing register scripts.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S160",
+      "title": "Register gMOTO test genome with new Factory",
+      "description": "Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx ts-node scripts/register-genome-test.ts. Wait for confirmation. Then verify the frontend shows the genome: open the dev server, check the Explore page, genome count in stats should be >= 1. Also run check-factory.ts or similar to verify getGenomeCount() returns > 0 from the new factory.",
+      "priority": 160,
+      "passes": false,
+      "acceptance": "register-genome-test.ts runs successfully. Frontend Explore page shows at least 1 genome from the new factory. getGenomeCount() > 0.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S161",
+      "title": "Verify createPool auto-creation during genome creation",
+      "description": "Using the frontend dev server, create a new test genome (any token as underlying, symbol starting with g). Verify that after registration Step 3 runs (Creating Pool...) and shows a pool address. Then verify: call motoFactory.getPool(gTokenPubkey, underlyingPubkey) in a check script or via the frontend and confirm it returns a non-zero address. Document the pool address in progress.txt.",
+      "priority": 161,
+      "passes": false,
+      "acceptance": "Creating a genome via frontend UI results in pool creation step completing. Pool address is non-zero. MotoSwap factory getPool returns it.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S162",
+      "title": "Verify injectRewards increases ratio",
+      "description": "Using My Genomes page on the frontend: select a genome you own that has some gTokens minted. Enter an amount of underlying tokens to inject (you must have them in your wallet). Click Inject Rewards. Verify: (1) Transaction broadcasts successfully. (2) Page refetches and shows updated ratio (should be > previous ratio). (3) underlyingBalance increased. Document the ratio change in progress.txt.",
+      "priority": 162,
+      "passes": false,
+      "acceptance": "injectRewards transaction succeeds on testnet. Genome ratio increases after injection. progress.txt notes the verification.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S163",
+      "title": "Verify end-to-end LP claim flow",
+      "description": "End-to-end test of LP claim: (1) Add liquidity to a genome's pool via MotoSwap or the frontend. (2) Verify LP balance shows > 0 in My Genomes page GenomeOwnerCard. (3) Click Claim LP Fees -> Genome. (4) Complete all 3 steps (approve LP, removeLiquidity, injectRewards). (5) Verify genome ratio increased. Document result in progress.txt.",
+      "priority": 163,
+      "passes": false,
+      "acceptance": "Full LP claim flow completes on testnet. LP balance decreases to 0. Genome ratio increases. progress.txt notes verification.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S164",
+      "title": "Update SUBMISSION.md with new features",
+      "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/SUBMISSION.md: add section 'New Features (Phase 2)' documenting: (1) gToken naming standard \u2014 all genome tokens start with g prefix, enforced in UI. (2) injectRewards \u2014 genome owners can boost yield by injecting underlying tokens. (3) Automatic MotoSwap pool creation on genome deploy. (4) LP Claim Flow \u2014 My Genomes page lets owners remove LP fees and inject them into genome. (5) New Factory address. Keep existing content.",
+      "priority": 164,
+      "passes": false,
+      "acceptance": "SUBMISSION.md has Phase 2 features section with all 4 new features documented. File is valid markdown.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S165",
+      "title": "Update prd.json \u2014 mark S122-S164 complete and update metadata",
+      "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/prd.json: (1) For each story S122-S164 that has been successfully implemented, set passes: true. (2) Update project description to include 'Genome Protocol \u2014 gToken yield wrapping'. Verify all stories have acceptance criteria fields.",
+      "priority": 165,
+      "passes": false,
+      "acceptance": "prd.json stories S122-S164 have passes: true. Project description updated. JSON is valid.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S166",
+      "title": "Final feature commit for genome protocol v2",
+      "description": "Run git add -A from /home/dev/Documents/hashZroRepos/team-projects/optnet/helix. Then commit with message: 'feat: genome protocol v2 \u2014 gToken naming, injectRewards, LP claim flow'. Stage all relevant files: contracts/src/genome/, contracts/scripts/deploy-genome-factory.ts, contracts/scripts/register-genome-test.ts, frontend/src/, AGENTS.md, SUBMISSION.md, progress.txt, prd.json.",
+      "priority": 166,
+      "passes": false,
+      "acceptance": "git log shows commit 'feat: genome protocol v2'. All changed files included in commit.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S167",
+      "title": "Production build verification",
+      "description": "Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/frontend && npm run build. Verify dist/ directory is generated. Check that Genome.wasm is included in dist/. Verify bundle size is reasonable. If build fails, fix errors and re-run.",
+      "priority": 167,
+      "passes": false,
+      "acceptance": "npm run build exits 0. dist/ directory exists with index.html, assets/, Genome.wasm. No build errors.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S168",
+      "title": "Vercel or IPFS deployment",
+      "description": "Deploy the frontend. If using Vercel: run vercel --prod from frontend/. If using IPFS: use the ipfs deploy command or service configured. Verify the deployed URL loads correctly. Test navigation: /, /mine/:address, /create, /my-genomes all load. Verify wallet connection works on deployed version.",
+      "priority": 168,
+      "passes": false,
+      "acceptance": "Frontend is deployed and accessible at a public URL. All routes load. Wallet connection functions.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S169",
+      "title": "Update README.md with Genome Protocol description",
+      "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/README.md: (1) Change project name to 'Helix \u2014 Genome Protocol'. (2) Update description to explain gToken standard: wrap any OP-20 token, get gTokens that appreciate via fee yield. (3) Explain injectRewards. (4) Explain LP claim flow. (5) Update any references to 'mine' or 'xToken' to genome/gToken. Keep technical setup instructions.",
+      "priority": 169,
+      "passes": false,
+      "acceptance": "README.md references Genome Protocol, gToken, injectRewards, LP claim. No mine/xToken references in user-facing description. File is valid markdown.",
+      "model": "sonnet"
+    },
+    {
+      "id": "S170",
+      "title": "Update prd.json project metadata to Genome Protocol",
+      "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/prd.json: change project field to 'Genome Protocol \u2014 OPNet Port'. Update description field to: 'Token-wrapping yield protocol on Bitcoin L1. Wrap OP-20 tokens into gTokens (yield-bearing genome tokens). Genome owners earn yield via wrap/unwrap fees. LP rewards can be injected into genomes to increase the gToken ratio.' Save and verify JSON is valid.",
+      "priority": 170,
+      "passes": false,
+      "acceptance": "prd.json project field is 'Genome Protocol \u2014 OPNet Port'. Description reflects gToken/genome terminology. JSON is valid (python3 -c 'import json; json.load(open(\"prd.json\"))' exits 0).",
+      "model": "sonnet"
+    },
+    {
+      "id": "S171",
+      "title": "Ralph completion checkpoint \u2014 verify all 50 stories pass",
+      "description": "Verify all stories S122-S171 have passes: true in prd.json. Run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/frontend && npm run build one final time. Update progress.txt with final status: 'Phase 8-13 complete. 171/171 stories passing. Genome Protocol v2 deployed.' Commit progress.txt update.",
+      "priority": 171,
+      "passes": false,
+      "acceptance": "prd.json shows passes: true for S122-S171. npm run build exits 0. progress.txt notes 171/171 stories complete.",
       "model": "sonnet"
     }
   ]

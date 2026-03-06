@@ -1,5 +1,8 @@
 import { networks } from '@btc-vision/bitcoin';
 
+// Mines to permanently hide from the Explore page (use the full pubkey hex, e.g. "0x13e7c4...")
+export const HIDDEN_MINE_PUBKEYS: string[] = [];
+
 export const NETWORK = networks.testnet;
 export const RPC_URL = 'https://testnet.opnet.org';
 

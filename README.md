@@ -60,7 +60,6 @@ else:
 ## Project Structure
 
 ```
-mines-opnet/
 ├── contracts/          # AssemblyScript smart contracts
 │   ├── src/
 │   │   ├── miner-token/    MinerToken.ts
@@ -90,7 +89,7 @@ mines-opnet/
 ### Frontend
 
 ```bash
-cd mines-opnet/frontend
+cd frontend
 npm install
 npm run dev
 ```
@@ -100,7 +99,7 @@ Open `http://localhost:5173` and connect OPWallet (testnet mode).
 ### Contracts (build only)
 
 ```bash
-cd mines-opnet/contracts
+cd contracts
 npm install
 npm run build:miner    # MinerToken.wasm
 npm run build:factory  # Factory.wasm
