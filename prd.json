@@ -1150,7 +1150,7 @@
       "title": "Compile Genome contract to WASM",
       "description": "Run the genome contract compilation. First verify contracts/src/genome/index.ts correctly exports the Genome class. Then run: cd /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/contracts && npx asc src/genome/index.ts --config asconfig.json --target genome. If compilation succeeds, build/Genome.wasm should exist. If there are errors, fix them in Genome.ts and re-run. Common fixes: ensure ABIDataTypes decorators are correct, SafeMath imports present, TransferHelper imported.",
       "priority": 128,
-      "passes": false,
+      "passes": true,
       "acceptance": "contracts/build/Genome.wasm file exists after compilation. No asc compilation errors. File size > 0 bytes.",
       "model": "sonnet"
     },
