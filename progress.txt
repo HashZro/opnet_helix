@@ -1305,3 +1305,16 @@
   - Button label: 'Claim LP Fees -> Genome', disabled during claim, inverts on hover (matches ActionBtn style)
   - Step indicator shown above button when isClaiming and claimStep > 0
   - npm run build exits 0 — no TypeScript errors
+
+[2026-03-05] S148 — Implement Claim LP Rewards step 1 and 2 in MyGenomesPage
+  - Added MotoswapPoolAbi import from 'opnet' (alongside getContract)
+  - Added MOTOSWAP_ROUTER_ABI to lib/contracts import
+  - Added CONTRACT_ADDRESSES to config import
+  - Implemented handleClaimLP steps 1 and 2:
+    Step 1: getContract<any>(poolInfo.poolAddress, MotoswapPoolAbi) → increaseAllowance(routerAddr, lpBalance) → sendTransaction
+    Step 2: getContract<any>(routerAddr, MOTOSWAP_ROUTER_ABI) → removeLiquidity(gTokenAddr, underlyingAddr, lpBalance, 0n, 0n, senderAddress, deadline) → sendTransaction
+  - underlyingAmount extracted from result: checks props.amountB, props.amountA, decoded[1], decoded[0] in order
+  - console.log statements added throughout for debugging (per CLAUDE.md pattern)
+  - Step 3 placeholder left (S149 handles inject rewards)
+  - npm run build exits 0 (83 modules, no TypeScript errors)
+  - LSP false positives (6133) for new imports — tsc -b passes clean as expected

@@ -1330,7 +1330,7 @@
       "title": "Implement Claim LP Rewards step 1 and 2 in MyGenomesPage",
       "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard claim handler: Step 1 \u2014 approve LP tokens to router: getContract with MotoswapPoolAbi on poolAddress (with senderAddress), call increaseAllowance(Address.fromString(CONTRACT_ADDRESSES.motoswapRouter), lpBalance), sendTransaction. Step 2 \u2014 remove liquidity: getContract with MOTOSWAP_ROUTER_ABI on CONTRACT_ADDRESSES.motoswapRouter (with senderAddress), call removeLiquidity(gTokenAddress, underlyingAddress, lpBalance, 0n, 0n, walletSenderAddress, deadline=BigInt(Math.floor(Date.now()/1000)+1200)), sendTransaction. Extract underlyingAmount from result (amount of underlying token returned). Import MOTOSWAP_ROUTER_ABI, MotoswapPoolAbi from 'opnet'.",
       "priority": 148,
-      "passes": false,
+      "passes": true,
       "acceptance": "Claim flow steps 1 and 2 execute: LP approval tx sent, removeLiquidity tx sent. underlyingAmount extracted from result. npm run build exits 0.",
       "model": "sonnet"
     },

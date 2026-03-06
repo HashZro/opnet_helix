@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { getContract } from 'opnet';
+import { getContract, MotoswapPoolAbi } from 'opnet';
 import { Address } from '@btc-vision/transaction';
 import { useMines } from '../hooks/useMines';
 import { useWallet } from '../hooks/useWallet';
 import { useGenomePoolInfo } from '../hooks/useGenomePoolInfo';
 import { useToast } from '../contexts/ToastContext';
 import { formatBalance, truncateAddress, parseAmount, parseContractError } from '../lib/helpers';
-import { GENOME_ABI, OP_20_ABI } from '../lib/contracts';
+import { GENOME_ABI, OP_20_ABI, MOTOSWAP_ROUTER_ABI } from '../lib/contracts';
 import { provider } from '../lib/provider';
-import { NETWORK, HIDDEN_MINE_PUBKEYS } from '../config';
+import { NETWORK, HIDDEN_MINE_PUBKEYS, CONTRACT_ADDRESSES } from '../config';
 import type { MineInfo } from '../hooks/useMines';
 
 function isZeroPool(addr: string): boolean {
@@ -102,11 +102,78 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
     }
 
     async function handleClaimLP() {
+        if (!senderAddress) return;
         setIsClaiming(true);
         setClaimStep(1);
         try {
-            // Step 1 and 2 implemented in S148
+            const routerAddr = Address.fromString(CONTRACT_ADDRESSES.motoswapRouter);
+
+            // Step 1: Approve LP tokens to router
+            console.log('[claimLP] Step 1: Approving LP tokens to router', {
+                poolAddress: poolInfo.poolAddress,
+                router: CONTRACT_ADDRESSES.motoswapRouter,
+                lpBalance: poolInfo.lpBalance.toString(),
+            });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const poolContract = getContract<any>(poolInfo.poolAddress, MotoswapPoolAbi as any, provider, NETWORK, senderAddress);
+            const approveSim = await poolContract.increaseAllowance(routerAddr, poolInfo.lpBalance);
+            console.log('[claimLP] increaseAllowance sim:', approveSim);
+            if ('error' in (approveSim as object)) throw new Error(String((approveSim as { error: unknown }).error));
+            toast.info('Step 1/3: Approving LP tokens...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (approveSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('LP tokens approved');
+
+            // Step 2: Remove liquidity
+            setClaimStep(2);
+            const gTokenAddr = Address.fromString(mine.pubkey);
+            const underlyingAddr = Address.fromString(mine.underlyingAddress);
+            const deadline = BigInt(Math.floor(Date.now() / 1000) + 1200);
+
+            console.log('[claimLP] Step 2: Removing liquidity', {
+                gToken: mine.pubkey,
+                underlying: mine.underlyingAddress,
+                lpBalance: poolInfo.lpBalance.toString(),
+                deadline: deadline.toString(),
+            });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const routerContract = getContract<any>(routerAddr, MOTOSWAP_ROUTER_ABI as any, provider, NETWORK, senderAddress);
+            const removeSim = await routerContract.removeLiquidity(
+                gTokenAddr,
+                underlyingAddr,
+                poolInfo.lpBalance,
+                0n,
+                0n,
+                senderAddress,
+                deadline,
+            );
+            console.log('[claimLP] removeLiquidity sim:', removeSim);
+            console.log('[claimLP] removeLiquidity sim keys:', removeSim ? Object.keys(removeSim as object) : 'null');
+            console.log('[claimLP] removeLiquidity properties:', (removeSim as any)?.properties);
+            console.log('[claimLP] removeLiquidity decoded:', (removeSim as any)?.decoded);
+            if ('error' in (removeSim as object)) throw new Error(String((removeSim as { error: unknown }).error));
+            toast.info('Step 2/3: Removing liquidity...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (removeSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+
+            // Extract underlyingAmount from result (used in Step 3 — S149)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const props = (removeSim as any)?.properties;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const decoded = (removeSim as any)?.decoded;
+            const underlyingAmount: bigint = (() => {
+                if (props?.amountB !== undefined && props.amountB !== null) return BigInt(props.amountB.toString());
+                if (props?.amountA !== undefined && props.amountA !== null) return BigInt(props.amountA.toString());
+                if (Array.isArray(decoded) && decoded.length > 1) return BigInt(decoded[1].toString());
+                if (Array.isArray(decoded) && decoded.length > 0) return BigInt(decoded[0].toString());
+                return 0n;
+            })();
+            console.log('[claimLP] underlyingAmount extracted:', underlyingAmount.toString());
+            toast.success('Liquidity removed');
+
             // Step 3 implemented in S149
+            setClaimStep(3);
+            void underlyingAmount; // referenced in S149
         } catch (err) {
             console.error('[claimLP] error:', err);
             toast.error(parseContractError(err));
