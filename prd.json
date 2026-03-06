@@ -1,6 +1,6 @@
 {
-  "project": "Mines Protocol \u2014 OPNet Port",
-  "description": "Token-wrapping yield protocol on Bitcoin L1. Wrap OP_20 tokens into xTokens with fee-based yield. Staking rewards from protocol fees.",
+  "project": "Genome Protocol \u2014 OPNet Port",
+  "description": "Token-wrapping yield protocol on Bitcoin L1. Genome Protocol \u2014 gToken yield wrapping. Wrap OP-20 tokens into gTokens that appreciate via fee yield. Genome owners earn yield via wrap/unwrap fees. LP rewards can be injected into genomes to increase the gToken ratio.",
   "stories": [
     {
       "id": "S01",
@@ -1483,7 +1483,7 @@
       "title": "Update prd.json \u2014 mark S122-S164 complete and update metadata",
       "description": "Update /home/dev/Documents/hashZroRepos/team-projects/optnet/helix/prd.json: (1) For each story S122-S164 that has been successfully implemented, set passes: true. (2) Update project description to include 'Genome Protocol \u2014 gToken yield wrapping'. Verify all stories have acceptance criteria fields.",
       "priority": 165,
-      "passes": false,
+      "passes": true,
       "acceptance": "prd.json stories S122-S164 have passes: true. Project description updated. JSON is valid.",
       "model": "sonnet"
     },

@@ -1527,3 +1527,9 @@
   - Included gMOTO test genome address and confirmed ratio 1.3395 as proof of injectRewards working
   - Kept all original content (description, tweet, screenshots, old contract addresses, checklist)
 
+
+[2026-03-06] S165 — Updated prd.json metadata
+  - S122-S164 were already passes: true (verified by grep)
+  - Updated project field: 'Mines Protocol — OPNet Port' → 'Genome Protocol — OPNet Port'
+  - Updated description to include 'Genome Protocol — gToken yield wrapping' and gToken/genome terminology
+  - Marked S165 passes: true
