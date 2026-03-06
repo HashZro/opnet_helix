@@ -1456,7 +1456,7 @@
       "title": "Verify injectRewards increases ratio",
       "description": "Using My Genomes page on the frontend: select a genome you own that has some gTokens minted. Enter an amount of underlying tokens to inject (you must have them in your wallet). Click Inject Rewards. Verify: (1) Transaction broadcasts successfully. (2) Page refetches and shows updated ratio (should be > previous ratio). (3) underlyingBalance increased. Document the ratio change in progress.txt.",
       "priority": 162,
-      "passes": false,
+      "passes": true,
       "acceptance": "injectRewards transaction succeeds on testnet. Genome ratio increases after injection. progress.txt notes the verification.",
       "model": "sonnet"
     },

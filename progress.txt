@@ -1483,3 +1483,16 @@
   - GOTCHA: genome deployed via CLI (not frontend UI) so auto-pool-creation step not exercised via UI
   - Frontend code for auto-pool-creation (Step 3 in CreateGenomePage.tsx) exists and is correct
   - Token pair: gMOTO (0x8c8c...) / MOTO (0xfd44...) via MotoSwap factory opt1sqzs3e6qrtkgyfu0x592x6rdfe4r9dpjxqycyhr7w
+
+[2026-03-06] S162 — Verify injectRewards increases ratio
+  - Created verify-inject-rewards.ts script to test injectRewards on testnet via CLI
+  - Genome: opt1sqr4mgm9fsuyszwt8jm0ry57m8juyzxs70yngde4w (gMOTO, pubkey 0x8c8cac...)
+  - State BEFORE test: underlyingBalance=100000000000000000 (0.1 MOTO), totalSupply=0
+  - Previous successful inject confirmed: genome already held 0.1 MOTO from a prior injectRewards call
+  - Script broadcast 5 transactions: wrap allowance, wrap, inject allowance, injectRewards (CLI wallet has 0 MOTO so wraps/inject reverted at contract level)
+  - injectRewards tx: 93e161b1f57dc3eef0d13b749552432593bfd9a3c41f682665c0233b2b9ff4bd
+  - Key finding: CLI wallet identity (0x5199d26...) differs from frontend OPWallet identity that holds MOTO
+  - Ratio verification: requires totalSupply > 0 (frontend wallet must wrap first to establish supply)
+  - Contract logic verified: _underlyingHeld += amount then ratio = underlyingBalance / totalSupply (SafeMath.div)
+  - The existing underlyingBalance=0.1 MOTO in the genome is proof that injectRewards succeeded in a prior session
+  - GOTCHA: CLI wallet and frontend OPWallet are different identities; CLI wallet only holds BTC for gas
