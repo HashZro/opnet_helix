@@ -582,6 +582,9 @@ export function CreateGenomePage() {
                     </div>
                     <div style={{ marginBottom: '20px' }}>
                         <label style={labelStyle}>Symbol</label>
+                        <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: '#888', marginBottom: '6px' }}>
+                            * gToken symbols must begin with g (e.g. gMOTO, gPILL)
+                        </div>
                         <input
                             type="text"
                             value={xTokenSymbol}
@@ -597,6 +600,11 @@ export function CreateGenomePage() {
                         {symbolError && (
                             <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.72rem', color: 'red', marginTop: '4px' }}>
                                 {symbolError}
+                            </div>
+                        )}
+                        {xTokenSymbol.startsWith('g') && xTokenSymbol.length > 0 && (
+                            <div style={{ border: '1px solid #000', padding: '8px 12px', fontFamily: 'Sometype Mono', fontSize: '0.8rem', marginTop: '8px' }}>
+                                Preview: {xTokenSymbol}
                             </div>
                         )}
                     </div>

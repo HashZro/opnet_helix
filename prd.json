@@ -1258,7 +1258,7 @@
       "title": "Add live gToken symbol preview in CreateGenomePage",
       "description": "In frontend/src/pages/CreateGenomePage.tsx: (1) Below the symbol input field, add a preview section shown when symbol starts with 'g'. Style: border: '1px solid #000', padding: '8px 12px', fontFamily: 'Sometype Mono', showing 'Preview: {symbol}'. (2) Above the symbol field, add a mandatory note: '* gToken symbols must begin with g (e.g. gMOTO, gPILL)' in small grey Sometype Mono text. (3) The preview updates live as user types.",
       "priority": 140,
-      "passes": false,
+      "passes": true,
       "acceptance": "Typing 'gMOTO' in symbol field shows 'Preview: gMOTO' box below. Mandatory note is visible above field. npm run build exits 0.",
       "model": "sonnet"
     },
