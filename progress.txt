@@ -1284,3 +1284,15 @@
   - Updated MyGenomesPage destructure to include `senderAddress` from useWallet()
   - Passed `senderAddress` to each GenomeOwnerCard in the grid render
   - npm run build exits 0 (83 modules, tsc -b passes)
+
+[2026-03-05] S146 — Add Inject Rewards button to GenomeOwnerCard
+  - Added Inject Rewards action section to GenomeOwnerCard in MyGenomesPage.tsx
+  - New imports: getContract from 'opnet', Address from @btc-vision/transaction, useToast, parseAmount, parseContractError, GENOME_ABI, OP_20_ABI, provider, NETWORK, useWallet
+  - New state: injectAmount (string), isInjecting (bool), btnHovered (bool)
+  - handleInject(): parseAmount(18) → increaseAllowance(Address.fromString(mine.pubkey), parsed) → sendTransaction → injectRewards(parsed) → sendTransaction
+  - UI shown only when senderAddress is not null (wallet connected)
+  - Input: transparent bg, adapts color to card hover state
+  - Button: inverts on hover, adapts border/text color to card hover state (black card → white borders)
+  - senderAddress passed as senderAddress ?? undefined to satisfy getContract type (Address | undefined)
+  - GOTCHA: getContract 5th param is Address | undefined, but senderAddress prop is Address | null → use ?? undefined
+  - npm run build: 83 modules, 0 TypeScript errors, exit 0

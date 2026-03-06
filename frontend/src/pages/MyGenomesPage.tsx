@@ -1,10 +1,14 @@
 import { useState } from 'react';
-import type { Address } from '@btc-vision/transaction';
+import { getContract } from 'opnet';
+import { Address } from '@btc-vision/transaction';
 import { useMines } from '../hooks/useMines';
 import { useWallet } from '../hooks/useWallet';
 import { useGenomePoolInfo } from '../hooks/useGenomePoolInfo';
-import { formatBalance, truncateAddress } from '../lib/helpers';
-import { HIDDEN_MINE_PUBKEYS } from '../config';
+import { useToast } from '../contexts/ToastContext';
+import { formatBalance, truncateAddress, parseAmount, parseContractError } from '../lib/helpers';
+import { GENOME_ABI, OP_20_ABI } from '../lib/contracts';
+import { provider } from '../lib/provider';
+import { NETWORK, HIDDEN_MINE_PUBKEYS } from '../config';
 import type { MineInfo } from '../hooks/useMines';
 
 function isZeroPool(addr: string): boolean {
@@ -46,8 +50,53 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
     const underlyingSymbol = mine.underlyingSymbol || (symbol.startsWith('g') ? symbol.slice(1) : symbol);
     const [hovered, setHovered] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [injectAmount, setInjectAmount] = useState('');
+    const [isInjecting, setIsInjecting] = useState(false);
+    const [btnHovered, setBtnHovered] = useState(false);
+
+    const toast = useToast();
+    const { address: walletAddress } = useWallet();
 
     const poolInfo = useGenomePoolInfo(address, mine.pubkey, mine.underlyingAddress, senderAddress);
+
+    async function handleInject() {
+        const parsed = parseAmount(injectAmount, 18);
+        if (parsed === 0n) {
+            toast.error('Enter an amount greater than zero');
+            return;
+        }
+        setIsInjecting(true);
+        try {
+            const genomePubAddr = Address.fromString(mine.pubkey);
+            const underlyingAddr = Address.fromString(mine.underlyingAddress);
+
+            console.log('[injectRewards] increaseAllowance', { genome: mine.pubkey, underlying: mine.underlyingAddress, parsed: parsed.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const underlyingContract = getContract<any>(underlyingAddr, OP_20_ABI as any, provider, NETWORK, senderAddress ?? undefined);
+            const allowSim = await underlyingContract.increaseAllowance(genomePubAddr, parsed);
+            if ('error' in (allowSim as object)) throw new Error(String((allowSim as { error: unknown }).error));
+            toast.info('Approving underlying token...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (allowSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Approved');
+
+            console.log('[injectRewards] injectRewards', { amount: parsed.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const genomeContract = getContract<any>(mine.address, GENOME_ABI as any, provider, NETWORK, senderAddress ?? undefined);
+            const injectSim = await genomeContract.injectRewards(parsed);
+            if ('error' in (injectSim as object)) throw new Error(String((injectSim as { error: unknown }).error));
+            toast.info('Injecting rewards...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (injectSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Rewards injected — ratio increased');
+            setInjectAmount('');
+        } catch (err) {
+            console.error('[injectRewards] error:', err);
+            toast.error(parseContractError(err));
+        } finally {
+            setIsInjecting(false);
+        }
+    }
 
     const handleCopy = () => {
         navigator.clipboard.writeText(poolInfo.poolAddress).then(() => {
@@ -142,6 +191,53 @@ function GenomeOwnerCard({ mine, senderAddress }: GenomeOwnerCardProps) {
                     </div>
                 )}
             </div>
+
+            {/* Inject Rewards — only shown when connected */}
+            {senderAddress && (
+                <div style={{ marginTop: '16px', paddingTop: '12px', borderTop: `1px solid ${hovered ? '#333' : '#eee'}` }}>
+                    <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.65rem', color: hovered ? '#666' : '#aaa', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '8px' }}>
+                        Inject Rewards
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+                        <input
+                            type="text"
+                            value={injectAmount}
+                            onChange={e => setInjectAmount(e.target.value)}
+                            placeholder={`0.0 ${underlyingSymbol}`}
+                            disabled={isInjecting}
+                            style={{
+                                flex: 1,
+                                border: `1px solid ${hovered ? '#555' : '#000'}`,
+                                background: 'transparent',
+                                color: hovered ? '#fff' : '#000',
+                                padding: '6px 10px',
+                                fontFamily: 'Sometype Mono',
+                                fontSize: '0.8rem',
+                                outline: 'none',
+                            }}
+                        />
+                        <button
+                            onClick={handleInject}
+                            disabled={isInjecting || !injectAmount}
+                            onMouseEnter={() => setBtnHovered(true)}
+                            onMouseLeave={() => setBtnHovered(false)}
+                            style={{
+                                border: `1px solid ${hovered ? '#fff' : '#000'}`,
+                                background: btnHovered && !isInjecting && injectAmount ? (hovered ? '#fff' : '#000') : 'transparent',
+                                color: btnHovered && !isInjecting && injectAmount ? (hovered ? '#000' : '#fff') : (hovered ? '#fff' : '#000'),
+                                padding: '6px 12px',
+                                fontFamily: 'Sometype Mono',
+                                fontSize: '0.75rem',
+                                cursor: isInjecting || !injectAmount ? 'not-allowed' : 'pointer',
+                                opacity: isInjecting || !injectAmount ? 0.5 : 1,
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {isInjecting ? '...' : 'Inject Rewards'}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

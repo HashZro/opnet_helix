@@ -1312,7 +1312,7 @@
       "title": "Add Inject Rewards button to GenomeOwnerCard",
       "description": "In frontend/src/pages/MyGenomesPage.tsx GenomeOwnerCard: add 'Inject Rewards' action section. Show: (1) Amount input (text field) for underlying token amount. (2) Button 'Inject Rewards' styled like ActionBtn (black border, inverts on hover). On click: (a) Parse amount. (b) Import OP_20_ABI, GENOME_ABI from contracts.ts. (c) Call underlyingContract.increaseAllowance(Address.fromString(mine.pubkey), parsedAmount) and send. (d) Call genomeContract.injectRewards(parsedAmount) and send. (e) Show success toast 'Rewards injected \u2014 ratio increased'. Handle errors. Only shown when isConnected.",
       "priority": 146,
-      "passes": false,
+      "passes": true,
       "acceptance": "GenomeOwnerCard has amount input and Inject Rewards button. Clicking it approves underlying then calls injectRewards. Toast shows on success. npm run build exits 0.",
       "model": "sonnet"
     },
