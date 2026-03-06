@@ -1465,7 +1465,7 @@
       "title": "Verify end-to-end LP claim flow",
       "description": "End-to-end test of LP claim: (1) Add liquidity to a genome's pool via MotoSwap or the frontend. (2) Verify LP balance shows > 0 in My Genomes page GenomeOwnerCard. (3) Click Claim LP Fees -> Genome. (4) Complete all 3 steps (approve LP, removeLiquidity, injectRewards). (5) Verify genome ratio increased. Document result in progress.txt.",
       "priority": 163,
-      "passes": false,
+      "passes": true,
       "acceptance": "Full LP claim flow completes on testnet. LP balance decreases to 0. Genome ratio increases. progress.txt notes verification.",
       "model": "sonnet"
     },
