@@ -1375,7 +1375,7 @@
       "title": "Add gToken badge to MineCard",
       "description": "In frontend/src/components/MineCard.tsx: next to the token symbol in the header, add a small 'g' badge \u2014 a span with border: '1px solid currentColor', padding: '1px 4px', fontSize: '0.6rem', fontFamily: 'Sometype Mono' showing 'gToken'. Color matches card state (dark on white, light on black hover). Position it after the symbol text in the top row. Only show if symbol starts with 'g'.",
       "priority": 153,
-      "passes": false,
+      "passes": true,
       "acceptance": "MineCard shows 'gToken' badge next to symbol when symbol starts with 'g'. Badge inverts color on hover. npm run build exits 0.",
       "model": "sonnet"
     },

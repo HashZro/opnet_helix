@@ -32,6 +32,9 @@ export function MineCard({ mine }: MineCardProps) {
                     <h3 style={{ fontFamily: 'Mulish', fontWeight: 700, fontSize: '1rem', color: cardHovered ? '#fff' : '#000', marginBottom: '2px' }}>{name}</h3>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                         <span style={{ fontSize: '0.75rem', fontFamily: 'Sometype Mono', color: cardHovered ? '#aaa' : '#888' }}>{symbol}</span>
+                        {symbol.startsWith('g') && (
+                            <span style={{ border: '1px solid currentColor', padding: '1px 4px', fontSize: '0.6rem', fontFamily: 'Sometype Mono', color: cardHovered ? '#aaa' : '#888', lineHeight: 1 }}>gToken</span>
+                        )}
                         <span style={{ fontSize: '0.65rem', color: cardHovered ? '#666' : '#ccc' }}>▸</span>
                         <span style={{ fontSize: '0.75rem', fontFamily: 'Sometype Mono', color: cardHovered ? '#bbb' : '#555' }}>{underlyingName}</span>
                     </div>
