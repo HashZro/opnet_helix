@@ -361,7 +361,7 @@ export function CreateGenomePage() {
                 ? '0x' + Array.from(factoryRaw as Uint8Array).map((b: number) => b.toString(16).padStart(2, '0')).join('')
                 : String(factoryRaw);
 
-            const registerSelector = await computeSelector('registerMine()');
+            const registerSelector = await computeSelector('registerGenome()');
             const regWriter = new BinaryWriter();
             regWriter.writeSelector(registerSelector);
             regWriter.writeAddress(Address.fromString(underlyingPubkey));

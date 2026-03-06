@@ -1191,6 +1191,11 @@
   - MineInfo type name kept for backward compatibility
   - npx tsc --noEmit exits 0
 
+[2026-03-05] S137 — Updated CreateGenomePage.tsx registerGenome selector
+  - Changed computeSelector('registerMine()') -> computeSelector('registerGenome()') on line 364
+  - WASM path was already './Genome.wasm' from S132 — no change needed
+  - npm run build exits 0 (82 modules, no TypeScript errors)
+
 [2026-03-05] S136 — Updated useMine.ts internal variable names and comments to genome terminology
   - Renamed parameter mineAddress->genomeAddress in useMine() function body
   - Renamed mineCode->genomeCode, mineContract->genomeContract, mineWithSender->genomeWithSender

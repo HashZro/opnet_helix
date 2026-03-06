@@ -1231,7 +1231,7 @@
       "title": "Update CreateGenomePage.tsx WASM path and registerGenome selector",
       "description": "In frontend/src/pages/CreateGenomePage.tsx: (1) Change fetch URL from '/Mine.wasm' to '/Genome.wasm'. (2) Update the registerMine selector computation to registerGenome: change createHash('sha256').update('registerMine()') to createHash('sha256').update('registerGenome()'). (3) Update any other hardcoded 'registerMine' or 'Mine.wasm' strings. (4) Run cd frontend && npm run build to verify.",
       "priority": 137,
-      "passes": false,
+      "passes": true,
       "acceptance": "CreateGenomePage.tsx fetches /Genome.wasm. Selector uses 'registerGenome()'. npm run build exits 0.",
       "model": "sonnet"
     },
