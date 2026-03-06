@@ -57,7 +57,7 @@ function extractAddress(res: unknown, field: string): string {
     return '';
 }
 
-export function useMine(mineAddress: string | null) {
+export function useMine(genomeAddress: string | null) {
     const [data, setData] = useState<MineData | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -66,7 +66,7 @@ export function useMine(mineAddress: string | null) {
     const { senderAddress, address: walletAddress } = useWallet();
 
     useEffect(() => {
-        if (!mineAddress) {
+        if (!genomeAddress) {
             setData(null);
             setLoading(false);
             return;
@@ -78,17 +78,17 @@ export function useMine(mineAddress: string | null) {
 
         const run = async () => {
             try {
-                // Resolve mine contract pubkey hex (required for signInteraction contract field)
+                // Resolve genome contract pubkey hex (required for signInteraction contract field)
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const mineCode = await (provider as any).getCode(mineAddress);
-                const rawPubkey = mineCode?.contractPublicKey;
+                const genomeCode = await (provider as any).getCode(genomeAddress);
+                const rawPubkey = genomeCode?.contractPublicKey;
                 const pubkey: string = rawPubkey instanceof Uint8Array
                     ? '0x' + Array.from(rawPubkey as Uint8Array).map((b: number) => b.toString(16).padStart(2, '0')).join('')
                     : String(rawPubkey ?? '');
 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const mineContract = getContract<any>(
-                    mineAddress,
+                const genomeContract = getContract<any>(
+                    genomeAddress,
                     MINE_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
                     provider,
                     NETWORK,
@@ -99,14 +99,14 @@ export function useMine(mineAddress: string | null) {
                     wrapFeeRes, unwrapFeeRes,
                     underlyingRes, ownerRes,
                 ] = await Promise.all([
-                    mineContract.name(),
-                    mineContract.symbol(),
-                    mineContract.totalSupply(),
-                    mineContract.underlyingBalance(),
-                    mineContract.getWrapFee(),
-                    mineContract.getUnwrapFee(),
-                    mineContract.getUnderlying(),
-                    mineContract.getOwner(),
+                    genomeContract.name(),
+                    genomeContract.symbol(),
+                    genomeContract.totalSupply(),
+                    genomeContract.underlyingBalance(),
+                    genomeContract.getWrapFee(),
+                    genomeContract.getUnwrapFee(),
+                    genomeContract.getUnderlying(),
+                    genomeContract.getOwner(),
                 ]);
 
                 if (cancelled) return;
@@ -147,15 +147,15 @@ export function useMine(mineAddress: string | null) {
 
                 if (senderAddress && walletAddress) {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const mineWithSender = getContract<any>(
-                        mineAddress,
+                    const genomeWithSender = getContract<any>(
+                        genomeAddress,
                         MINE_ABI as any, // eslint-disable-line @typescript-eslint/no-explicit-any
                         provider,
                         NETWORK,
                         senderAddress,
                     );
 
-                    const xBalRes = await mineWithSender.balanceOf(senderAddress);
+                    const xBalRes = await genomeWithSender.balanceOf(senderAddress);
                     if (cancelled) return;
                     userXBalance = extractU256(xBalRes, 'balance');
 
@@ -174,7 +174,7 @@ export function useMine(mineAddress: string | null) {
                     }
 
                     // Compute client-side: xAmount * underlyingBalance / totalSupply
-                    // (mirrors _getUnderlyingAmount in Mine.ts — avoids selector mismatch for bare @method())
+                    // (mirrors _getUnderlyingAmount in Genome.ts — avoids selector mismatch for bare @method())
                     if (userXBalance > BigInt(0) && totalSupply > BigInt(0)) {
                         userUnderlyingValue = userXBalance * underlyingBalance / totalSupply;
                     } else {
@@ -184,7 +184,7 @@ export function useMine(mineAddress: string | null) {
 
                 if (!cancelled) {
                     setData({
-                        address: mineAddress,
+                        address: genomeAddress,
                         pubkey,
                         name: extractString(nameRes, 'name'),
                         symbol: extractString(symbolRes, 'symbol'),
@@ -205,7 +205,7 @@ export function useMine(mineAddress: string | null) {
                 }
             } catch (err) {
                 if (!cancelled) {
-                    setError(err instanceof Error ? err.message : 'Failed to fetch mine data');
+                    setError(err instanceof Error ? err.message : 'Failed to fetch genome data');
                 }
             } finally {
                 if (!cancelled) {
@@ -216,7 +216,7 @@ export function useMine(mineAddress: string | null) {
 
         void run();
         return () => { cancelled = true; };
-    }, [mineAddress, senderAddress, walletAddress, fetchTrigger]);
+    }, [genomeAddress, senderAddress, walletAddress, fetchTrigger]);
 
     const refetch = useCallback(() => {
         setFetchTrigger(t => t + 1);

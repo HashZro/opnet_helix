@@ -1222,7 +1222,7 @@
       "title": "Update useMine.ts comments and variable names",
       "description": "In frontend/src/hooks/useMine.ts: update internal comments from mine->genome. Update variable names: mineContract->genomeContract, mineCode->genomeCode, mineAddress->genomeAddress in the hook body (but keep the exported function name useMine for now). Update console.log labels. No logic changes.",
       "priority": 136,
-      "passes": false,
+      "passes": true,
       "acceptance": "useMine.ts has genomeContract, genomeCode variable names internally. Comments use genome terminology. npx tsc --noEmit exits 0.",
       "model": "sonnet"
     },

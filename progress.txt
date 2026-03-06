@@ -1190,3 +1190,13 @@
   - Error message: 'Failed to fetch mines' -> 'Failed to fetch genomes'
   - MineInfo type name kept for backward compatibility
   - npx tsc --noEmit exits 0
+
+[2026-03-05] S136 — Updated useMine.ts internal variable names and comments to genome terminology
+  - Renamed parameter mineAddress->genomeAddress in useMine() function body
+  - Renamed mineCode->genomeCode, mineContract->genomeContract, mineWithSender->genomeWithSender
+  - Updated comment: 'Resolve mine contract pubkey' -> 'Resolve genome contract pubkey'
+  - Updated comment: '_getUnderlyingAmount in Mine.ts' -> '_getUnderlyingAmount in Genome.ts'
+  - Updated error message: 'Failed to fetch mine data' -> 'Failed to fetch genome data'
+  - useEffect dependency array: mineAddress->genomeAddress
+  - Function export name useMine unchanged for backward compatibility
+  - npx tsc --noEmit exits 0
