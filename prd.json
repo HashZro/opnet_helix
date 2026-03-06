@@ -1357,7 +1357,7 @@
       "title": "Add Owner Actions section to MineDetailPage",
       "description": "In frontend/src/pages/MineDetailPage.tsx: add an 'Owner Actions' section shown only when isConnected and identityKey === mine.ownerAddress (case-insensitive). Section contains: (1) Inject Rewards: amount input + button that calls increaseAllowance then injectRewards(amount). (2) Set Wrap Fee: number input (0-20 = 0%-20%) + button that calls setWrapFee. (3) Set Unwrap Fee: same for setUnwrapFee. Style consistently with existing ActionBtn. Place section after the Protocol stats table and before modals.",
       "priority": 151,
-      "passes": false,
+      "passes": true,
       "acceptance": "Owner Actions section appears only when wallet is connected and user is genome owner. injectRewards, setWrapFee, setUnwrapFee buttons work. npm run build exits 0.",
       "model": "sonnet"
     },

@@ -4,9 +4,11 @@ import { getContract, MotoSwapFactoryAbi } from 'opnet';
 import { Address } from '@btc-vision/transaction';
 import { useMine } from '../hooks/useMine';
 import { useWallet } from '../hooks/useWallet';
-import { formatBalance } from '../lib/helpers';
+import { formatBalance, parseAmount, parseContractError } from '../lib/helpers';
 import { provider } from '../lib/provider';
 import { NETWORK, CONTRACT_ADDRESSES } from '../config';
+import { useToast } from '../contexts/ToastContext';
+import { GENOME_ABI, OP_20_ABI } from '../lib/contracts';
 import { WrapModal } from '../components/WrapModal';
 import { UnwrapModal } from '../components/UnwrapModal';
 import { AddLiquidityModal } from '../components/AddLiquidityModal';
@@ -177,13 +179,22 @@ function ActionBtn({ onClick, children }: { onClick: () => void; children: React
 export function MineDetailPage() {
     const { address } = useParams<{ address: string }>();
     const { data: mine, loading, error } = useMine(address ?? null);
-    const { isConnected } = useWallet();
+    const { isConnected, identityKey, senderAddress, address: walletAddress } = useWallet();
+    const toast = useToast();
     const ratio = mine && mine.totalSupply > 0n ? Number(mine.underlyingBalance) / Number(mine.totalSupply) : 1.0;
     const apy = useApyEstimate(address ?? '', ratio);
     const [showWrap, setShowWrap] = useState(false);
     const [showUnwrap, setShowUnwrap] = useState(false);
     const [showAddLiquidity, setShowAddLiquidity] = useState(false);
     const [poolExists, setPoolExists] = useState<boolean | null>(null);
+    const [injectAmount, setInjectAmount] = useState('');
+    const [isInjecting, setIsInjecting] = useState(false);
+    const [wrapFeeInput, setWrapFeeInput] = useState('');
+    const [isSettingWrapFee, setIsSettingWrapFee] = useState(false);
+    const [unwrapFeeInput, setUnwrapFeeInput] = useState('');
+    const [isSettingUnwrapFee, setIsSettingUnwrapFee] = useState(false);
+
+    const isOwner = isConnected && !!identityKey && !!mine && identityKey.toLowerCase() === mine.ownerAddress.toLowerCase();
 
     useEffect(() => {
         if (!mine?.pubkey || !mine.underlyingPubkey) return;
@@ -208,6 +219,91 @@ export function MineDetailPage() {
         void check();
         return () => { cancelled = true; };
     }, [mine?.pubkey, mine?.underlyingPubkey]);
+
+    async function handleInjectRewards() {
+        if (!senderAddress || !walletAddress || !mine) return;
+        const parsed = parseAmount(injectAmount, 18);
+        if (parsed === 0n) { toast.error('Enter an amount greater than zero'); return; }
+        setIsInjecting(true);
+        try {
+            const genomePubAddr = Address.fromString(mine.pubkey);
+            const underlyingContractAddr = Address.fromString(mine.underlyingAddress);
+            console.log('[injectRewards] increaseAllowance', { genome: mine.pubkey, underlying: mine.underlyingAddress, amount: parsed.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const underlyingContract = getContract<any>(underlyingContractAddr, OP_20_ABI as any, provider, NETWORK, senderAddress);
+            const allowSim = await underlyingContract.increaseAllowance(genomePubAddr, parsed);
+            if ('error' in (allowSim as object)) throw new Error(String((allowSim as { error: unknown }).error));
+            toast.info('Approving underlying token...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (allowSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Approved');
+            console.log('[injectRewards] injectRewards', { amount: parsed.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const genomeContract = getContract<any>(mine.address, GENOME_ABI as any, provider, NETWORK, senderAddress);
+            const injectSim = await genomeContract.injectRewards(parsed);
+            if ('error' in (injectSim as object)) throw new Error(String((injectSim as { error: unknown }).error));
+            toast.info('Injecting rewards...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (injectSim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Rewards injected — ratio increased');
+            setInjectAmount('');
+        } catch (err) {
+            console.error('[injectRewards] error:', err);
+            toast.error(parseContractError(err));
+        } finally {
+            setIsInjecting(false);
+        }
+    }
+
+    async function handleSetWrapFee() {
+        if (!senderAddress || !walletAddress || !mine) return;
+        const pct = parseFloat(wrapFeeInput);
+        if (isNaN(pct) || pct < 0 || pct > 20) { toast.error('Wrap fee must be 0%–20%'); return; }
+        const feeBps = BigInt(Math.round(pct * 10));
+        setIsSettingWrapFee(true);
+        try {
+            console.log('[setWrapFee]', { feeBps: feeBps.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const genomeContract = getContract<any>(mine.address, GENOME_ABI as any, provider, NETWORK, senderAddress);
+            const sim = await genomeContract.setWrapFee(feeBps);
+            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
+            toast.info('Setting wrap fee...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (sim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Wrap fee updated');
+            setWrapFeeInput('');
+        } catch (err) {
+            console.error('[setWrapFee] error:', err);
+            toast.error(parseContractError(err));
+        } finally {
+            setIsSettingWrapFee(false);
+        }
+    }
+
+    async function handleSetUnwrapFee() {
+        if (!senderAddress || !walletAddress || !mine) return;
+        const pct = parseFloat(unwrapFeeInput);
+        if (isNaN(pct) || pct < 0 || pct > 20) { toast.error('Unwrap fee must be 0%–20%'); return; }
+        const feeBps = BigInt(Math.round(pct * 10));
+        setIsSettingUnwrapFee(true);
+        try {
+            console.log('[setUnwrapFee]', { feeBps: feeBps.toString() });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const genomeContract = getContract<any>(mine.address, GENOME_ABI as any, provider, NETWORK, senderAddress);
+            const sim = await genomeContract.setUnwrapFee(feeBps);
+            if ('error' in (sim as object)) throw new Error(String((sim as { error: unknown }).error));
+            toast.info('Setting unwrap fee...');
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await (sim as any).sendTransaction({ signer: null, mldsaSigner: null, refundTo: walletAddress });
+            toast.success('Unwrap fee updated');
+            setUnwrapFeeInput('');
+        } catch (err) {
+            console.error('[setUnwrapFee] error:', err);
+            toast.error(parseContractError(err));
+        } finally {
+            setIsSettingUnwrapFee(false);
+        }
+    }
 
     const underlyingSymbol = mine?.underlyingSymbol || (mine
         ? (mine.symbol.startsWith('x') ? mine.symbol.slice(1) : mine.symbol)
@@ -352,6 +448,84 @@ export function MineDetailPage() {
                     </tbody>
                 </table>
             ) : null}
+
+            {/* Owner Actions — only for genome owner */}
+            {isOwner && mine && (
+                <>
+                    {divider}
+                    <div style={SECTION_LABEL}>Owner Actions</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '28px' }}>
+                        {/* Inject Rewards */}
+                        <div style={{ border: '1px solid #000', padding: '16px 20px' }}>
+                            <div style={{ ...SECTION_LABEL, marginBottom: '8px' }}>Inject Rewards</div>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    step="any"
+                                    placeholder="Amount"
+                                    value={injectAmount}
+                                    onChange={e => setInjectAmount(e.target.value)}
+                                    disabled={isInjecting}
+                                    style={{ flex: 1, border: '1px solid #000', background: '#fff', padding: '8px 12px', fontFamily: 'Sometype Mono', fontSize: '0.85rem', outline: 'none', opacity: isInjecting ? 0.5 : 1 }}
+                                />
+                                <ActionBtn onClick={() => { void handleInjectRewards(); }}>
+                                    {isInjecting ? 'Injecting...' : 'Inject'}
+                                </ActionBtn>
+                            </div>
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: '#888', marginTop: '6px' }}>
+                                Transfer {underlyingSymbol} into the genome pool to increase the ratio
+                            </div>
+                        </div>
+                        {/* Set Wrap Fee */}
+                        <div style={{ border: '1px solid #000', padding: '16px 20px' }}>
+                            <div style={{ ...SECTION_LABEL, marginBottom: '8px' }}>Set Wrap Fee</div>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    step="0.1"
+                                    placeholder={`Current: ${(Number(mine.wrapFee) / 10).toFixed(1)}%`}
+                                    value={wrapFeeInput}
+                                    onChange={e => setWrapFeeInput(e.target.value)}
+                                    disabled={isSettingWrapFee}
+                                    style={{ flex: 1, border: '1px solid #000', background: '#fff', padding: '8px 12px', fontFamily: 'Sometype Mono', fontSize: '0.85rem', outline: 'none', opacity: isSettingWrapFee ? 0.5 : 1 }}
+                                />
+                                <ActionBtn onClick={() => { void handleSetWrapFee(); }}>
+                                    {isSettingWrapFee ? 'Saving...' : 'Set'}
+                                </ActionBtn>
+                            </div>
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: '#888', marginTop: '6px' }}>
+                                Enter percentage (0–20). Current: {(Number(mine.wrapFee) / 10).toFixed(1)}%
+                            </div>
+                        </div>
+                        {/* Set Unwrap Fee */}
+                        <div style={{ border: '1px solid #000', padding: '16px 20px' }}>
+                            <div style={{ ...SECTION_LABEL, marginBottom: '8px' }}>Set Unwrap Fee</div>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'stretch' }}>
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="20"
+                                    step="0.1"
+                                    placeholder={`Current: ${(Number(mine.unwrapFee) / 10).toFixed(1)}%`}
+                                    value={unwrapFeeInput}
+                                    onChange={e => setUnwrapFeeInput(e.target.value)}
+                                    disabled={isSettingUnwrapFee}
+                                    style={{ flex: 1, border: '1px solid #000', background: '#fff', padding: '8px 12px', fontFamily: 'Sometype Mono', fontSize: '0.85rem', outline: 'none', opacity: isSettingUnwrapFee ? 0.5 : 1 }}
+                                />
+                                <ActionBtn onClick={() => { void handleSetUnwrapFee(); }}>
+                                    {isSettingUnwrapFee ? 'Saving...' : 'Set'}
+                                </ActionBtn>
+                            </div>
+                            <div style={{ fontFamily: 'Sometype Mono', fontSize: '0.7rem', color: '#888', marginTop: '6px' }}>
+                                Enter percentage (0–20). Current: {(Number(mine.unwrapFee) / 10).toFixed(1)}%
+                            </div>
+                        </div>
+                    </div>
+                </>
+            )}
 
             <div style={SECTION_LABEL}>Genomes</div>
 

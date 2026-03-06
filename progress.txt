@@ -1340,3 +1340,17 @@
   - Navbar.tsx, MineCard.tsx, CreateGenomePage.tsx, MyGenomesPage.tsx: no remaining Mine/xToken user-facing strings (already clean from S109-S142)
   - Variable names unchanged (xTokenName, xTokenSymbol, mine, etc.)
   - npm run build exits 0 (83 modules, no TypeScript errors)
+
+[2026-03-05] S151 — Add Owner Actions section to MineDetailPage
+  - Added 'Owner Actions' section to frontend/src/pages/MineDetailPage.tsx
+  - Shown only when isConnected && identityKey.toLowerCase() === mine.ownerAddress.toLowerCase()
+  - Three sub-sections: Inject Rewards, Set Wrap Fee, Set Unwrap Fee
+  - Inject Rewards: number input + button → increaseAllowance(genomePubAddr, amount) → injectRewards(amount)
+  - Set Wrap Fee: number input (0–20%) → setWrapFee(bps) where bps = pct * 10
+  - Set Unwrap Fee: same pattern for setUnwrapFee
+  - All handlers follow same getContract/sendTransaction pattern as MyGenomesPage (signer:null, mldsaSigner:null)
+  - Added new imports: parseAmount, parseContractError (helpers), useToast (contexts), GENOME_ABI, OP_20_ABI (contracts)
+  - isOwner flag uses case-insensitive comparison: identityKey.toLowerCase() === mine.ownerAddress.toLowerCase()
+  - Section placed after Protocol stats table, before modals — with divider separator
+  - LSP 6133 false positives (as expected) — tsc -b passes clean
+  - npm run build exits 0 (83 modules, no TypeScript errors)
