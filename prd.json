@@ -1186,7 +1186,7 @@
       "title": "Copy Genome.wasm to frontend public directory",
       "description": "Copy contracts/build/Genome.wasm to frontend/public/Genome.wasm. Verify the file is present. Update CreateGenomePage.tsx (or any file that fetches the WASM) to use '/Genome.wasm' instead of '/Mine.wasm'. Verify the fetch URL in CreateGenomePage references Genome.wasm.",
       "priority": 132,
-      "passes": false,
+      "passes": true,
       "acceptance": "frontend/public/Genome.wasm exists. CreateGenomePage.tsx fetches '/Genome.wasm'. cd frontend && npm run build exits 0.",
       "model": "sonnet"
     },

@@ -1162,3 +1162,9 @@
     - Added comment: // Factory v3 — Genome Protocol, deployed 2026-03-05
   - npm run build: 82 modules, 0 TypeScript errors, exit 0
   - New Factory uses genome method names (registerGenome, getGenomeCount, getGenomeAtIndex, getGenomeAddress)
+
+[2026-03-05] S132 — Copy Genome.wasm to frontend public directory
+  - Copied contracts/build/Genome.wasm (39561 bytes) to frontend/public/Genome.wasm
+  - Updated CreateGenomePage.tsx loadBytecode(): fetch('./Mine.wasm') -> fetch('./Genome.wasm')
+  - frontend npm run build exits 0 (82 modules, no TypeScript errors)
+  - Mine.wasm still present in public/ for reference (not deleted)

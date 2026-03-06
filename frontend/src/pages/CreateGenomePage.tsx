@@ -17,7 +17,7 @@ async function computeSelector(sig: string): Promise<number> {
 }
 
 async function loadBytecode(): Promise<Uint8Array> {
-    const resp = await fetch('./Mine.wasm');
+    const resp = await fetch('./Genome.wasm');
     const buf = await resp.arrayBuffer();
     return new Uint8Array(buf);
 }
