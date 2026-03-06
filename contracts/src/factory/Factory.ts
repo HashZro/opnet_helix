@@ -19,13 +19,13 @@ const EMPTY_SUB: Uint8Array = new Uint8Array(30);
 export class Factory extends OP_NET {
   // Storage pointers
   private readonly _owner: u16 = Blockchain.nextPointer;
-  private readonly _mineCount: StoredU256 = new StoredU256(
+  private readonly _genomeCount: StoredU256 = new StoredU256(
     Blockchain.nextPointer,
     EMPTY_SUB,
   );
-  private readonly pMineByUnderlying: u16 = Blockchain.nextPointer;
-  private readonly pMineByIndex: u16 = Blockchain.nextPointer;
-  private readonly pUnderlyingByMine: u16 = Blockchain.nextPointer;
+  private readonly pGenomeByUnderlying: u16 = Blockchain.nextPointer;
+  private readonly pGenomeByIndex: u16 = Blockchain.nextPointer;
+  private readonly pUnderlyingByGenome: u16 = Blockchain.nextPointer;
 
   public override onDeployment(_calldata: Calldata): void {
     super.onDeployment(_calldata);
@@ -39,25 +39,25 @@ export class Factory extends OP_NET {
 
   @method()
   @returns({ name: "count", type: ABIDataTypes.UINT256 })
-  public registerMine(_calldata: Calldata): BytesWriter {
+  public registerGenome(_calldata: Calldata): BytesWriter {
     this.requireOwner();
 
     const underlying: Address = _calldata.readAddress();
-    const mineAddress: Address = _calldata.readAddress();
+    const genomeAddress: Address = _calldata.readAddress();
 
-    // Store underlying -> mine mapping
-    this.sa(this.addrKey(this.pMineByUnderlying, underlying), mineAddress);
+    // Store underlying -> genome mapping
+    this.sa(this.addrKey(this.pGenomeByUnderlying, underlying), genomeAddress);
 
-    // Store mine -> underlying reverse mapping
-    this.sa(this.addrKey(this.pUnderlyingByMine, mineAddress), underlying);
+    // Store genome -> underlying reverse mapping
+    this.sa(this.addrKey(this.pUnderlyingByGenome, genomeAddress), underlying);
 
-    // Store mine at current index
-    const count: u256 = this._mineCount.value;
-    this.sa(this.idxKey(this.pMineByIndex, count), mineAddress);
+    // Store genome at current index
+    const count: u256 = this._genomeCount.value;
+    this.sa(this.idxKey(this.pGenomeByIndex, count), genomeAddress);
 
-    // Increment mine count
+    // Increment genome count
     const newCount: u256 = SafeMath.add(count, ONE);
-    this._mineCount.value = newCount;
+    this._genomeCount.value = newCount;
 
     const response = new BytesWriter(32);
     response.writeU256(newCount);
@@ -65,34 +65,34 @@ export class Factory extends OP_NET {
   }
 
   @method()
-  @returns({ name: "mineAddress", type: ABIDataTypes.ADDRESS })
-  public getMineAddress(_calldata: Calldata): BytesWriter {
+  @returns({ name: "genomeAddress", type: ABIDataTypes.ADDRESS })
+  public getGenomeAddress(_calldata: Calldata): BytesWriter {
     const underlying: Address = _calldata.readAddress();
-    const mine: Address = this.la(
-      this.addrKey(this.pMineByUnderlying, underlying),
+    const genome: Address = this.la(
+      this.addrKey(this.pGenomeByUnderlying, underlying),
     );
     const response = new BytesWriter(32);
-    response.writeAddress(mine);
+    response.writeAddress(genome);
     return response;
   }
 
   @method()
   @returns({ name: "count", type: ABIDataTypes.UINT256 })
-  public getMineCount(_calldata: Calldata): BytesWriter {
+  public getGenomeCount(_calldata: Calldata): BytesWriter {
     const response = new BytesWriter(32);
-    response.writeU256(this._mineCount.value);
+    response.writeU256(this._genomeCount.value);
     return response;
   }
 
   @method()
-  @returns({ name: "mineAddress", type: ABIDataTypes.ADDRESS })
-  public getMineAtIndex(_calldata: Calldata): BytesWriter {
+  @returns({ name: "genomeAddress", type: ABIDataTypes.ADDRESS })
+  public getGenomeAtIndex(_calldata: Calldata): BytesWriter {
     const idx: u256 = _calldata.readU256();
-    const count: u256 = this._mineCount.value;
+    const count: u256 = this._genomeCount.value;
     if (!u256.lt(idx, count)) throw new Revert("index out of bounds");
-    const mine: Address = this.la(this.idxKey(this.pMineByIndex, idx));
+    const genome: Address = this.la(this.idxKey(this.pGenomeByIndex, idx));
     const response = new BytesWriter(32);
-    response.writeAddress(mine);
+    response.writeAddress(genome);
     return response;
   }
 

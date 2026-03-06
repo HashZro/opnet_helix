@@ -1123,7 +1123,7 @@
       "title": "Rename Factory.ts methods and storage from mine to genome",
       "description": "In contracts/src/factory/Factory.ts: rename methods registerMine->registerGenome, getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex, getMineAddress->getGenomeAddress. Rename storage pointer variables: pMineByUnderlying->pGenomeByUnderlying, pUnderlyingByMine->pUnderlyingByGenome, pMineByIndex->pGenomeByIndex, _mineCount->_genomeCount. Update all internal variable names that reference 'mine' to 'genome' (e.g. const mineAddress -> const genomeAddress). Update comments.",
       "priority": 125,
-      "passes": false,
+      "passes": true,
       "acceptance": "Factory.ts has methods getGenomeCount, getGenomeAtIndex, getGenomeAddress, registerGenome. Storage variable names use genome prefix. No mine references remain in method names or storage variables.",
       "model": "sonnet"
     },

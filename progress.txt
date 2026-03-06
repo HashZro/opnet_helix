@@ -1095,3 +1095,11 @@
   - Updated contracts/src/genome/index.ts: replaced `import { Mine as Genome }` alias with direct `import { Genome }`
   - No logic changes; all method signatures, error strings, storage pointers unchanged
   - Test compile succeeded: build/Genome.wasm produced (39KB), no errors
+
+[2026-03-05] S125 — Rename Factory.ts methods and storage from mine to genome
+  - Methods renamed: registerMine->registerGenome, getMineCount->getGenomeCount, getMineAtIndex->getGenomeAtIndex, getMineAddress->getGenomeAddress
+  - Storage pointers renamed: _mineCount->_genomeCount, pMineByUnderlying->pGenomeByUnderlying, pMineByIndex->pGenomeByIndex, pUnderlyingByMine->pUnderlyingByGenome
+  - Internal variable names updated: mineAddress->genomeAddress, mine (local vars)->genome
+  - Comments updated: '-> mine mapping', '-> underlying reverse mapping', 'mine at current index', 'mine count' -> genome equivalents
+  - @returns name fields updated: mineAddress->genomeAddress in getGenomeAddress and getGenomeAtIndex
+  - No logic changes — all storage pointers retain their Blockchain.nextPointer assignment order
