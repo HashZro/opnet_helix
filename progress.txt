@@ -1376,3 +1376,11 @@
   - No useMines import, no myGenomeCount variable — Navbar is clean
   - npm run build exits 0 (83 modules, no TypeScript errors)
   - Acceptance criteria met without any code changes needed
+
+[2026-03-05] S155 — Clean up config.ts and add genome version constant
+  - Added top comment: '// Factory v3 — Genome Protocol deployed 2026-03-05'
+  - Added export const GENOME_CONTRACT_VERSION = 2
+  - Renamed HIDDEN_MINE_PUBKEYS → HIDDEN_GENOME_PUBKEYS (constant was stale mine terminology)
+  - Updated all references: HomePage.tsx (import + filter usage), MyGenomesPage.tsx (import + filter usage)
+  - Stale addresses (xMotoMine, mine, staking, etc.) were already removed in S131 — config.ts was already clean
+  - npm run build exits 0 (83 modules, no TypeScript errors)

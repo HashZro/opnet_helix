@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMines } from '../hooks/useMines';
 import type { MineInfo } from '../hooks/useMines';
 import { MineCard } from '../components/MineCard';
-import { HIDDEN_MINE_PUBKEYS } from '../config';
+import { HIDDEN_GENOME_PUBKEYS } from '../config';
 import { formatBalance } from '../lib/helpers';
 
 function SkeletonCard() {
@@ -159,7 +159,7 @@ function ProtocolStats({ mines, loading }: { mines: MineInfo[]; loading: boolean
 
 export function HomePage() {
     const { mines: allMines, loading, error } = useMines();
-    const mines = allMines.filter(m => !HIDDEN_MINE_PUBKEYS.includes(m.pubkey));
+    const mines = allMines.filter(m => !HIDDEN_GENOME_PUBKEYS.includes(m.pubkey));
 
     return (
         <div style={{ padding: '48px 0' }}>

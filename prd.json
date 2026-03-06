@@ -1393,7 +1393,7 @@
       "title": "Clean up config.ts and add genome version constant",
       "description": "In frontend/src/config.ts: (1) Remove or comment out stale addresses: xMotoMine, xMotoMinePubkey, mine, minePubkey, staking, stakingPubkey (these refer to old deployed contracts). (2) Add export const GENOME_CONTRACT_VERSION = 2. (3) Add comment block at top: '// Factory v3 \u2014 Genome Protocol deployed 2026-03-05'. (4) Keep motoswapRouter, motoswapFactory, motoToken, pillToken and other token addresses. (5) Update HIDDEN_MINE_PUBKEYS comment to HIDDEN_GENOME_PUBKEYS.",
       "priority": 155,
-      "passes": false,
+      "passes": true,
       "acceptance": "config.ts has no stale mine/staking addresses. GENOME_CONTRACT_VERSION exported. npm run build exits 0.",
       "model": "sonnet"
     },

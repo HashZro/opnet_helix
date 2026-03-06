@@ -8,7 +8,7 @@ import { useToast } from '../contexts/ToastContext';
 import { formatBalance, truncateAddress, parseAmount, parseContractError } from '../lib/helpers';
 import { GENOME_ABI, OP_20_ABI, MOTOSWAP_ROUTER_ABI } from '../lib/contracts';
 import { provider } from '../lib/provider';
-import { NETWORK, HIDDEN_MINE_PUBKEYS, CONTRACT_ADDRESSES } from '../config';
+import { NETWORK, HIDDEN_GENOME_PUBKEYS, CONTRACT_ADDRESSES } from '../config';
 import type { MineInfo } from '../hooks/useMines';
 
 function isZeroPool(addr: string): boolean {
@@ -408,7 +408,7 @@ export function MyGenomesPage() {
     const { identityKey, isConnected, senderAddress } = useWallet();
 
     const mines = allMines
-        .filter(m => !HIDDEN_MINE_PUBKEYS.includes(m.pubkey))
+        .filter(m => !HIDDEN_GENOME_PUBKEYS.includes(m.pubkey))
         .filter(m => identityKey && m.ownerAddress.toLowerCase() === identityKey.toLowerCase());
 
     return (
